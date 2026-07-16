@@ -1,0 +1,403 @@
+<meta charset="UTF-8">
+<title>Manifest — Distribution Operations Intelligence Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#e7ebec;
+    --surface:#f7f9fa;
+    --surface-2:#eef1f2;
+    --ink:#141a1f;
+    --ink-soft:#3d474e;
+    --line:#c7ced1;
+    --signal:#c8631a;
+    --signal-ink:#7a3d10;
+    --current:#2a7c6c;
+    --alarm:#b5341f;
+    --caution:#a9761f;
+    --font-display:"Bahnschrift SemiBold Condensed","Bahnschrift","Arial Narrow",sans-serif;
+    --font-body:"Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,serif;
+    --font-mono:"Cascadia Code","Consolas","SFMono-Regular",Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#10161b;
+      --surface:#1a232a;
+      --surface-2:#212b32;
+      --ink:#e6ebed;
+      --ink-soft:#aab5bb;
+      --line:#323e46;
+      --signal:#ef9a4c;
+      --signal-ink:#ffd9ac;
+      --current:#4cb3a0;
+      --alarm:#e2604a;
+      --caution:#e2ac52;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10161b; --surface:#1a232a; --surface-2:#212b32; --ink:#e6ebed;
+    --ink-soft:#aab5bb; --line:#323e46; --signal:#ef9a4c; --signal-ink:#ffd9ac;
+    --current:#4cb3a0; --alarm:#e2604a; --caution:#e2ac52;
+  }
+  :root[data-theme="light"]{
+    --bg:#e7ebec; --surface:#f7f9fa; --surface-2:#eef1f2; --ink:#141a1f;
+    --ink-soft:#3d474e; --line:#c7ced1; --signal:#c8631a; --signal-ink:#7a3d10;
+    --current:#2a7c6c; --alarm:#b5341f; --caution:#a9761f;
+  }
+
+  *{box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); font-size:17px; line-height:1.65;
+  }
+  ::selection{ background:var(--signal); color:#fff; }
+
+  a{ color:var(--signal-ink); text-decoration-thickness:1px; text-underline-offset:2px; }
+  a:focus-visible, button:focus-visible, .chip:focus-visible{
+    outline:2px solid var(--signal); outline-offset:2px;
+  }
+
+  .wrap{ max-width:920px; margin:0 auto; padding:0 28px; }
+
+  h1,h2,h3,.eyebrow,.stamp,.field-label{ font-family:var(--font-display); text-wrap:balance; }
+
+  /* ---------- header / manifest block ---------- */
+  header.masthead{
+    position:relative; overflow:hidden;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 5px),
+      linear-gradient(180deg, var(--surface-2), var(--bg));
+    border-bottom:1px solid var(--line);
+    padding:64px 0 0;
+  }
+  header.masthead::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 60%, var(--bg) 100%);
+    pointer-events:none;
+  }
+  .masthead-inner{ position:relative; }
+  .eyebrow{
+    font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--signal-ink); margin:0 0 14px;
+  }
+  h1.title{
+    font-size:clamp(42px,8vw,76px); line-height:.95; letter-spacing:.01em;
+    text-transform:uppercase; margin:0 0 8px; color:var(--ink);
+  }
+  .subtitle{
+    font-family:var(--font-body); font-style:italic; font-size:19px;
+    color:var(--ink-soft); max-width:46ch; margin:0 0 36px;
+  }
+
+  .manifest-fields{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    border-top:1px solid var(--line); border-left:1px solid var(--line);
+    margin-bottom:0;
+  }
+  .field{
+    border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:14px 16px 16px;
+  }
+  .field-label{
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-soft); margin:0 0 6px;
+  }
+  .field-value{ font-family:var(--font-mono); font-size:13.5px; color:var(--ink); }
+
+  /* ---------- sections ---------- */
+  section{ padding:64px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+
+  .stamp{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--ink-soft); margin:0 0 18px;
+  }
+  .stamp::before{
+    content:""; width:22px; height:1px; background:var(--ink-soft);
+  }
+
+  h2{ font-size:clamp(26px,4vw,34px); text-transform:uppercase; letter-spacing:.01em; margin:0 0 22px; }
+
+  p{ margin:0 0 18px; max-width:64ch; }
+  p:last-child{ margin-bottom:0; }
+
+  .lede{ font-size:20px; color:var(--ink); max-width:60ch; }
+
+  /* ---------- architecture diagram ---------- */
+  .diagram{
+    display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center;
+    gap:10px; margin:40px 0 8px; overflow-x:auto; padding-bottom:8px;
+  }
+  .diagram-col{ display:flex; flex-direction:column; gap:10px; min-width:160px; }
+  .diagram-arrow{ font-family:var(--font-mono); color:var(--ink-soft); font-size:20px; text-align:center; }
+  .node{
+    background:var(--surface); border:1px solid var(--line); border-radius:2px;
+    padding:12px 14px; font-family:var(--font-mono); font-size:12.5px; color:var(--ink);
+  }
+  .node.core{
+    background:var(--signal); color:#fff; border-color:var(--signal);
+    font-weight:600; text-align:center;
+  }
+  .diagram-caption{ font-size:13px; color:var(--ink-soft); font-family:var(--font-mono); margin-top:6px; }
+
+  @media (max-width:720px){
+    .diagram{ grid-template-columns:1fr; }
+    .diagram-arrow{ transform:rotate(90deg); }
+  }
+
+  /* ---------- module cards ---------- */
+  .modules{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1px;
+    background:var(--line); border:1px solid var(--line); margin-top:8px;
+  }
+  .module{
+    background:var(--surface); padding:22px 20px;
+    opacity:0; transform:translateY(10px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .module.in-view{ opacity:1; transform:none; }
+  .module h3{ font-size:16px; letter-spacing:.04em; text-transform:uppercase; margin:0 0 8px; color:var(--signal-ink); }
+  .module p{ font-size:14.5px; color:var(--ink-soft); margin:0; }
+
+  /* ---------- code panel ---------- */
+  .code-panel{
+    background:var(--ink); color:#dfe6e9; border-radius:3px; overflow:hidden;
+    margin:28px 0; border:1px solid var(--line);
+  }
+  .code-panel .bar{
+    display:flex; align-items:center; gap:8px; padding:9px 14px;
+    background:rgba(255,255,255,0.05); font-family:var(--font-mono); font-size:11.5px;
+    letter-spacing:.06em; text-transform:uppercase; color:#9aa7ad;
+  }
+  .code-panel pre{
+    margin:0; padding:18px 20px; overflow-x:auto;
+    font-family:var(--font-mono); font-size:13px; line-height:1.6;
+  }
+  .code-panel .c{ color:#7f8c93; }
+  .code-panel .k{ color:#ef9a4c; }
+  .code-panel .s{ color:#7fc7b4; }
+
+  /* ---------- how-i-worked list ---------- */
+  .process{ list-style:none; margin:24px 0 0; padding:0; display:flex; flex-direction:column; gap:20px; }
+  .process li{ display:grid; grid-template-columns:auto 1fr; gap:18px; }
+  .process .mark{ font-family:var(--font-mono); color:var(--current); font-size:14px; padding-top:2px; }
+  .process p{ margin:0; }
+
+  /* ---------- outcomes ---------- */
+  .outcomes-wrap{ position:relative; }
+  .stamp-badge{
+    position:absolute; top:6px; right:12px;
+    border:3px solid var(--current); color:var(--current);
+    border-radius:6px; padding:8px 14px; transform:rotate(-8deg);
+    font-family:var(--font-display); font-size:14px; letter-spacing:.14em;
+    text-transform:uppercase; opacity:.85;
+  }
+  .outcomes{ list-style:none; margin:8px 0 0; padding:0; display:grid; gap:14px; }
+  .outcomes li{
+    display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:baseline;
+    font-family:var(--font-mono); font-size:14.5px;
+  }
+  .outcomes li::before{ content:"—"; color:var(--current); }
+
+  /* ---------- demo CTA ---------- */
+  .demo-cta{
+    background:var(--surface); border:1px solid var(--line); border-radius:3px;
+    padding:36px; margin-top:8px; display:grid; gap:16px;
+    grid-template-columns:1.3fr auto; align-items:center;
+  }
+  .demo-cta h3{ font-size:22px; text-transform:uppercase; letter-spacing:.02em; margin:0 0 8px; }
+  .demo-cta p{ margin:0; color:var(--ink-soft); font-size:15px; }
+  .btn{
+    display:inline-block; background:var(--signal); color:#fff; font-family:var(--font-display);
+    letter-spacing:.06em; text-transform:uppercase; font-size:14px; text-decoration:none;
+    padding:14px 26px; border-radius:2px; white-space:nowrap; transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 6px 16px -6px rgba(0,0,0,.35); }
+  @media (max-width:640px){ .demo-cta{ grid-template-columns:1fr; } }
+
+  /* ---------- footer ---------- */
+  footer{ padding:44px 0 60px; }
+  .tags{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 22px; }
+  .tag{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em;
+    border:1px solid var(--line); color:var(--ink-soft); padding:5px 10px; border-radius:2px;
+  }
+  .disclosure{ font-size:13.5px; color:var(--ink-soft); font-style:italic; max-width:60ch; }
+
+  @media (prefers-reduced-motion: reduce){
+    .module{ transition:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <p class="eyebrow">Engineering case study — systems architecture</p>
+    <h1 class="title">Manifest</h1>
+    <p class="subtitle">An operations intelligence platform built to replace a wholesale distributor's spreadsheet-based procurement, inventory, and pricing workflow with a single system of record.</p>
+  </div>
+  <div class="wrap" style="padding:0;">
+    <div class="manifest-fields">
+      <div class="field"><p class="field-label">Role</p><p class="field-value">Sole engineer &amp; architect</p></div>
+      <div class="field"><p class="field-label">Stack</p><p class="field-value">Python · Flask · PostgreSQL</p></div>
+      <div class="field"><p class="field-label">Scope</p><p class="field-value">Procurement · Inventory · Pricing · CRM</p></div>
+      <div class="field"><p class="field-label">Status</p><p class="field-value">In production</p></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <p class="stamp">The problem</p>
+    <p class="lede">The business ran procurement, inventory, and sales analysis across 25+ interlinked spreadsheets — one for inventory, one for sales history, one for inbound shipments, one for outbound orders, one for margin tiers, and more.</p>
+    <p>Every sheet fed the next by hand. A missed formula, a stale tab, or a renamed column could silently break a procurement decision for the whole company, and no one would notice until stock ran out or a lot expired on the shelf. There was no single source of truth, no audit trail, and no way to see risk — a stockout, an aging lot, a dead SKU — until someone happened to be looking at the right tab at the right time.</p>
+    <p>Reconciling the sheets against the accounting system took a standing chunk of a person's week, every week, and the answer was still only as fresh as the last manual update.</p>
+  </section>
+
+  <section>
+    <p class="stamp">What I built</p>
+    <h2>A centralized platform, rolled out module by module</h2>
+    <p>I designed and built a Flask/PostgreSQL application to replace the spreadsheet ecosystem incrementally, without taking the business offline. Each module went live independently and ran in parallel against the legacy spreadsheets until its output was verified, before the spreadsheet was retired.</p>
+
+    <div class="diagram">
+      <div class="diagram-col">
+        <div class="node">Order &amp; fulfillment system</div>
+        <div class="node">Accounting system of record</div>
+        <div class="node">Automated market price monitoring</div>
+      </div>
+      <div class="diagram-arrow">→</div>
+      <div class="diagram-col">
+        <div class="node core">PostgreSQL<br>system of record</div>
+      </div>
+      <div class="diagram-arrow">→</div>
+      <div class="diagram-col">
+        <div class="node">Procurement risk engine</div>
+        <div class="node">Pricing intelligence</div>
+        <div class="node">Supplier CRM</div>
+        <div class="node">Receiving &amp; lot tracking</div>
+      </div>
+    </div>
+    <p class="diagram-caption">Three independent source feeds consolidate into one database; every downstream module reads from — and writes back to — the same tables.</p>
+  </section>
+
+  <section>
+    <p class="stamp">System modules</p>
+    <h2>Five modules, one database</h2>
+    <div class="modules" id="modules">
+      <div class="module">
+        <h3>Procurement risk engine</h3>
+        <p>Classifies every SKU into a priority-ordered risk state — stockout, aging inventory, low stock on a key item, dead capital — from sales velocity, margin tier, and days of cover.</p>
+      </div>
+      <div class="module">
+        <h3>Pricing intelligence</h3>
+        <p>Automated monitoring of competitor storefronts tracks market price movement over time and flags where the business is priced out of line.</p>
+      </div>
+      <div class="module">
+        <h3>Supplier relationship log</h3>
+        <p>A lightweight CRM for sourcing contacts, vetting notes, and communication history, replacing a shared folder of scattered documents.</p>
+      </div>
+      <div class="module">
+        <h3>Receiving &amp; lot tracking</h3>
+        <p>Barcode-based receiving captures lot and expiration data at the dock, instead of being transcribed from a packing slip afterward.</p>
+      </div>
+      <div class="module">
+        <h3>Returns &amp; buyback pipeline</h3>
+        <p>Tracks inbound buyback cases from intake through grading to disposition, with status visible to sales and operations at once.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="stamp">The analytics engine</p>
+    <h2>Priority-ordered risk classification</h2>
+    <p>The core of the procurement module is a single ranking function. Every SKU is evaluated against a fixed, priority-ordered list of conditions — the first condition it matches wins — so that a dead-stock item that is also technically "low stock" is never mis-ranked above genuine reorder risk.</p>
+
+    <div class="code-panel">
+      <div class="bar">risk_classifier.py</div>
+      <pre><span class="c"># evaluated top-to-bottom; first match wins</span>
+<span class="k">def</span> classify_risk(sku):
+    if sku.on_hand == 0:
+        if sku.tier == <span class="s">"A"</span> and sku.velocity_6mo > 5:
+            return <span class="s">"STOCKOUT — BUY IMMEDIATELY"</span>
+        if sku.tier in (<span class="s">"A"</span>, <span class="s">"B"</span>):
+            return <span class="s">"STOCKOUT — HIGH PRIORITY"</span>
+        if sku.velocity_6mo > 5:
+            return <span class="s">"STOCKOUT — REORDER NOW"</span>
+        if sku.velocity_6mo == 0:
+            return <span class="s">"DEAD STOCK — NO DEMAND"</span>
+        return <span class="s">"STOCKOUT"</span>
+
+    if sku.days_to_expiration <= 30:
+        return <span class="s">"AGING — CRITICAL"</span>
+    if sku.days_to_expiration <= 90:
+        return <span class="s">"AGING — URGENT"</span>
+    if sku.days_to_expiration <= 180:
+        return <span class="s">"AGING — WATCH"</span>
+
+    if sku.tier in (<span class="s">"A"</span>, <span class="s">"B"</span>) and sku.months_of_stock <= 3:
+        return <span class="s">"LOW STOCK — PRIORITY ITEM"</span>
+    if sku.months_of_stock > 12:
+        return <span class="s">"OVERSTOCKED"</span>
+
+    return <span class="s">"OK"</span></pre>
+    </div>
+    <p>Two rolling velocity windows — a 6-month baseline and a 3-month trend — drive the reorder math, so a SKU that is slowing down gets flagged before it becomes dead capital, not after. The full, runnable version of this module is in <code>code-samples/</code> alongside this write-up.</p>
+  </section>
+
+  <section>
+    <p class="stamp">How I worked</p>
+    <h2>Ship the module, validate against the old system, then retire it</h2>
+    <ol class="process">
+      <li><span class="mark">01</span><p>Interviewed the people who actually used each spreadsheet before writing schema — the business rules living in a column header or a conditional format were often more important than the data itself.</p></li>
+      <li><span class="mark">02</span><p>Built one module at a time against the real database, running it side-by-side with the spreadsheet it replaced until the numbers matched.</p></li>
+      <li><span class="mark">03</span><p>Treated the accounting system, not the spreadsheets, as the source of truth for anything financial — spreadsheets were reference only, never authoritative.</p></li>
+      <li><span class="mark">04</span><p>Retired each spreadsheet only after its replacement module had run in production long enough to earn trust.</p></li>
+    </ol>
+  </section>
+
+  <section class="outcomes-wrap">
+    <p class="stamp">Outcomes</p>
+    <span class="stamp-badge">In production</span>
+    <h2>What changed</h2>
+    <ul class="outcomes">
+      <li>25+ interlinked spreadsheets consolidated into one PostgreSQL system of record.</li>
+      <li>Tens of thousands of SKUs continuously risk-classified, instead of reviewed on a manual cadence.</li>
+      <li>Six-figure count of historical competitor price records tracked for market positioning.</li>
+      <li>Stockout and aging-inventory alerts now surface automatically, in priority order, instead of depending on someone spotting them in a tab.</li>
+      <li>Supplier sourcing history moved out of a shared folder and into a searchable, dated communication log.</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="stamp">Try it</p>
+    <div class="demo-cta">
+      <div>
+        <h3>Live interactive demo</h3>
+        <p>A working version of the operations dashboard, running on synthetic sample data — filter by risk status and priority tier, sort the manifest table, and open an item to see the recommended action.</p>
+      </div>
+      <a class="btn" href="demo/index.html">Open the dashboard →</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="tags">
+    <span class="tag">Python</span>
+    <span class="tag">Flask</span>
+    <span class="tag">PostgreSQL</span>
+    <span class="tag">SQL migrations</span>
+    <span class="tag">ETL / data sync</span>
+    <span class="tag">Barcode / GS1 scanning</span>
+    <span class="tag">Automated web monitoring</span>
+  </div>
+  <p class="disclosure">This case study describes a real production system I designed and built. The company, product categories, figures, and data shown here — including the live demo — have been generalized and replaced with synthetic examples; no client-identifying information is included.</p>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.module').forEach(el => io.observe(el));
+</script>
