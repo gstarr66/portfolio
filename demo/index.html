@@ -1,0 +1,572 @@
+<title>Manifest — Operations Dashboard (Demo)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#e7ebec; --surface:#f7f9fa; --surface-2:#eef1f2; --panel:#ffffff;
+    --ink:#141a1f; --ink-soft:#5b656b; --ink-faint:#8b959a; --line:#c7ced1;
+    --signal:#c8631a; --signal-ink:#7a3d10; --signal-soft:#f3ddc7;
+    --good:#2a7c6c; --good-soft:#d7e9e4;
+    --alarm:#b5341f; --alarm-soft:#f4dcd6;
+    --caution:#a9761f; --caution-soft:#f1e7cf;
+    --neutral:#5b656b; --neutral-soft:#e4e7e8;
+    --font-display:"Bahnschrift SemiBold Condensed","Bahnschrift","Arial Narrow",sans-serif;
+    --font-body:"Segoe UI","Charter",Georgia,sans-serif;
+    --font-mono:"Cascadia Code","Consolas","SFMono-Regular",Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1519; --surface:#161f25; --surface-2:#1c262d; --panel:#1a232a;
+      --ink:#e6ebed; --ink-soft:#9aa6ac; --ink-faint:#6b767c; --line:#2c3941;
+      --signal:#ef9a4c; --signal-ink:#ffd9ac; --signal-soft:#3a2c1c;
+      --good:#4cb3a0; --good-soft:#173430;
+      --alarm:#e2604a; --alarm-soft:#3a1f1a;
+      --caution:#e2ac52; --caution-soft:#382c18;
+      --neutral:#9aa6ac; --neutral-soft:#232d33;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1519; --surface:#161f25; --surface-2:#1c262d; --panel:#1a232a;
+    --ink:#e6ebed; --ink-soft:#9aa6ac; --ink-faint:#6b767c; --line:#2c3941;
+    --signal:#ef9a4c; --signal-ink:#ffd9ac; --signal-soft:#3a2c1c;
+    --good:#4cb3a0; --good-soft:#173430;
+    --alarm:#e2604a; --alarm-soft:#3a1f1a;
+    --caution:#e2ac52; --caution-soft:#382c18;
+    --neutral:#9aa6ac; --neutral-soft:#232d33;
+  }
+  :root[data-theme="light"]{
+    --bg:#e7ebec; --surface:#f7f9fa; --surface-2:#eef1f2; --panel:#ffffff;
+    --ink:#141a1f; --ink-soft:#5b656b; --ink-faint:#8b959a; --line:#c7ced1;
+    --signal:#c8631a; --signal-ink:#7a3d10; --signal-soft:#f3ddc7;
+    --good:#2a7c6c; --good-soft:#d7e9e4;
+    --alarm:#b5341f; --alarm-soft:#f4dcd6;
+    --caution:#a9761f; --caution-soft:#f1e7cf;
+    --neutral:#5b656b; --neutral-soft:#e4e7e8;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    font-size:14.5px;
+  }
+  ::selection{ background:var(--signal); color:#fff; }
+  button{ font-family:inherit; }
+  a{ color:var(--signal-ink); }
+  *:focus-visible{ outline:2px solid var(--signal); outline-offset:1px; }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:14px 22px; background:var(--surface); border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .topbar-left{ display:flex; align-items:center; gap:14px; }
+  .brand{ font-family:var(--font-display); text-transform:uppercase; letter-spacing:.06em; font-size:18px; }
+  .brand small{ display:block; font-family:var(--font-body); font-style:italic; font-size:11.5px; color:var(--ink-soft); letter-spacing:0; text-transform:none; }
+  .back-link{ font-size:12.5px; color:var(--ink-soft); text-decoration:none; }
+  .back-link:hover{ color:var(--signal-ink); }
+  .demo-pill{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--signal-soft); color:var(--signal-ink); padding:5px 10px; border-radius:20px;
+  }
+
+  /* ---------- stat strip ---------- */
+  .stats{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px;
+    background:var(--line); border-bottom:1px solid var(--line);
+  }
+  .stat{ background:var(--surface); padding:16px 20px; display:flex; flex-direction:column; gap:6px; }
+  .stat-label{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); }
+  .stat-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+  .stat-value{ font-family:var(--font-mono); font-size:26px; font-variant-numeric:tabular-nums; }
+  .stat-value.alarm{ color:var(--alarm); }
+  .stat-value.signal{ color:var(--signal-ink); }
+  .stat svg{ overflow:visible; }
+
+  /* ---------- layout ---------- */
+  .layout{ display:grid; grid-template-columns:230px 1fr; min-height:calc(100vh - 130px); }
+  @media (max-width:860px){ .layout{ grid-template-columns:1fr; } }
+
+  .rail{
+    background:var(--surface); border-right:1px solid var(--line); padding:20px 18px;
+    display:flex; flex-direction:column; gap:24px;
+  }
+  .rail-group h4{
+    margin:0 0 10px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft);
+    font-family:var(--font-display); font-weight:600;
+  }
+  .search{
+    width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:4px;
+    background:var(--panel); color:var(--ink); font-size:13px;
+  }
+  .tier-row{ display:flex; gap:6px; }
+  .tier-toggle{
+    flex:1; padding:7px 0; text-align:center; border:1px solid var(--line); border-radius:4px;
+    background:var(--panel); color:var(--ink-soft); font-family:var(--font-mono); font-size:13px;
+    cursor:pointer; font-weight:600;
+  }
+  .tier-toggle.active{ background:var(--signal); border-color:var(--signal); color:#fff; }
+  .chip-list{ display:flex; flex-direction:column; gap:6px; }
+  .chip{
+    display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:4px;
+    border:1px solid transparent; cursor:pointer; font-size:12.5px; color:var(--ink-soft);
+  }
+  .chip:hover{ background:var(--surface-2); }
+  .chip input{ accent-color:var(--signal); }
+  .chip.active{ color:var(--ink); font-weight:600; }
+  .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
+  select.loc{
+    width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:4px;
+    background:var(--panel); color:var(--ink); font-size:13px;
+  }
+  .reset-btn{
+    background:none; border:1px solid var(--line); color:var(--ink-soft); border-radius:4px;
+    padding:8px; font-size:12px; cursor:pointer;
+  }
+  .reset-btn:hover{ color:var(--ink); border-color:var(--ink-soft); }
+
+  /* ---------- table ---------- */
+  .main{ padding:0; overflow-x:auto; }
+  .result-count{ padding:14px 22px 6px; font-size:12.5px; color:var(--ink-soft); font-family:var(--font-mono); }
+  table{ width:100%; border-collapse:collapse; min-width:920px; }
+  thead th{
+    position:sticky; top:0; background:var(--surface); text-align:left;
+    font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft);
+    padding:10px 14px; border-bottom:1px solid var(--line); cursor:pointer; white-space:nowrap;
+    user-select:none;
+  }
+  thead th:hover{ color:var(--ink); }
+  thead th .arrow{ opacity:.5; margin-left:4px; }
+  tbody tr{ border-bottom:1px solid var(--line); cursor:pointer; }
+  tbody tr:hover{ background:var(--surface-2); }
+  tbody tr.selected{ background:var(--signal-soft); }
+  td{ padding:10px 14px; vertical-align:middle; }
+  td.sku{ font-family:var(--font-mono); font-size:12.5px; color:var(--ink-soft); }
+  td.num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; text-align:right; }
+  td.desc{ max-width:220px; }
+  td.desc .cat{ display:block; font-size:11px; color:var(--ink-faint); }
+
+  .pill{
+    display:inline-block; padding:3px 9px; border-radius:20px; font-size:11.5px; font-weight:600;
+    white-space:nowrap;
+  }
+  .pill.alarm{ background:var(--alarm-soft); color:var(--alarm); }
+  .pill.caution{ background:var(--caution-soft); color:var(--caution); }
+  .pill.good{ background:var(--good-soft); color:var(--good); }
+  .pill.neutral{ background:var(--neutral-soft); color:var(--neutral); }
+
+  .tier-badge{
+    display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
+    border-radius:4px; font-family:var(--font-mono); font-weight:700; font-size:12px;
+  }
+  .tier-badge.A{ background:var(--signal); color:#fff; }
+  .tier-badge.B{ background:var(--signal-soft); color:var(--signal-ink); }
+  .tier-badge.C{ background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--line); }
+  .tier-badge.D{ background:var(--surface-2); color:var(--ink-faint); border:1px solid var(--line); }
+
+  /* ---------- drawer ---------- */
+  .scrim{
+    position:fixed; inset:0; background:rgba(10,14,17,.35); opacity:0; pointer-events:none;
+    transition:opacity .2s ease; z-index:9;
+  }
+  .scrim.open{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; top:0; right:0; height:100%; width:380px; max-width:92vw;
+    background:var(--panel); border-left:1px solid var(--line); z-index:10;
+    transform:translateX(100%); transition:transform .25s ease;
+    display:flex; flex-direction:column;
+  }
+  .drawer.open{ transform:none; }
+  .drawer-head{
+    padding:20px 22px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+  }
+  .drawer-head .sku{ font-family:var(--font-mono); font-size:12px; color:var(--ink-soft); }
+  .drawer-head h3{ margin:4px 0 0; font-family:var(--font-display); font-size:19px; text-transform:uppercase; letter-spacing:.02em; }
+  .drawer-close{ background:none; border:none; font-size:20px; color:var(--ink-soft); cursor:pointer; line-height:1; padding:2px; }
+  .drawer-body{ padding:20px 22px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:20px; }
+  .kv-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .kv-label{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:2px; }
+  .kv-value{ font-family:var(--font-mono); font-size:14.5px; font-variant-numeric:tabular-nums; }
+  .action-box{
+    background:var(--surface-2); border-left:3px solid var(--signal); border-radius:4px;
+    padding:14px 16px; font-size:13.5px; line-height:1.55;
+  }
+  .action-box .label{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--signal-ink); margin-bottom:6px; font-weight:700; }
+
+  @media (prefers-reduced-motion: reduce){
+    .drawer, .scrim{ transition:none; }
+  }
+</style>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="brand">Manifest<small>Operations dashboard</small></div>
+    <a class="back-link" href="../case-study.html">← Case study</a>
+  </div>
+  <span class="demo-pill">Synthetic sample data — for demonstration only</span>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="layout">
+  <aside class="rail">
+    <div class="rail-group">
+      <h4>Search</h4>
+      <input class="search" id="search" type="text" placeholder="SKU or description…">
+    </div>
+    <div class="rail-group">
+      <h4>Priority tier</h4>
+      <div class="tier-row" id="tierRow"></div>
+    </div>
+    <div class="rail-group">
+      <h4>Risk status</h4>
+      <div class="chip-list" id="statusList"></div>
+    </div>
+    <div class="rail-group">
+      <h4>Location</h4>
+      <select class="loc" id="locSelect"></select>
+    </div>
+    <button class="reset-btn" id="resetBtn">Reset filters</button>
+  </aside>
+
+  <div class="main">
+    <div class="result-count" id="resultCount"></div>
+    <table>
+      <thead>
+        <tr>
+          <th data-key="sku">SKU</th>
+          <th data-key="description">Description</th>
+          <th data-key="location">Location</th>
+          <th data-key="tier">Tier</th>
+          <th data-key="status">Status</th>
+          <th data-key="monthsOfStock" style="text-align:right">Mo. Stock</th>
+          <th data-key="velocity6mo" style="text-align:right">6-Mo Vel.</th>
+          <th data-key="margin" style="text-align:right">Margin</th>
+          <th>Trend</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <div class="sku" id="dSku"></div>
+      <h3 id="dName"></h3>
+    </div>
+    <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="kv-grid">
+      <div><div class="kv-label">Status</div><div class="kv-value" id="dStatus"></div></div>
+      <div><div class="kv-label">Priority tier</div><div class="kv-value" id="dTier"></div></div>
+      <div><div class="kv-label">On hand</div><div class="kv-value" id="dOnHand"></div></div>
+      <div><div class="kv-label">Months of stock</div><div class="kv-value" id="dMos"></div></div>
+      <div><div class="kv-label">6-mo velocity</div><div class="kv-value" id="dVel6"></div></div>
+      <div><div class="kv-label">3-mo velocity</div><div class="kv-value" id="dVel3"></div></div>
+      <div><div class="kv-label">Margin</div><div class="kv-value" id="dMargin"></div></div>
+      <div><div class="kv-label">Location</div><div class="kv-value" id="dLoc"></div></div>
+    </div>
+    <div>
+      <div class="kv-label" style="margin-bottom:6px;">6-month trend</div>
+      <svg id="dSpark" width="100%" height="56" viewBox="0 0 300 56" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="action-box">
+      <div class="label">Recommended action</div>
+      <div id="dAction"></div>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- seeded RNG for reproducible demo data ----------
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(88771);
+  const pick = arr => arr[Math.floor(rand() * arr.length)];
+  const randInt = (a, b) => Math.floor(a + rand() * (b - a + 1));
+
+  const CATEGORIES = ["Fasteners", "Packaging", "Electrical", "Tooling", "Adhesives", "Safety Gear"];
+  const LOCATIONS = ["North DC", "West DC", "South DC"];
+  const NOUNS = ["Bracket", "Connector", "Strap", "Sleeve", "Coupler", "Clamp", "Adapter", "Gasket", "Housing", "Fitting", "Panel", "Roll", "Cartridge", "Spool", "Bin Liner"];
+  const ADJ = ["Standard", "Heavy-Duty", "Compact", "Reinforced", "Low-Profile", "Wide", "Industrial", "Precision"];
+
+  const STATUS_META = {
+    "STOCKOUT — BUY IMMEDIATELY": { sev: "alarm", action: "Zero on hand, top-tier item with strong demand. Place an order today — every day out of stock is lost revenue on a bestseller." },
+    "STOCKOUT — HIGH PRIORITY":  { sev: "alarm", action: "Zero on hand on a top or second-tier item. Prioritize this reorder above standard-tier stockouts." },
+    "STOCKOUT — REORDER NOW":    { sev: "alarm", action: "Zero on hand with strong sales velocity. Reorder now regardless of margin tier." },
+    "STOCKOUT":                  { sev: "alarm", action: "Zero on hand. Reorder at standard priority." },
+    "DEAD STOCK — NO DEMAND":    { sev: "neutral", action: "Zero on hand and zero recent sales. Do not reorder — investigate demand before restocking." },
+    "AGING — CRITICAL":          { sev: "alarm", action: "Inventory expiring within 30 days. Consider a markdown or transfer to move it before it's a write-off." },
+    "AGING — URGENT":            { sev: "caution", action: "Inventory expiring within 90 days. Plan a markdown or promotional push." },
+    "AGING — WATCH":             { sev: "caution", action: "Inventory expiring within 180 days. Monitor sell-through pace." },
+    "LOW STOCK — PRIORITY ITEM": { sev: "caution", action: "Top or second-tier item with under 3 months of cover. Reorder before it becomes a stockout." },
+    "OVERSTOCKED":                { sev: "neutral", action: "Over 12 months of cover at current velocity. Hold or discount before placing another order." },
+    "OK":                         { sev: "good", action: "No action needed — inventory and demand are in balance." }
+  };
+
+  function classifyRisk(s){
+    if (s.onHand === 0){
+      if (s.tier === "A" && s.velocity6mo > 5) return "STOCKOUT — BUY IMMEDIATELY";
+      if (s.tier === "A" || s.tier === "B") return "STOCKOUT — HIGH PRIORITY";
+      if (s.velocity6mo > 5) return "STOCKOUT — REORDER NOW";
+      if (s.velocity6mo === 0) return "DEAD STOCK — NO DEMAND";
+      return "STOCKOUT";
+    }
+    if (s.daysToExpiration !== null){
+      if (s.daysToExpiration <= 30) return "AGING — CRITICAL";
+      if (s.daysToExpiration <= 90) return "AGING — URGENT";
+      if (s.daysToExpiration <= 180) return "AGING — WATCH";
+    }
+    if ((s.tier === "A" || s.tier === "B") && s.monthsOfStock <= 3) return "LOW STOCK — PRIORITY ITEM";
+    if (s.monthsOfStock > 12) return "OVERSTOCKED";
+    return "OK";
+  }
+
+  function genTrend(base){
+    const pts = [];
+    let v = base;
+    for (let i = 0; i < 12; i++){
+      v = Math.max(0, v + (rand() - 0.5) * base * 0.35);
+      pts.push(Math.round(v));
+    }
+    return pts;
+  }
+
+  const TIER_WEIGHTS = [["A",0.12],["B",0.22],["C",0.36],["D",0.30]];
+  function weightedTier(){
+    const r = rand(); let acc = 0;
+    for (const [t,w] of TIER_WEIGHTS){ acc += w; if (r <= acc) return t; }
+    return "D";
+  }
+
+  const rows = [];
+  for (let i = 0; i < 52; i++){
+    const cat = pick(CATEGORIES);
+    const tier = weightedTier();
+    const velocity6mo = Math.round((rand() < 0.12 ? 0 : randInt(1, 40)) * (tier === "A" ? 1.6 : tier === "B" ? 1.2 : 0.8) * 10) / 10;
+    const velocity3mo = Math.max(0, Math.round((velocity6mo * (0.6 + rand() * 0.8)) * 10) / 10);
+    const zeroStock = rand() < 0.16;
+    const onHand = zeroStock ? 0 : randInt(5, 900);
+    const monthsOfStock = velocity6mo > 0 ? Math.round((onHand / velocity6mo) * 10) / 10 : (onHand > 0 ? 99 : 0);
+    const hasLot = rand() < 0.3;
+    const daysToExpiration = hasLot ? randInt(-10, 420) : null;
+    const margin = Math.round((tier === "A" ? randInt(30,48) : tier === "B" ? randInt(28,38) : tier === "C" ? randInt(16,24) : randInt(6,14)));
+    const cost = Math.round(randInt(4, 260) * (1 + rand()));
+    const sku = {
+      sku: `SK-${10000 + i}-${pick(["A","B","C","D","E"])}`,
+      description: `${pick(ADJ)} ${pick(NOUNS)}`,
+      category: cat,
+      location: pick(LOCATIONS),
+      tier, onHand, velocity6mo, velocity3mo, monthsOfStock,
+      daysToExpiration: daysToExpiration !== null ? Math.max(daysToExpiration, -5) : null,
+      margin, cost,
+      trend: genTrend(Math.max(velocity6mo, 2))
+    };
+    sku.status = classifyRisk(sku);
+    rows.push(sku);
+  }
+
+  // ---------- stat strip ----------
+  const statsEl = document.getElementById("stats");
+  const alertRows = rows.filter(r => r.status.startsWith("STOCKOUT"));
+  const deadCapital = rows.filter(r => r.status === "OVERSTOCKED" || r.status === "DEAD STOCK — NO DEMAND")
+    .reduce((sum, r) => sum + r.onHand * r.cost, 0);
+  const atRiskUnits = rows.filter(r => STATUS_META[r.status].sev !== "good").reduce((sum, r) => sum + Math.max(r.onHand, 1), 0);
+
+  function sparkSvg(points, w, h, color){
+    const max = Math.max(...points, 1);
+    const min = Math.min(...points, 0);
+    const range = Math.max(max - min, 1);
+    const step = w / (points.length - 1);
+    const coords = points.map((v, i) => [i*step, h - ((v-min)/range) * (h*0.85) - h*0.05]);
+    const line = coords.map((c,i) => (i===0?"M":"L") + c[0].toFixed(1) + "," + c[1].toFixed(1)).join(" ");
+    const area = line + ` L${w},${h} L0,${h} Z`;
+    const last = coords[coords.length-1];
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <path d="${area}" fill="${color}" opacity="0.15" stroke="none"></path>
+      <path d="${line}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"></path>
+      <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.4" fill="${color}"></circle>
+    </svg>`;
+  }
+
+  const stats = [
+    { label: "SKUs tracked", value: rows.length.toLocaleString(), trend: genTrend(rows.length), cls:"" },
+    { label: "Units at risk", value: atRiskUnits.toLocaleString(), trend: genTrend(atRiskUnits/10), cls:"alarm" },
+    { label: "Dead capital", value: "$" + deadCapital.toLocaleString(), trend: genTrend(deadCapital/500), cls:"" },
+    { label: "Open reorder alerts", value: alertRows.length.toLocaleString(), trend: genTrend(alertRows.length || 1), cls:"signal" }
+  ];
+  statsEl.innerHTML = stats.map(s => `
+    <div class="stat">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-row">
+        <span class="stat-value ${s.cls}">${s.value}</span>
+        ${sparkSvg(s.trend, 90, 30, s.cls === "alarm" ? "var(--alarm)" : "var(--signal)")}
+      </div>
+    </div>`).join("");
+
+  // ---------- filter rail ----------
+  let activeTiers = new Set();
+  let activeStatuses = new Set();
+  let activeLoc = "ALL";
+  let searchTerm = "";
+  let sortKey = "status";
+  let sortDir = 1;
+
+  const STATUS_GROUPS = [
+    { label: "Stockout", match: s => s.startsWith("STOCKOUT"), sev: "alarm" },
+    { label: "Aging", match: s => s.startsWith("AGING"), sev: "caution" },
+    { label: "Low stock", match: s => s === "LOW STOCK — PRIORITY ITEM", sev: "caution" },
+    { label: "Overstocked", match: s => s === "OVERSTOCKED", sev: "neutral" },
+    { label: "Dead stock", match: s => s === "DEAD STOCK — NO DEMAND", sev: "neutral" },
+    { label: "OK", match: s => s === "OK", sev: "good" }
+  ];
+
+  const tierRow = document.getElementById("tierRow");
+  ["A","B","C","D"].forEach(t => {
+    const btn = document.createElement("div");
+    btn.className = "tier-toggle"; btn.textContent = t;
+    btn.addEventListener("click", () => {
+      activeTiers.has(t) ? activeTiers.delete(t) : activeTiers.add(t);
+      btn.classList.toggle("active");
+      render();
+    });
+    tierRow.appendChild(btn);
+  });
+
+  const statusList = document.getElementById("statusList");
+  STATUS_GROUPS.forEach(g => {
+    const label = document.createElement("label");
+    label.className = "chip";
+    label.innerHTML = `<input type="checkbox"><span class="dot" style="background:var(--${g.sev})"></span><span>${g.label}</span>`;
+    const checkbox = label.querySelector("input");
+    checkbox.addEventListener("change", () => {
+      checkbox.checked ? activeStatuses.add(g.label) : activeStatuses.delete(g.label);
+      label.classList.toggle("active", checkbox.checked);
+      render();
+    });
+    statusList.appendChild(label);
+  });
+
+  const locSelect = document.getElementById("locSelect");
+  locSelect.innerHTML = `<option value="ALL">All locations</option>` + LOCATIONS.map(l => `<option value="${l}">${l}</option>`).join("");
+  locSelect.addEventListener("change", () => { activeLoc = locSelect.value; render(); });
+
+  document.getElementById("search").addEventListener("input", e => { searchTerm = e.target.value.toLowerCase(); render(); });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    activeTiers.clear(); activeStatuses.clear(); activeLoc = "ALL"; searchTerm = "";
+    document.getElementById("search").value = "";
+    locSelect.value = "ALL";
+    tierRow.querySelectorAll(".tier-toggle").forEach(b => b.classList.remove("active"));
+    statusList.querySelectorAll(".chip").forEach(c => { c.classList.remove("active"); c.querySelector("input").checked = false; });
+    render();
+  });
+
+  document.querySelectorAll("thead th[data-key]").forEach(th => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+      render();
+    });
+  });
+
+  // ---------- table render ----------
+  const tbody = document.getElementById("tbody");
+  const resultCount = document.getElementById("resultCount");
+
+  function severityOf(status){ return STATUS_META[status].sev; }
+
+  function render(){
+    let filtered = rows.filter(r => {
+      if (activeTiers.size && !activeTiers.has(r.tier)) return false;
+      if (activeStatuses.size){
+        const matches = [...activeStatuses].some(label => STATUS_GROUPS.find(g => g.label === label).match(r.status));
+        if (!matches) return false;
+      }
+      if (activeLoc !== "ALL" && r.location !== activeLoc) return false;
+      if (searchTerm && !(r.sku.toLowerCase().includes(searchTerm) || r.description.toLowerCase().includes(searchTerm))) return false;
+      return true;
+    });
+
+    const sevOrder = { alarm:0, caution:1, neutral:2, good:3 };
+    filtered.sort((a,b) => {
+      let av, bv;
+      if (sortKey === "status"){ av = sevOrder[severityOf(a.status)]; bv = sevOrder[severityOf(b.status)]; }
+      else { av = a[sortKey]; bv = b[sortKey]; }
+      if (typeof av === "string") return av.localeCompare(bv) * sortDir;
+      return (av - bv) * sortDir;
+    });
+
+    resultCount.textContent = `${filtered.length} of ${rows.length} SKUs`;
+
+    document.querySelectorAll("thead th[data-key]").forEach(th => {
+      th.querySelector(".arrow")?.remove();
+      if (th.dataset.key === sortKey){
+        const arrow = document.createElement("span");
+        arrow.className = "arrow"; arrow.textContent = sortDir === 1 ? "↑" : "↓";
+        th.appendChild(arrow);
+      }
+    });
+
+    tbody.innerHTML = filtered.map(r => {
+      const sev = severityOf(r.status);
+      return `<tr data-sku="${r.sku}">
+        <td class="sku">${r.sku}</td>
+        <td class="desc">${r.description}<span class="cat">${r.category}</span></td>
+        <td>${r.location}</td>
+        <td><span class="tier-badge ${r.tier}">${r.tier}</span></td>
+        <td><span class="pill ${sev}">${r.status}</span></td>
+        <td class="num">${r.onHand === 0 ? "0" : r.monthsOfStock.toFixed(1)}</td>
+        <td class="num">${r.velocity6mo.toFixed(1)}</td>
+        <td class="num">${r.margin}%</td>
+        <td>${sparkSvg(r.trend, 70, 24, sev === "alarm" ? "var(--alarm)" : sev === "caution" ? "var(--caution)" : sev === "good" ? "var(--good)" : "var(--neutral)")}</td>
+      </tr>`;
+    }).join("");
+
+    tbody.querySelectorAll("tr").forEach(tr => {
+      tr.addEventListener("click", () => openDrawer(rows.find(r => r.sku === tr.dataset.sku), tr));
+    });
+  }
+
+  // ---------- drawer ----------
+  const drawer = document.getElementById("drawer");
+  const scrim = document.getElementById("scrim");
+  function openDrawer(r, tr){
+    document.querySelectorAll("tbody tr").forEach(t => t.classList.remove("selected"));
+    tr.classList.add("selected");
+    document.getElementById("dSku").textContent = r.sku;
+    document.getElementById("dName").textContent = r.description;
+    const sev = severityOf(r.status);
+    document.getElementById("dStatus").innerHTML = `<span class="pill ${sev}">${r.status}</span>`;
+    document.getElementById("dTier").innerHTML = `<span class="tier-badge ${r.tier}">${r.tier}</span>`;
+    document.getElementById("dOnHand").textContent = r.onHand.toLocaleString() + " units";
+    document.getElementById("dMos").textContent = r.onHand === 0 ? "—" : r.monthsOfStock.toFixed(1) + " mo";
+    document.getElementById("dVel6").textContent = r.velocity6mo.toFixed(1) + " units/mo";
+    document.getElementById("dVel3").textContent = r.velocity3mo.toFixed(1) + " units/mo";
+    document.getElementById("dMargin").textContent = r.margin + "%";
+    document.getElementById("dLoc").textContent = r.location;
+    document.getElementById("dAction").textContent = STATUS_META[r.status].action;
+    document.getElementById("dSpark").innerHTML = sparkSvg(r.trend, 300, 56, sev === "alarm" ? "var(--alarm)" : sev === "caution" ? "var(--caution)" : sev === "good" ? "var(--good)" : "var(--neutral)").replace(/<svg[^>]*>|<\/svg>/g,"");
+    drawer.classList.add("open"); scrim.classList.add("open");
+  }
+  function closeDrawer(){ drawer.classList.remove("open"); scrim.classList.remove("open"); }
+  document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+  scrim.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+
+  render();
+})();
+</script>
