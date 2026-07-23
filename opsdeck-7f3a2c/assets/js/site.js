@@ -11,17 +11,23 @@
   "use strict";
 
   // ── Path prefix ──────────────────────────────────────────────────────────
-  // Every content page lives exactly one folder below the site root
-  // (e.g. /procurement/index.html) except the root index.html itself.
-  // This lets the same nav.html work from any depth without hardcoding
-  // a deployment path.
+  // Derived from this script's own <script src="..."> attribute rather than
+  // from counting URL path segments. Counting segments broke as soon as the
+  // whole site was deployed under a subfolder (e.g. /opsdeck-7f3a2c/) instead
+  // of the domain root — every page picked up one extra phantom path segment,
+  // which pushed the computed prefix one level too high and caused the nav
+  // fetch to resolve outside the site entirely. Reading it off the script tag
+  // is correct regardless of how deep the deployment root is nested, since
+  // every page already references site.js with the right relative prefix.
   function computePrefix() {
-    var segments = window.location.pathname.split('/').filter(Boolean);
-    // Drop the filename itself
-    if (segments.length && segments[segments.length - 1].indexOf('.html') !== -1) {
-      segments.pop();
+    var scripts = document.getElementsByTagName('script');
+    var marker = 'assets/js/site.js';
+    for (var i = 0; i < scripts.length; i++) {
+      var src = scripts[i].getAttribute('src') || '';
+      var idx = src.indexOf(marker);
+      if (idx !== -1) return src.slice(0, idx);
     }
-    return segments.length >= 1 ? '../'.repeat(1) : '';
+    return ''; // fallback: assume site root
   }
   window.SITE_PREFIX = computePrefix();
 
