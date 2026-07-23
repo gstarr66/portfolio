@@ -1,0 +1,427 @@
+{
+ "generated_note": "Full snapshot -- 15 real outbound orders / 17 real order lines, 2026-07-23.",
+ "demo_order_id": 10,
+ "orders": [
+  {
+   "id": 1,
+   "qbo_invoice_id": "127594",
+   "invoice_number": "41410",
+   "customer_name": "West Florida Surgery Center",
+   "order_date": "2026-05-21",
+   "daily_order_number": 1,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 2
+  },
+  {
+   "id": 2,
+   "qbo_invoice_id": "127713",
+   "invoice_number": "41446",
+   "customer_name": "Luis Robles",
+   "order_date": "2026-05-21",
+   "daily_order_number": 2,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 2
+  },
+  {
+   "id": 3,
+   "qbo_invoice_id": "127796",
+   "invoice_number": "41484",
+   "customer_name": "Allina Health System Mercy Hospital",
+   "order_date": "2026-05-21",
+   "daily_order_number": 3,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 4,
+   "qbo_invoice_id": "127793",
+   "invoice_number": "41481",
+   "customer_name": "Community Hospital of the Monterey Peninsula",
+   "order_date": "2026-05-21",
+   "daily_order_number": 4,
+   "status": "approved",
+   "ship_method": "FedEx 2nd Day",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 5,
+   "qbo_invoice_id": "127821",
+   "invoice_number": "41493",
+   "customer_name": "Redlands Community Hospital",
+   "order_date": "2026-05-21",
+   "daily_order_number": 5,
+   "status": "approved",
+   "ship_method": "FedEx Express Saver",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 6,
+   "qbo_invoice_id": "127814",
+   "invoice_number": "41492",
+   "customer_name": "Shenandoah Medical Center",
+   "order_date": "2026-05-21",
+   "daily_order_number": 6,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 7,
+   "qbo_invoice_id": "127791",
+   "invoice_number": "41480",
+   "customer_name": "Treasure Valley Hospital (50057)",
+   "order_date": "2026-05-21",
+   "daily_order_number": 7,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 8,
+   "qbo_invoice_id": "127799",
+   "invoice_number": "41486",
+   "customer_name": "Harbor Regional Health Community Hospital",
+   "order_date": "2026-05-21",
+   "daily_order_number": 8,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 9,
+   "qbo_invoice_id": "127839",
+   "invoice_number": "41495",
+   "customer_name": "Lake Worth Surgical Center",
+   "order_date": "2026-05-21",
+   "daily_order_number": 9,
+   "status": "approved",
+   "ship_method": "FedEx 1st Overnight",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": null,
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 10,
+   "qbo_invoice_id": "127806",
+   "invoice_number": "41488",
+   "customer_name": "Unity Physicians Hospital",
+   "order_date": "2026-05-21",
+   "daily_order_number": 10,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": "Justin Shrake\nUnity Physicians Hospital\n4455 EDISON LAKES PKWY\nMISHAWAKA, IN  46545-1414 US",
+   "ship_to_name": "Justin Shrake",
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 11,
+   "qbo_invoice_id": "127810",
+   "invoice_number": "41491",
+   "customer_name": "Murray-Calloway County Hospital",
+   "order_date": "2026-05-21",
+   "daily_order_number": 11,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": "Nikki Bradley\nMurray-Calloway County Hospital\n803 POPLAR ST\nMURRAY, KY  42071-2432 US",
+   "ship_to_name": "Nikki Bradley",
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 12,
+   "qbo_invoice_id": "127863",
+   "invoice_number": "41505",
+   "customer_name": "OrthoIllinois Surgery Center - Rockford",
+   "order_date": "2026-05-21",
+   "daily_order_number": 12,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": "Bridget Smith\nOrthoIllinois Surgery Center - Rockford\n346 ROXBURY RD\nROCKFORD, IL  61107-5090 US",
+   "ship_to_name": "Bridget Smith",
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 13,
+   "qbo_invoice_id": "127920",
+   "invoice_number": "41528",
+   "customer_name": "Cenmed Enterprises",
+   "order_date": "2026-05-21",
+   "daily_order_number": 13,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": "Cenmed Enterprises\nATTN: RECEIVING\n121 JERSEY AVE\nNEW BRUNSWICK, NJ  08901-3275",
+   "ship_to_name": null,
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 14,
+   "qbo_invoice_id": "129524",
+   "invoice_number": "42056",
+   "customer_name": "Acotec Technologies",
+   "order_date": "2026-06-18",
+   "daily_order_number": 1,
+   "status": "approved",
+   "ship_method": "FedEx Ground",
+   "sales_rep": "GLS",
+   "custom_shipping": "Bill Account",
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": "Christopher Dinh\n2347 Bering Dr\nSan Jose, CA  95131 US",
+   "ship_to_name": "Christopher Dinh",
+   "po_number": null,
+   "line_count": 1
+  },
+  {
+   "id": 15,
+   "qbo_invoice_id": "130487",
+   "invoice_number": "42373",
+   "customer_name": "Advanced Surgery Center at Brownwood",
+   "order_date": "2026-06-24",
+   "daily_order_number": 1,
+   "status": "packed",
+   "ship_method": "FedEx Ground",
+   "sales_rep": null,
+   "custom_shipping": null,
+   "tracking_number": null,
+   "ship_date": null,
+   "ship_addr": "Matthew Reed\nAdvanced Surgery Center at Brownwood\n2955 BROWNWOOD BLVD STE 208\nTHE VILLAGES, FL  32163-2040",
+   "ship_to_name": "Matthew Reed",
+   "po_number": null,
+   "line_count": 1
+  }
+ ],
+ "lines": {
+  "1": [
+   {
+    "line_num": "1",
+    "ref_ea": "LF2019E",
+    "description": "LF2019 - Covidien Ligasure Exact Dissector Sealer/Divider",
+    "qty_ordered": 11.0,
+    "wh_location": "RK11, Y31, Y32"
+   },
+   {
+    "line_num": "3",
+    "ref_ea": "Sales Tax",
+    "description": "Sales Tax calculated by AvaTax for 127594-V2 at Tue May 19 02:21:08 UTC 2026",
+    "qty_ordered": 1.0,
+    "wh_location": ""
+   }
+  ],
+  "2": [
+   {
+    "line_num": "1",
+    "ref_ea": "T43110E",
+    "description": "T43110 - Medtronic Grafton Dmb Putty 10Cc\n\nExpired, not for human use",
+    "qty_ordered": 1.0,
+    "wh_location": "I51"
+   },
+   {
+    "line_num": "2",
+    "ref_ea": "SHIP001E",
+    "description": "SHIP001 - Fedex Ground Shipping",
+    "qty_ordered": 1.0,
+    "wh_location": ""
+   }
+  ],
+  "3": [
+   {
+    "line_num": "1",
+    "ref_ea": "471093E",
+    "description": "471093 - Intuitive Endowrist Prograsp Forceps",
+    "qty_ordered": 2.0,
+    "wh_location": "R11, R12, R25"
+   }
+  ],
+  "4": [
+   {
+    "line_num": "1",
+    "ref_ea": "EGIA45AVMB",
+    "description": "EGIA45AVM - Covidien Endo Gia Articulating Vascular/Medium Tri-Staple Reload 45.0Mm (Gold) - Box-of-6",
+    "qty_ordered": 1.0,
+    "wh_location": "V14"
+   }
+  ],
+  "5": [
+   {
+    "line_num": "1",
+    "ref_ea": "7510200E",
+    "description": "7510200 - Medtronic Infuse Bone Graft Small\n\nThis product is no longer covered under SurgiShop's general warranty policy. Please see terms and conditions for details",
+    "qty_ordered": 3.0,
+    "wh_location": "I11, I12"
+   }
+  ],
+  "6": [
+   {
+    "line_num": "1",
+    "ref_ea": "STRAP25E",
+    "description": "STRAP25 - Ethicon Securestrap Absorbable Single Use Strap Fixation Device 5.0Mm (25 Straps)",
+    "qty_ordered": 3.0,
+    "wh_location": "H35, H44, RK13, RK15"
+   }
+  ],
+  "7": [
+   {
+    "line_num": "1",
+    "ref_ea": "LF1937E",
+    "description": "LF1937 - Covidien Ligasure Nano-Coated Maryland Jaw Laparoscopic Sealer/Divider 37.0Cm",
+    "qty_ordered": 10.0,
+    "wh_location": "RK21, Y21, Y23, Y24"
+   }
+  ],
+  "8": [
+   {
+    "line_num": "1",
+    "ref_ea": "TA9048SE",
+    "description": "TA9048S - Covidien Ta Dst Series Technology Stapler 90.0Mm X 4.8Mm",
+    "qty_ordered": 2.0,
+    "wh_location": "W23"
+   }
+  ],
+  "9": [
+   {
+    "line_num": "1",
+    "ref_ea": "23-113-1E",
+    "description": "23-113-1 - Medtronic Salient Surgical Aquamantys 2.3 Bipolar Sealer",
+    "qty_ordered": 3.0,
+    "wh_location": "J13, J14, RK22, RK31"
+   }
+  ],
+  "10": [
+   {
+    "line_num": "1",
+    "ref_ea": "4301-02E",
+    "description": "4301-02 - Baxter SepraFilm Adhesion Barrier: 5 x 6\" - Each",
+    "qty_ordered": 5.0,
+    "wh_location": "C11, C15"
+   }
+  ],
+  "11": [
+   {
+    "line_num": "1",
+    "ref_ea": "470179E",
+    "description": "470179 - Intuitive Surgical Hot Shears Monopolar Curved Scissors",
+    "qty_ordered": 1.0,
+    "wh_location": "R21, R22"
+   }
+  ],
+  "12": [
+   {
+    "line_num": "1",
+    "ref_ea": "AR-7200B",
+    "description": "AR-7200 - Arthrex FiberWire blue 38\" T-5 taper Box of 12",
+    "qty_ordered": 2.0,
+    "wh_location": "B32"
+   }
+  ],
+  "13": [
+   {
+    "line_num": "1",
+    "ref_ea": "ILS-1800-KTE",
+    "description": "ILS-1800-KTE \u2013 Medtronic Endobronchial Procedure Kit 180 Degree Catheter",
+    "qty_ordered": 2.0,
+    "wh_location": "J63"
+   }
+  ],
+  "14": [
+   {
+    "line_num": "1",
+    "ref_ea": "ENF403012E",
+    "description": "ENF403012E \u2013 Medos Cerenovus Enterprise 2 Vascular Reconstruction Device Stent 4mm x 30mm x 0.533mm",
+    "qty_ordered": 2.0,
+    "wh_location": "CC33"
+   }
+  ],
+  "15": [
+   {
+    "line_num": "1",
+    "ref_ea": "4301-02E",
+    "description": "4301-02 - Baxter SepraFilm Adhesion Barrier: 5 x 6\" - Each",
+    "qty_ordered": 5.0,
+    "wh_location": "C11, C15"
+   }
+  ]
+ }
+}

@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Item Master Detail — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div id="notFound" class="alert alert-danger d-none">Product not found in this snapshot.</div>
+
+  <div id="content" style="display:none">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <a href="item_master.html" class="btn btn-sm btn-outline-secondary me-2">← Item Master</a>
+        <strong class="fs-5" id="skuHeading"></strong>
+        <span class="text-muted ms-2" id="nameHeading"></span>
+      </div>
+      <div id="badgeHeading"></div>
+    </div>
+
+    <div class="row g-3">
+
+      <div class="col-lg-8">
+        <form id="editForm">
+
+          <div class="card mb-3">
+            <div class="card-header bg-dark text-white py-2">Identity</div>
+            <div class="card-body">
+              <div class="row g-2">
+                <div class="col-md-2">
+                  <label class="form-label small mb-1">SKU</label>
+                  <input type="text" class="form-control form-control-sm bg-light" id="fSku" disabled>
+                </div>
+                <div class="col-md-10">
+                  <label class="form-label small mb-1">Item Name</label>
+                  <input type="text" class="form-control form-control-sm" id="fName">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small mb-1">Brand / Manufacturer</label>
+                  <input type="text" class="form-control form-control-sm" id="fMfr">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small mb-1">Item # <span class="text-muted">(mfr catalog)</span></label>
+                  <input type="text" class="form-control form-control-sm" id="fItemNumber" maxlength="20">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small mb-1">GTIN</label>
+                  <input type="text" class="form-control form-control-sm" id="fGtin">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small mb-1">UOM</label>
+                  <input type="text" class="form-control form-control-sm" id="fUom" placeholder="e.g. EA, BX">
+                </div>
+                <div class="col-md-9">
+                  <label class="form-label small mb-1">Box Conversion</label>
+                  <input type="text" class="form-control form-control-sm" id="fConversion" placeholder="e.g. 10 EA per BX">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header bg-dark text-white py-2">Classification</div>
+            <div class="card-body">
+              <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                  <label class="form-label small mb-1">Category</label>
+                  <select class="form-select form-select-sm" id="fCategory">
+                    <option value="">— None —</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small mb-1">Tax Class</label>
+                  <select class="form-select form-select-sm" id="fTaxClass">
+                    <option value="">— None —</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <div class="d-flex flex-column gap-1 pt-1">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="chkActive">
+                      <label class="form-check-label small" for="chkActive">Active</label>
+                    </div>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="chkImplantable">
+                      <label class="form-check-label small" for="chkImplantable">Implantable</label>
+                    </div>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="chkTempCrit">
+                      <label class="form-check-label small" for="chkTempCrit">Temp Critical</label>
+                    </div>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="chkTempSens">
+                      <label class="form-check-label small" for="chkTempSens">Temp Sensitive</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header bg-dark text-white py-2">Pricing</div>
+            <div class="card-body">
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <label class="form-label small mb-1">Retail Price</label>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">$</span>
+                    <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="fRetail">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small mb-1">Sale Price</label>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">$</span>
+                    <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="fSale">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small mb-1">
+                    Approval Only
+                    <span class="text-muted" title="Manager must acknowledge before approving invoice below this price">(?)</span>
+                  </label>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">$</span>
+                    <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="fApproval">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small mb-1">
+                    True Low
+                    <span class="text-danger" title="Absolute floor — system blocks sales below this price">(!)</span>
+                  </label>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text text-danger">$</span>
+                    <input type="number" step="0.01" min="0" class="form-control form-control-sm border-danger" id="fTrueLow">
+                  </div>
+                  <div class="form-text text-danger" style="font-size:0.7rem">Hard floor — no sales below this</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-success btn-sm" data-demo-inert="Save Item Changes">Save Changes</button>
+            <a href="item_master.html" class="btn btn-outline-secondary btn-sm">Cancel</a>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="card mb-3">
+          <div class="card-header bg-secondary text-white py-2">On Hand</div>
+          <div class="card-body p-0">
+            <table class="table table-sm mb-0" style="font-size:0.83rem">
+              <tbody id="onHandBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-header bg-secondary text-white py-2">Valuation &amp; Velocity</div>
+          <div class="card-body p-0">
+            <table class="table table-sm mb-0" style="font-size:0.83rem">
+              <tbody id="valuationBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-header bg-secondary text-white py-2">Competitor Price</div>
+          <div id="competitorBody"></div>
+        </div>
+
+        <a href="#" id="lotDetailLink" class="btn btn-sm btn-outline-primary w-100">View Lot Detail &amp; Movements →</a>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+function money(v, digits) {
+  digits = digits === undefined ? 2 : digits;
+  return v ? '$' + Number(v).toFixed(digits) : null;
+}
+
+fetch('../data/inventory/item_master_detail.json').then(r => r.json()).then(data => {
+  const sku = new URLSearchParams(location.search).get('sku');
+  const rec = data.by_sku[sku];
+  if (!rec) {
+    document.getElementById('notFound').classList.remove('d-none');
+    return;
+  }
+  document.getElementById('content').style.display = '';
+  render(rec, data.categories, data.tax_classes);
+});
+
+function render(rec, categories, taxClasses) {
+  const p = rec.product;
+  document.title = p.sku + ' — Item Master';
+  document.getElementById('skuHeading').textContent = p.sku;
+  document.getElementById('nameHeading').textContent = p.name || '';
+
+  let badges = p.is_active ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>';
+  if (p.implantable) badges += '<span class="badge bg-primary ms-1">Implantable</span>';
+  if (p.temp_critical) badges += '<span class="badge bg-danger ms-1">Temp Critical</span>';
+  if (p.temp_sensitive) badges += '<span class="badge bg-warning text-dark ms-1">Temp Sensitive</span>';
+  document.getElementById('badgeHeading').innerHTML = badges;
+
+  document.getElementById('fSku').value = p.sku;
+  document.getElementById('fName').value = p.name || '';
+  document.getElementById('fMfr').value = p.manufacturer || '';
+  document.getElementById('fItemNumber').value = p.item_number || '';
+  document.getElementById('fGtin').value = p.gtin || '';
+  document.getElementById('fUom').value = p.uom || '';
+  document.getElementById('fConversion').value = p.conversion || '';
+  document.getElementById('fRetail').value = p.retail_price != null ? p.retail_price.toFixed(2) : '';
+  document.getElementById('fSale').value = p.sale_price != null ? p.sale_price.toFixed(2) : '';
+  document.getElementById('fApproval').value = p.approval_only != null ? p.approval_only.toFixed(2) : '';
+  document.getElementById('fTrueLow').value = p.true_low != null ? p.true_low.toFixed(2) : '';
+  document.getElementById('chkActive').checked = !!p.is_active;
+  document.getElementById('chkImplantable').checked = !!p.implantable;
+  document.getElementById('chkTempCrit').checked = !!p.temp_critical;
+  document.getElementById('chkTempSens').checked = !!p.temp_sensitive;
+
+  const catSel = document.getElementById('fCategory');
+  categories.forEach(([name, code]) => {
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = `${name} (${code})`;
+    if (p.category_code === code) opt.selected = true;
+    catSel.appendChild(opt);
+  });
+
+  const taxSel = document.getElementById('fTaxClass');
+  taxClasses.forEach(tc => {
+    const opt = document.createElement('option');
+    opt.value = tc; opt.textContent = tc;
+    if (p.tax_class === tc) opt.selected = true;
+    taxSel.appendChild(opt);
+  });
+
+  const q = rec.qty;
+  document.getElementById('onHandBody').innerHTML = `
+    <tr><td class="text-muted">Main</td><td class="text-end fw-semibold">${Math.trunc(q.main_qty)}</td></tr>
+    <tr><td class="text-muted">Short Dated</td><td class="text-end">${Math.trunc(q.short_dated_qty)}</td></tr>
+    <tr><td class="text-muted">Damaged</td><td class="text-end">${Math.trunc(q.damaged_qty)}</td></tr>
+    <tr class="table-light"><td class="fw-semibold">Total</td><td class="text-end fw-semibold">${Math.trunc(q.total_qty)}</td></tr>`;
+
+  const m = rec.metrics;
+  document.getElementById('valuationBody').innerHTML = `
+    <tr><td class="text-muted">Avg Cost (valuation)</td><td class="text-end">${m && m.avg_cost ? money(m.avg_cost) : '—'}</td></tr>
+    <tr><td class="text-muted">Avg Sale Price</td><td class="text-end">${m && m.avg_sale_price ? money(m.avg_sale_price) : '—'}</td></tr>
+    <tr><td class="text-muted">Velocity 3mo</td><td class="text-end">${m && m.vel_3mo ? m.vel_3mo.toFixed(1) + '/mo' : '—'}</td></tr>
+    <tr><td class="text-muted">Velocity 12mo</td><td class="text-end">${m && m.vel_12mo ? m.vel_12mo.toFixed(1) + '/mo' : '—'}</td></tr>
+    <tr><td class="text-muted">Min Par</td><td class="text-end">${m && m.min_par ? Math.trunc(m.min_par) : '—'}</td></tr>`;
+
+  const compEl = document.getElementById('competitorBody');
+  if (!p.item_number) {
+    compEl.innerHTML = `<div class="card-body py-2"><p class="text-muted small mb-0">Set an Item # to enable competitor price matching.</p></div>`;
+  } else if (!rec.competitor_prices.length) {
+    compEl.innerHTML = `<div class="card-body py-2"><p class="text-muted small mb-0">No in-stock competitor match found for <strong>${p.item_number}</strong>.</p></div>`;
+  } else {
+    const rows = rec.competitor_prices.map((cp, i) => `
+      <tr ${i === 0 ? 'class="table-light"' : ''}>
+        <td class="text-muted">${cp.competitor}${i === 0 ? '<span class="badge bg-success ms-1" style="font-size:.65rem">Lowest</span>' : ''}</td>
+        <td class="text-end fw-semibold">$${cp.price.toFixed(2)}</td>
+        <td class="text-end text-muted small">${cp.qty_available} in stock</td>
+      </tr>`).join('');
+    compEl.innerHTML = `
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0" style="font-size:0.83rem"><tbody>${rows}</tbody></table>
+        <div class="px-2 pb-1 pt-0">
+          <span class="text-muted" style="font-size:0.7rem">Last synced: ${(rec.competitor_prices[0].last_seen || '—').slice(0,10)}</span>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('lotDetailLink').href = 'lot_detail.html?ref=' + encodeURIComponent(p.sku);
+
+  document.getElementById('chkImplantable').addEventListener('change', function() {
+    if (this.checked) document.getElementById('fTaxClass').value = 'PH404914';
+  });
+
+  wireInertLinks();
+}
+</script>
+</body>
+</html>

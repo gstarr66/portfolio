@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supplier — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+  <style>
+    .ql-toolbar { border-radius: 4px 4px 0 0; border-color: #ced4da !important; }
+    .ql-container { border-radius: 0 0 4px 4px; border-color: #ced4da !important; }
+    .comm-body p { margin-bottom: .25rem; }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4" id="app">
+  <div class="text-muted py-5 text-center">Loading supplier…</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const wantedId = parseInt(params.get('id'), 10);
+  let DATA = null;
+  let supplier = null;
+
+  fetch('../data/suppliers/suppliers.json').then(r => r.json()).then(data => {
+    DATA = data;
+    supplier = data.suppliers.find(s => s.id === wantedId) || data.suppliers[0];
+    if (!supplier) {
+      document.getElementById('app').innerHTML =
+        '<div class="alert alert-warning mt-4">No suppliers found in this snapshot.</div>';
+      return;
+    }
+    render();
+  });
+
+  const TYPE_COLORS = {
+    'Meeting': 'info', 'Phone': 'success', 'Sent Email': 'warning',
+    'Received Email': 'primary', 'Other': 'secondary'
+  };
+
+  function fmtDate(iso) {
+    if (!iso) return null;
+    const [y, m, d] = iso.split('-');
+    return `${m}/${d}/${y}`;
+  }
+  function daysLeft(iso) {
+    if (!iso) return null;
+    const exp = new Date(iso + 'T00:00:00');
+    const t = new Date(DATA.today + 'T00:00:00');
+    return Math.round((exp - t) / 86400000);
+  }
+  function fmtBytes(n) {
+    if (!n) return '—';
+    return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB';
+  }
+  function commNs(id) { return 'suppliers_comm_' + id; }
+
+  function mergedComms() {
+    const extra = window.demoStore.get(commNs(supplier.id), []);
+    return extra.concat(supplier.comms); // extra (newest first, prepended) then baked comms (already sorted desc)
+  }
+
+  function render() {
+    const dl = daysLeft(supplier.contract_expires_on);
+    const comms = mergedComms();
+
+    document.getElementById('app').innerHTML = `
+      <div class="d-flex align-items-center gap-3 mb-1 flex-wrap">
+        <a href="list.html" class="btn btn-sm btn-outline-secondary">← Suppliers</a>
+        <h4 class="mb-0 me-2">${supplier.name}</h4>
+        ${supplier.preferred_vendor ? '<span class="badge bg-success fs-6">★ Preferred Vendor</span>' : ''}
+        ${!supplier.is_active ? '<span class="badge bg-secondary">Inactive</span>' : ''}
+        <a href="new_edit.html?id=${supplier.id}" class="btn btn-sm btn-outline-primary ms-auto">Edit Supplier</a>
+      </div>
+
+      <p class="text-muted mb-3" style="font-size:.9rem">
+        ${supplier.city ? supplier.city + (supplier.state ? ', ' + supplier.state : '') + ' &nbsp;·&nbsp; ' : ''}
+        ${supplier.website ? `<a href="${supplier.website}" target="_blank" class="text-decoration-none">${supplier.website}</a> &nbsp;·&nbsp; ` : ''}
+        ${supplier.date_vetted ? 'Vetted ' + fmtDate(supplier.date_vetted) : '<span class="text-warning">Not vetted</span>'}
+        ${supplier.contract_expires_on ? ' &nbsp;·&nbsp; ' + (
+          dl < 0 ? `<span class="text-danger fw-bold">Contract EXPIRED</span>` :
+          dl <= 30 ? `<span class="text-danger fw-bold">Contract expires ${fmtDate(supplier.contract_expires_on)}</span>` :
+          dl <= 90 ? `<span class="text-warning fw-bold">Contract expires ${fmtDate(supplier.contract_expires_on)}</span>` :
+          `Contract expires ${fmtDate(supplier.contract_expires_on)}`
+        ) : ''}
+      </p>
+
+      <ul class="nav nav-tabs mb-3" id="supplierTabs">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-info">Info</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-contacts">Contacts <span class="badge bg-secondary">${supplier.contacts.length}</span></a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-communications" id="communicationsTabLink">Communications <span class="badge bg-secondary" id="commCountBadge">${comms.length}</span></a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-documents">Documents <span class="badge bg-secondary">${supplier.docs.length}</span></a></li>
+      </ul>
+
+      <div class="tab-content">
+
+        <div class="tab-pane fade show active" id="tab-info">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white py-2">Address</div>
+                <div class="card-body">
+                  ${supplier.address_line1 ? `
+                    <p class="mb-1">${supplier.address_line1}</p>
+                    ${supplier.address_line2 ? `<p class="mb-1">${supplier.address_line2}</p>` : ''}
+                    <p class="mb-0">${supplier.city || ''}${supplier.state ? ', ' + supplier.state : ''}${supplier.zip_code ? ' ' + supplier.zip_code : ''}</p>
+                  ` : '<span class="text-muted">No address on file</span>'}
+                  ${supplier.website ? `<hr class="my-2"><a href="${supplier.website}" target="_blank" class="text-decoration-none">${supplier.website}</a>` : ''}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white py-2">Procurement Details</div>
+                <div class="card-body">
+                  <table class="table table-sm table-borderless mb-0">
+                    <tbody>
+                      <tr><td class="text-muted" style="width:40%">Date Vetted</td><td>${supplier.date_vetted ? fmtDate(supplier.date_vetted) : '<span class="text-warning">Not vetted</span>'}</td></tr>
+                      <tr><td class="text-muted">Preferred Vendor</td><td>${supplier.preferred_vendor ? '<span class="badge bg-success">Yes</span>' : '<span class="text-muted">No</span>'}</td></tr>
+                      <tr><td class="text-muted">Payment Terms</td><td>${supplier.payment_terms || '—'}</td></tr>
+                      <tr><td class="text-muted">Lead Time</td><td>${supplier.lead_time_days ? supplier.lead_time_days + ' days' : '—'}</td></tr>
+                      <tr><td class="text-muted">Contract Expires</td><td>${
+                        supplier.contract_expires_on ? (
+                          dl < 0 ? `<span class="text-danger fw-bold">EXPIRED (${fmtDate(supplier.contract_expires_on)})</span>` :
+                          dl <= 30 ? `<span class="text-danger fw-bold">${fmtDate(supplier.contract_expires_on)} (${dl}d)</span>` :
+                          dl <= 90 ? `<span class="text-warning fw-bold">${fmtDate(supplier.contract_expires_on)} (${dl}d)</span>` :
+                          fmtDate(supplier.contract_expires_on)
+                        ) : '—'
+                      }</td></tr>
+                      ${supplier.tags ? `<tr><td class="text-muted">Tags</td><td>${supplier.tags.split(',').map(t => `<span class="badge bg-secondary">${t.trim()}</span>`).join(' ')}</td></tr>` : ''}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            ${supplier.notes ? `
+            <div class="col-12">
+              <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white py-2">Notes</div>
+                <div class="card-body">${supplier.notes}</div>
+              </div>
+            </div>` : ''}
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-contacts">
+          ${supplier.contacts.length ? `
+          <div class="table-responsive mb-4">
+            <table class="table table-sm table-hover align-middle">
+              <thead><tr><th>Name</th><th>Title</th><th>Email</th><th>Phone</th><th>Primary</th><th></th></tr></thead>
+              <tbody>
+                ${supplier.contacts.map(c => `
+                  <tr>
+                    <td class="fw-semibold">${c.name}</td>
+                    <td class="text-muted">${c.title || '—'}</td>
+                    <td>${c.email ? `<a href="mailto:${c.email}" class="text-decoration-none">${c.email}</a>` : '—'}</td>
+                    <td class="text-nowrap">${c.phone || '—'}</td>
+                    <td>${c.is_primary ? '<span class="badge bg-success">★ Primary</span>' :
+                      `<button class="btn btn-xs btn-outline-secondary btn-sm py-0 px-2" data-demo-inert="Set Primary Contact">Set Primary</button>`}</td>
+                    <td><button class="btn btn-xs btn-outline-danger btn-sm py-0 px-2" data-demo-inert="Remove Contact">Remove</button></td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>` : '<p class="text-muted mb-4">No contacts yet.</p>'}
+
+          <div class="card shadow-sm" style="max-width:600px">
+            <div class="card-header bg-secondary text-white py-2">Add Contact</div>
+            <div class="card-body">
+              <form onsubmit="return false">
+                <div class="row g-2 mb-2">
+                  <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Name *"></div>
+                  <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Title / Role"></div>
+                </div>
+                <div class="row g-2 mb-2">
+                  <div class="col-6"><input type="email" class="form-control form-control-sm" placeholder="Email"></div>
+                  <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Phone"></div>
+                </div>
+                <div class="d-flex align-items-center gap-3 mt-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="is_primary">
+                    <label class="form-check-label" for="is_primary">Primary Contact</label>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-success ms-auto" data-demo-inert="Add Contact">Add Contact</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-communications">
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white py-2">Log Communication</div>
+            <div class="card-body">
+              <form id="comm-form" onsubmit="return false">
+                <div class="row g-2 mb-3">
+                  <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Date</label>
+                    <input type="date" id="commDate" class="form-control form-control-sm" required>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Type</label>
+                    <select id="commType" class="form-select form-select-sm">
+                      ${DATA.comm_types.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small fw-semibold">Summary <span class="text-muted fw-normal">(one line)</span></label>
+                    <input type="text" id="commSummary" class="form-control form-control-sm" placeholder="Brief description of the communication…">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Notes / Detail</label>
+                  <div id="quill-editor" style="height:180px; background:#fff;"></div>
+                </div>
+                <button type="button" id="btnLogComm" class="btn btn-sm btn-success">Log Communication</button>
+              </form>
+            </div>
+          </div>
+
+          <div id="commsList"></div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-documents">
+          ${supplier.docs.length ? `
+          <div class="table-responsive mb-4">
+            <table class="table table-sm table-hover align-middle">
+              <thead><tr><th>Label</th><th>File</th><th>Size</th><th>Uploaded By</th><th>Date</th><th>Notes</th><th></th></tr></thead>
+              <tbody>
+                ${supplier.docs.map(d => `
+                  <tr>
+                    <td class="fw-semibold">${d.display_label}</td>
+                    <td class="text-muted" style="font-size:.85rem">${d.original_filename}</td>
+                    <td class="text-nowrap text-muted" style="font-size:.85rem">${fmtBytes(d.file_size)}</td>
+                    <td class="text-muted" style="font-size:.85rem">${d.uploaded_by_name || '—'}</td>
+                    <td class="text-nowrap text-muted" style="font-size:.85rem">${d.created_at ? d.created_at.slice(0, 10) : '—'}</td>
+                    <td class="text-muted" style="font-size:.85rem">${d.notes || ''}</td>
+                    <td class="text-nowrap">
+                      <button class="btn btn-xs btn-outline-primary btn-sm py-0 px-2 me-1" data-demo-inert="Download Document">Download</button>
+                      <button class="btn btn-xs btn-outline-danger btn-sm py-0 px-2" data-demo-inert="Delete Document">Delete</button>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>` : '<p class="text-muted mb-4">No documents uploaded yet.</p>'}
+
+          <div class="card shadow-sm" style="max-width:560px">
+            <div class="card-header bg-secondary text-white py-2">Upload Document</div>
+            <div class="card-body">
+              <form onsubmit="return false">
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold">Label <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" placeholder="e.g. Master Supply Agreement 2026">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold">File <span class="text-danger">*</span></label>
+                  <input type="file" class="form-control form-control-sm">
+                  <div class="form-text">PDF, Word, Excel, JPG, PNG, TXT</div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>
+                  <input type="text" class="form-control form-control-sm" placeholder="Brief description…">
+                </div>
+                <button type="button" class="btn btn-sm btn-success" data-demo-inert="Upload Document">Upload</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    document.getElementById('commDate').value = new Date().toISOString().slice(0, 10);
+    renderComms();
+    wireInertLinks();
+
+    let quillEditor = null;
+    function initQuill() {
+      if (quillEditor) return;
+      quillEditor = new Quill('#quill-editor', {
+        theme: 'snow',
+        modules: { toolbar: [['bold', 'italic', 'underline'], [{ list: 'ordered' }, { list: 'bullet' }], ['clean']] }
+      });
+    }
+    document.getElementById('communicationsTabLink').addEventListener('shown.bs.tab', initQuill);
+    if (window.location.hash === '#tab-communications') initQuill();
+
+    document.getElementById('btnLogComm').addEventListener('click', function () {
+      const commDate = document.getElementById('commDate').value;
+      if (!commDate) { toast('Date is required.', 'danger'); return; }
+      const entry = {
+        id: 'demo-' + Date.now(),
+        comm_date: commDate,
+        comm_type: document.getElementById('commType').value,
+        logged_by_name: 'Gary Starr (Demo)',
+        summary: document.getElementById('commSummary').value.trim() || null,
+        body: quillEditor ? quillEditor.root.innerHTML : null,
+        _demo: true,
+      };
+      window.demoStore.append(commNs(supplier.id), entry);
+      document.getElementById('commSummary').value = '';
+      if (quillEditor) quillEditor.setContents([]);
+      renderComms();
+      toast('Communication logged. <br><small>Demo — not saved to a server.</small>', 'success');
+    });
+  }
+
+  function renderComms() {
+    const comms = mergedComms();
+    document.getElementById('commCountBadge').textContent = comms.length;
+    const el = document.getElementById('commsList');
+    if (!comms.length) {
+      el.innerHTML = '<p class="text-muted">No communications logged yet.</p>';
+      return;
+    }
+    el.innerHTML = `<div class="d-flex flex-column gap-3">` + comms.map(c => `
+      <div class="card shadow-sm ${c._demo ? 'border-success' : ''}">
+        <div class="card-header d-flex align-items-center gap-2 py-2">
+          <span class="badge bg-${TYPE_COLORS[c.comm_type] || 'secondary'}">${c.comm_type}</span>
+          <span class="fw-semibold">${fmtDate(c.comm_date)}</span>
+          <span class="text-muted" style="font-size:.85rem">· ${c.logged_by_name || 'Unknown'}</span>
+          ${c._demo ? '<span class="badge bg-success ms-2">New — demo only</span>' : ''}
+          <button class="btn btn-xs btn-outline-danger btn-sm py-0 px-2 ms-auto" data-demo-inert="Delete Communication">Delete</button>
+        </div>
+        <div class="card-body py-2">
+          ${c.summary ? `<p class="mb-1 fw-semibold">${c.summary}</p>` : ''}
+          ${c.body ? `<div class="comm-body" style="font-size:.9rem">${c.body}</div>` : ''}
+        </div>
+      </div>`).join('') + `</div>`;
+    wireInertLinks();
+  }
+</script>
+</body>
+</html>

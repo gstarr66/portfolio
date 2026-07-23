@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hot Codes — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0">Hot Codes</h5>
+    <form class="d-flex gap-2" onsubmit="return false">
+      <input type="text" id="searchBox" class="form-control form-control-sm"
+             style="width:220px" placeholder="SKU, name, brand…">
+      <button class="btn btn-sm btn-primary" onclick="render()">Search</button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" id="btnClear">Clear</button>
+    </form>
+  </div>
+
+  <div class="text-muted small mb-2" id="countLine">Loading…</div>
+
+  <div class="table-responsive">
+  <table class="table table-sm table-hover align-middle" style="font-size:0.82rem">
+    <colgroup>
+      <col style="width:10%">  <!-- Brand -->
+      <col style="width:7%">   <!-- SKU -->
+      <col>                    <!-- Name — flex -->
+      <col style="width:7%">   <!-- Web Price -->
+      <col style="width:6%">   <!-- TL -->
+      <col style="width:6%">   <!-- AO -->
+      <col style="width:7%">   <!-- Sale Price -->
+      <col style="width:4%">   <!-- Unit -->
+      <col style="width:5%">   <!-- Temp -->
+      <col style="width:5%">   <!-- Total Inv -->
+      <col style="width:5%">   <!-- Available -->
+      <col style="width:5%">   <!-- Short Dated -->
+      <col style="width:4%">   <!-- Hold -->
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>SKU</th>
+        <th>Name</th>
+        <th class="text-end">Web Price</th>
+        <th class="text-end">TL</th>
+        <th class="text-end">AO</th>
+        <th class="text-end">Sale Price</th>
+        <th>Unit</th>
+        <th>Temp</th>
+        <th class="text-end">Total Inv</th>
+        <th class="text-end">Available</th>
+        <th class="text-end">Short Dated</th>
+        <th class="text-end">Hold</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  let DATA = null;
+
+  fetch('../data/sales/hot_codes.json').then(r => r.json()).then(d => {
+    DATA = d;
+    render();
+  });
+
+  function money(v) {
+    return (v || v === 0) ? '$' + Number(v).toFixed(2) : '—';
+  }
+
+  function rowHtml(item) {
+    let tempBadge = '';
+    if (item.temperature === 'Critical') tempBadge = '<span class="badge bg-danger" style="font-size:.68rem">Crit</span>';
+    else if (item.temperature === 'Sensitive') tempBadge = '<span class="badge bg-warning text-dark" style="font-size:.68rem">Sens</span>';
+
+    const avail = Math.trunc(item.available_inventory);
+    const shortDated = Math.trunc(item.short_dated_3mo);
+    const hold = Math.trunc(item.hold_qty);
+
+    return `
+      <tr>
+        <td class="text-truncate" style="max-width:0">${item.brand || ''}</td>
+        <td><strong>${item.sku}</strong></td>
+        <td class="text-muted text-truncate" style="max-width:0">${item.name || ''}</td>
+        <td class="text-end text-nowrap">${money(item.web_price)}</td>
+        <td class="text-end text-nowrap">${item.tl ? `<span class="text-danger fw-semibold">${money(item.tl)}</span>` : '—'}</td>
+        <td class="text-end text-nowrap">${item.ao ? `<span class="text-warning fw-semibold">${money(item.ao)}</span>` : '—'}</td>
+        <td class="text-end text-nowrap">${money(item.sale_price)}</td>
+        <td>${item.unit || ''}</td>
+        <td>${tempBadge}</td>
+        <td class="text-end fw-semibold">${Math.trunc(item.total_inventory)}</td>
+        <td class="text-end ${avail === 0 ? 'text-danger fw-semibold' : ''}">${avail}</td>
+        <td class="text-end ${shortDated > 0 ? 'text-warning fw-semibold' : ''}">${shortDated > 0 ? shortDated : '—'}</td>
+        <td class="text-end ${hold > 0 ? 'text-primary fw-semibold' : ''}">${hold > 0 ? hold : '—'}</td>
+      </tr>`;
+  }
+
+  function render() {
+    const q = (document.getElementById('searchBox').value || '').trim().toUpperCase();
+    let items = DATA.items;
+    if (q) {
+      items = items.filter(i =>
+        (i.sku || '').toUpperCase().includes(q) ||
+        (i.name || '').toUpperCase().includes(q) ||
+        (i.brand || '').toUpperCase().includes(q)
+      );
+    }
+
+    document.getElementById('countLine').textContent =
+      `${items.length} item${items.length !== 1 ? 's' : ''} shown`;
+
+    const tbody = document.getElementById('rows');
+    if (!items.length) {
+      tbody.innerHTML = '<tr><td colspan="13" class="text-center text-muted py-4">No items found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(rowHtml).join('');
+  }
+
+  document.getElementById('searchBox').addEventListener('input', render);
+  document.getElementById('btnClear').addEventListener('click', () => {
+    document.getElementById('searchBox').value = '';
+    render();
+  });
+</script>
+</body>
+</html>

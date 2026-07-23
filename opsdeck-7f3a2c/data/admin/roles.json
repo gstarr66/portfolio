@@ -1,0 +1,184 @@
+{
+ "generated_note": "Full snapshot -- all 12 roles x 7 active modules, 2026-07-23.",
+ "roles": [
+  {
+   "id": 12,
+   "name": "accounting",
+   "display_name": "Accounting",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 9,
+   "name": "acquisition",
+   "display_name": "Acquisition",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 10,
+   "name": "administrator",
+   "display_name": "Administrator",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 4,
+   "name": "inventory_control",
+   "display_name": "Inventory Control",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 3,
+   "name": "operations_manager",
+   "display_name": "Operations Manager",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 5,
+   "name": "procurement_manager",
+   "display_name": "Procurement Manager",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 6,
+   "name": "procurement_staff",
+   "display_name": "Procurement Staff",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 11,
+   "name": "qc_lead",
+   "display_name": "QC Lead",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 7,
+   "name": "sales",
+   "display_name": "Sales",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 8,
+   "name": "sales_manager",
+   "display_name": "Sales Manager",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 2,
+   "name": "warehouse_manager",
+   "display_name": "Warehouse Manager",
+   "description": null,
+   "is_active": true
+  },
+  {
+   "id": 1,
+   "name": "warehouse_staff",
+   "display_name": "Warehouse Staff",
+   "description": null,
+   "is_active": true
+  }
+ ],
+ "modules": [
+  {
+   "id": 6,
+   "name": "admin",
+   "display_name": "Admin",
+   "sort_order": 1
+  },
+  {
+   "id": 2,
+   "name": "inventory_control",
+   "display_name": "Inventory Control",
+   "sort_order": 2
+  },
+  {
+   "id": 3,
+   "name": "outbound",
+   "display_name": "Outbound",
+   "sort_order": 3
+  },
+  {
+   "id": 4,
+   "name": "procurement",
+   "display_name": "Procurement",
+   "sort_order": 4
+  },
+  {
+   "id": 5,
+   "name": "sales",
+   "display_name": "Sales",
+   "sort_order": 5
+  },
+  {
+   "id": 1,
+   "name": "warehouse",
+   "display_name": "Warehouse",
+   "sort_order": 6
+  },
+  {
+   "id": 7,
+   "name": "warranty",
+   "display_name": "Warranty Claims",
+   "sort_order": 16
+  }
+ ],
+ "perm_map": {
+  "11": {
+   "1": "manage"
+  },
+  "3": {
+   "1": "manage",
+   "2": "manage",
+   "3": "manage",
+   "4": "view"
+  },
+  "2": {
+   "1": "manage"
+  },
+  "1": {
+   "1": "edit"
+  },
+  "12": {
+   "2": "view",
+   "3": "view"
+  },
+  "5": {
+   "2": "view",
+   "4": "manage"
+  },
+  "4": {
+   "2": "edit",
+   "3": "manage"
+  },
+  "6": {
+   "4": "edit"
+  },
+  "9": {
+   "5": "edit"
+  },
+  "8": {
+   "5": "manage"
+  },
+  "10": {
+   "6": "manage",
+   "2": "manage",
+   "3": "manage",
+   "4": "manage",
+   "5": "manage",
+   "1": "manage",
+   "7": "manage"
+  },
+  "7": {
+   "5": "edit",
+   "7": "manage"
+  }
+ }
+}

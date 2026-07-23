@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitor Intelligence — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+  <style>
+    :root { --proc-primary:#1B4F72; --proc-accent:#2E86C1; }
+
+    .proc-header {
+      background: linear-gradient(135deg,var(--proc-primary) 0%,var(--proc-accent) 100%);
+      color:#fff; border-radius:8px; padding:18px 24px; margin-bottom:20px;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+    .proc-header h4 { margin:0; font-size:1.25rem; font-weight:700; }
+    .proc-header .sub { font-size:.8rem; opacity:.8; margin-top:2px; }
+
+    .stat-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+      gap:12px; margin-bottom:20px;
+    }
+    .stat-card {
+      background:#fff; border-radius:8px; padding:14px 16px;
+      border-left:4px solid var(--proc-accent); box-shadow:0 1px 4px rgba(0,0,0,.08);
+    }
+    .stat-card .val { font-size:1.6rem; font-weight:700; color:#1B4F72; line-height:1; }
+    .stat-card .lbl { font-size:.72rem; color:#6c757d; margin-top:4px;
+                      text-transform:uppercase; letter-spacing:.5px; }
+
+    .alert-badge {
+      display:inline-block; padding:3px 10px; border-radius:4px;
+      font-size:.72rem; font-weight:700; white-space:nowrap;
+    }
+    .unit-badge {
+      display:inline-block; padding:1px 6px; border-radius:3px;
+      font-size:.68rem; font-weight:700;
+    }
+    .unit-e { background:#d1ecf1; color:#0c5460; }
+    .unit-b { background:#fdebd0; color:#784212; }
+    .bucket-badge {
+      display:inline-block; width:20px; height:20px; border-radius:50%;
+      font-size:.7rem; font-weight:700; color:#fff; text-align:center; line-height:20px;
+    }
+
+    .ci-table { font-size:.8rem; margin:0; }
+    .ci-table thead th {
+      background:#1B4F72; color:#fff; position:sticky; top:0; z-index:2;
+      white-space:nowrap; padding:8px 10px; font-weight:600; border:none;
+    }
+    .ci-table tbody tr:hover { background:#f0f4f8; cursor:pointer; }
+    .ci-table td { padding:6px 10px; vertical-align:middle; border-color:#e9ecef; }
+    .tbl-wrapper { max-height:680px; overflow-y:auto; }
+
+    .price-danger  { color:#dc3545; font-weight:700; }
+    .price-better  { color:#198754; font-weight:700; }
+    .price-na      { color:#adb5bd; }
+
+    .filter-bar {
+      padding:10px 14px; background:#f8f9fa; border-bottom:1px solid #dee2e6;
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+    }
+    .filter-bar input, .filter-bar select { font-size:.8rem; }
+
+    .legend-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; font-size:.72rem; }
+    .legend-item { display:flex; align-items:center; gap:5px; }
+    .legend-dot  { width:12px; height:12px; border-radius:2px; flex-shrink:0; }
+
+    #detailModal .modal-header { background:#1B4F72; color:#fff; }
+    #detailModal .modal-title  { font-size:.95rem; font-weight:700; }
+    .chart-wrap { position:relative; height:220px; }
+    .sales-tbl  { font-size:.78rem; }
+    .sales-tbl thead th { background:#1B4F72; color:#fff; padding:5px 8px; }
+    .sales-tbl td { padding:4px 8px; }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="proc-header">
+    <div>
+      <h4>Competitor Intelligence</h4>
+      <div class="sub">WestCMR · ShopSPS — unit-type-aware matching · E and B shown separately</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="index.html" class="btn btn-sm btn-light fw-semibold">← Procurement Dashboard</a>
+    </div>
+  </div>
+
+  <div class="stat-grid" id="statGrid"></div>
+
+  <div class="bg-white rounded" style="border:1px solid #dee2e6;overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control form-control-sm" style="max-width:280px"
+             id="ciSearch" placeholder="Search ref, SKU, manufacturer…">
+      <select class="form-select form-select-sm" style="max-width:160px" id="alertFilter">
+        <option value="">All Alerts</option>
+        <option value="DANGER">DANGER</option>
+        <option value="LIQUIDATION">LIQUIDATION</option>
+        <option value="OPPORTUNITY">OPPORTUNITY</option>
+        <option value="SURGI_ONLY">SURGI ONLY</option>
+        <option value="OK">OK</option>
+      </select>
+      <select class="form-select form-select-sm" style="max-width:110px" id="unitFilter">
+        <option value="">E + B</option>
+        <option value="E">Each only</option>
+        <option value="B">Box only</option>
+      </select>
+      <select class="form-select form-select-sm" style="max-width:130px" id="stockFilter">
+        <option value="">Any Stock</option>
+        <option value="instock">Comp In Stock</option>
+        <option value="oos">Comp OOS</option>
+      </select>
+    </div>
+
+    <div class="tbl-wrapper">
+      <table class="table ci-table table-bordered" id="ciTable">
+        <thead><tr id="ciHeadRow"></tr></thead>
+        <tbody id="ciBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="legend-row" id="legendRow"></div>
+  <div class="mt-1 text-muted" style="font-size:.72rem" id="unmatchedNote"></div>
+
+  <div class="modal fade" id="detailModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailTitle">Loading…</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="detailBody">
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-2 text-muted" style="font-size:.85rem">Fetching price &amp; sales history…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+let DATA = null;
+let DETAIL = null;
+const COMP_COLORS = ['#0D6EFD','#fd7e14','#198754','#6f42c1'];
+let activeChart = null;
+
+Promise.all([
+  fetch('../data/procurement/competitor_intel.json').then(r => r.json()),
+  fetch('../data/procurement/competitor_detail.json').then(r => r.json())
+]).then(([ci, detail]) => {
+  DATA = ci;
+  DETAIL = detail;
+  renderStats();
+  renderHead();
+  renderRows();
+  renderLegend();
+  wireFilters();
+});
+
+function renderStats() {
+  const s = DATA.stats;
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card"><div class="val">${s.total}</div><div class="lbl">Matched Products</div></div>
+    <div class="stat-card" style="border-color:#dc3545"><div class="val text-danger">${s.danger}</div><div class="lbl">DANGER — Below Our COGS</div></div>
+    <div class="stat-card" style="border-color:#fd7e14"><div class="val" style="color:#fd7e14">${s.liquidation}</div><div class="lbl">Liquidating — &lt;70% COGS</div></div>
+    <div class="stat-card" style="border-color:#198754"><div class="val text-success">${s.opportunity}</div><div class="lbl">Opportunity — We're Cheaper</div></div>
+    <div class="stat-card" style="border-color:#0D6EFD"><div class="val" style="color:#0D6EFD">${s.surgi_only}</div><div class="lbl">Surgi Only</div></div>
+    <div class="stat-card" style="border-color:#adb5bd"><div class="val text-muted">${s.unmatched_total}</div><div class="lbl">Unmatched — Auto Hidden</div></div>
+  `;
+  document.getElementById('unmatchedNote').innerHTML =
+    `Red prices = below our COGS &nbsp;|&nbsp; Green = above our retail ×1.10 &nbsp;|&nbsp; ${s.unmatched_total} unmatched competitor products auto-hidden — retried on next sync`;
+}
+
+function renderHead() {
+  let cols = `<th>Alert</th><th>Ref&nbsp;(Mfr#)</th><th>Unit</th><th>Manufacturer</th><th>Our SKU</th><th>B</th>
+    <th class="text-end">Our COGS</th><th class="text-end">Our Retail</th><th class="text-end">Vel&nbsp;6mo</th>`;
+  Object.entries(DATA.competitors).forEach(([cid, cname]) => {
+    cols += `<th class="text-end" style="background:#1a3a50">${cname}&nbsp;Price</th><th class="text-end" style="background:#1a3a50">Qty</th>`;
+  });
+  document.getElementById('ciHeadRow').innerHTML = cols;
+}
+
+function priceCell(price, ourCogs, ourRetail) {
+  if (!(price > 0)) return `<td class="text-end"><span class="price-na">—</span></td>`;
+  let cls = '', title = '';
+  if (ourCogs > 0 && price < ourCogs * 0.70) { cls = 'price-danger'; title = 'Below 70% of our COGS — liquidating'; }
+  else if (ourCogs > 0 && price < ourCogs) { cls = 'price-danger'; title = 'Below our COGS'; }
+  else if (ourRetail > 0 && price > ourRetail * 1.10) { cls = 'price-better'; title = 'Above our retail ×1.10 — opportunity'; }
+  if (cls) return `<td class="text-end"><span class="${cls}" title="${title}">$${price.toFixed(2)}</span></td>`;
+  return `<td class="text-end">$${price.toFixed(2)}</td>`;
+}
+
+function qtyCell(qty, price) {
+  if (qty > 0) return `<td class="text-end"><span class="text-success fw-bold">${qty}</span></td>`;
+  if (price > 0) return `<td class="text-end"><span class="text-danger">0</span></td>`;
+  return `<td class="text-end"><span class="price-na">—</span></td>`;
+}
+
+function renderRows() {
+  const cids = Object.keys(DATA.competitors);
+  const rowsHtml = DATA.rows.map(r => {
+    const hasStock = Object.values(r.comp_ids).some(v => v.qty > 0);
+    const displayRetail = r.our_sale > 0 ? r.our_sale : r.our_retail;
+
+    let compCells = '';
+    cids.forEach(cid => {
+      const cp = r.comp_ids[cid] || {};
+      const price = cp.price || 0;
+      const qty = cp.qty || 0;
+      compCells += priceCell(price, r.our_cogs, r.our_retail) + qtyCell(qty, price);
+    });
+
+    return `<tr data-alert="${r.alert}" data-unit="${r.comp_unit}" data-stock="${hasStock ? 'instock' : 'oos'}"
+                data-ref="${r.comp_ref}" data-compunit="${r.comp_unit}" data-oursku="${r.our_sku || ''}"
+                onclick="openDetail(this)" title="Click to view price history and sales detail">
+      <td><span class="alert-badge" style="background:${r.alert_bg};color:${r.alert_text}">${r.alert.replace('_',' ')}</span></td>
+      <td><strong>${r.comp_ref}</strong></td>
+      <td><span class="unit-badge ${r.comp_unit === 'E' ? 'unit-e' : 'unit-b'}">${r.comp_unit}${r.comp_unit === 'B' ? '/' + r.comp_units_pkg : ''}</span></td>
+      <td style="font-size:.75rem;color:#6c757d">${r.comp_mfr || r.comp_name || '—'}</td>
+      <td>${r.our_sku
+          ? `<span class="text-primary fw-semibold">${r.our_sku}</span>
+             <span class="unit-badge ms-1 ${r.our_unit === 'E' ? 'unit-e' : 'unit-b'}">${r.our_unit}${r.our_unit === 'B' ? '/' + r.our_units_pkg : ''}</span>
+             ${r.our_name ? `<div style="font-size:.68rem;color:#6c757d">${r.our_name.slice(0,45)}</div>` : ''}`
+          : '<span class="text-muted">—</span>'}</td>
+      <td>${r.bucket ? `<span class="bucket-badge" style="background:${r.bucket_color}">${r.bucket}</span>` : '—'}</td>
+      <td class="text-end">${r.our_cogs > 0 ? '$' + r.our_cogs.toFixed(2) : '<span class="price-na">—</span>'}</td>
+      <td class="text-end">${displayRetail > 0 ? '$' + displayRetail.toFixed(2) : '<span class="price-na">—</span>'}</td>
+      <td class="text-end">${r.vel_6mo.toFixed(2)}</td>
+      ${compCells}
+    </tr>`;
+  });
+  document.getElementById('ciBody').innerHTML = rowsHtml.join('');
+}
+
+function renderLegend() {
+  const descriptions = {
+    LIQUIDATION: ' — comp price &lt; 70% of our COGS',
+    DANGER: ' — comp price &lt; our COGS',
+    OPPORTUNITY: ' — comp price &gt; our retail ×1.10',
+    SURGI_ONLY: ' — we stock it, they don\'t',
+  };
+  let html = Object.entries(DATA.alert_colors)
+    .filter(([alert]) => alert !== 'UNMATCHED')
+    .map(([alert, c]) => `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${c.bg};border:1px solid #ccc"></div>
+        <span style="color:#6c757d">${alert.replace('_',' ')}${descriptions[alert] || ''}</span>
+      </div>`).join('');
+  html += `<div class="legend-item ms-3"><span class="unit-badge unit-e me-1">E</span><span style="color:#6c757d">Each</span></div>`;
+  html += `<div class="legend-item"><span class="unit-badge unit-b me-1">B/N</span><span style="color:#6c757d">Box of N</span></div>`;
+  document.getElementById('legendRow').innerHTML = html;
+}
+
+function wireFilters() {
+  ['ciSearch','alertFilter','unitFilter','stockFilter'].forEach(id =>
+    document.getElementById(id).addEventListener('input', filterCI));
+}
+
+function filterCI() {
+  const q     = (document.getElementById('ciSearch').value    || '').toLowerCase();
+  const alert = (document.getElementById('alertFilter').value || '').toUpperCase();
+  const unit  = (document.getElementById('unitFilter').value  || '');
+  const stock = (document.getElementById('stockFilter').value || '');
+
+  document.querySelectorAll('#ciTable tbody tr').forEach(row => {
+    const textOk  = !q     || row.textContent.toLowerCase().includes(q);
+    const alertOk = !alert || row.dataset.alert === alert;
+    const unitOk  = !unit  || row.dataset.unit  === unit;
+    const stockOk = !stock || row.dataset.stock  === stock;
+    row.style.display = (textOk && alertOk && unitOk && stockOk) ? '' : 'none';
+  });
+}
+
+function openDetail(row) {
+  const ref    = row.dataset.ref;
+  const unit   = row.dataset.compunit;
+  const ourSku = row.dataset.oursku;
+
+  document.getElementById('detailTitle').textContent = ref + ' [' + unit + ']' + (ourSku ? ' → ' + ourSku : '');
+  document.getElementById('detailBody').innerHTML = `
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status"></div>
+      <div class="mt-2 text-muted" style="font-size:.85rem">Fetching data…</div>
+    </div>`;
+
+  const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+  modal.show();
+
+  const key = `${ref.toUpperCase()}|${unit}`;
+  const data = DETAIL[key] || { price_history: {}, our_sales: [] };
+  renderDetail(data, ourSku);
+}
+
+function renderDetail(data, ourSku) {
+  if (activeChart) { activeChart.destroy(); activeChart = null; }
+
+  const histories = data.price_history || {};
+  const compNames = Object.keys(histories);
+
+  const allDates = [...new Set(compNames.flatMap(c => histories[c].map(p => p.dt)))].sort();
+
+  const datasets = compNames.map((comp, i) => {
+    const map = Object.fromEntries(histories[comp].map(p => [p.dt, p.price]));
+    return {
+      label: comp,
+      data: allDates.map(d => map[d] ?? null),
+      borderColor: COMP_COLORS[i % COMP_COLORS.length],
+      backgroundColor: COMP_COLORS[i % COMP_COLORS.length] + '22',
+      tension: 0.3, spanGaps: true, pointRadius: 3,
+    };
+  });
+
+  let qtyRows = '';
+  if (compNames.length) {
+    const latestQty = compNames.map(comp => {
+      const last = histories[comp][histories[comp].length - 1];
+      return `<td class="text-end"><strong>${last ? last.qty : '—'}</strong></td>`;
+    }).join('');
+    qtyRows = `<tr><td class="fw-semibold">Current Qty</td>${latestQty}</tr>`;
+
+    const latestPrice = compNames.map(comp => {
+      const last = histories[comp][histories[comp].length - 1];
+      return `<td class="text-end">${last ? '$' + last.price.toFixed(4) : '—'}</td>`;
+    }).join('');
+    qtyRows += `<tr><td class="fw-semibold">Latest Price</td>${latestPrice}</tr>`;
+  }
+
+  const sales = data.our_sales || [];
+  let salesHtml = '';
+  if (sales.length) {
+    salesHtml = sales.map(s => `
+      <tr>
+        <td>${s.month}</td>
+        <td class="text-end">${s.qty.toFixed(1)}</td>
+        <td class="text-end">$${s.avg_rate.toFixed(4)}</td>
+        <td class="text-end">$${s.revenue.toFixed(2)}</td>
+      </tr>`).join('');
+  } else {
+    salesHtml = `<tr><td colspan="4" class="text-muted text-center">No sales in last 12 months</td></tr>`;
+  }
+
+  const noHistory = compNames.length === 0 || allDates.length === 0;
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="row g-3">
+      <div class="col-md-7">
+        <h6 class="fw-bold text-secondary mb-2" style="font-size:.8rem;text-transform:uppercase">
+          Competitor Price History — Last 90 Days
+        </h6>
+        ${noHistory
+          ? '<div class="text-muted p-3 border rounded text-center" style="font-size:.85rem">No price history recorded yet — data populates after next competitor sync.</div>'
+          : `<div class="chart-wrap"><canvas id="priceChart"></canvas></div>
+             <table class="table table-sm sales-tbl mt-2">
+               <thead><tr><th></th>${compNames.map(c=>`<th class="text-end">${c}</th>`).join('')}</tr></thead>
+               <tbody>${qtyRows}</tbody>
+             </table>`
+        }
+      </div>
+      <div class="col-md-5">
+        <h6 class="fw-bold text-secondary mb-2" style="font-size:.8rem;text-transform:uppercase">
+          Our Sales — ${ourSku || 'No SKU matched'} — Last 12 Months
+        </h6>
+        <table class="table table-sm table-bordered sales-tbl">
+          <thead><tr><th>Month</th><th class="text-end">Qty</th><th class="text-end">Avg Rate</th><th class="text-end">Revenue</th></tr></thead>
+          <tbody>${salesHtml}</tbody>
+        </table>
+      </div>
+    </div>`;
+
+  if (!noHistory) {
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    activeChart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: allDates, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position:'top', labels:{ font:{size:11} } } },
+        scales: {
+          x: { ticks:{ font:{size:10}, maxRotation:45 } },
+          y: {
+            ticks: { font:{size:10}, callback: v => '$' + v.toFixed(2) },
+            title: { display:true, text:'Price', font:{size:10} }
+          }
+        }
+      }
+    });
+  }
+}
+
+document.getElementById('detailModal').addEventListener('hidden.bs.modal', () => {
+  if (activeChart) { activeChart.destroy(); activeChart = null; }
+});
+</script>
+</body>
+</html>

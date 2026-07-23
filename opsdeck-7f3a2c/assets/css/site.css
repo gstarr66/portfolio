@@ -1,0 +1,21 @@
+/* SurgiCentral static demo — shared styling, adapted from surgicentral/templates/base.html */
+body { background: #f8f9fa; }
+.navbar-brand { font-weight: 700; letter-spacing: .5px; }
+.navbar-brand img { height: 28px; margin-right: 8px; vertical-align: middle; }
+.nav-link.active { font-weight: 600; }
+.table th { white-space: nowrap; background: #343a40; color: #fff; }
+.badge-live   { background: #198754; }
+.badge-mongo  { background: #0d6efd; }
+.badge-import { background: #6c757d; }
+.summary-bar  { background: #fff; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px 20px; margin-bottom: 16px; }
+.dropdown-menu { font-size: .875rem; }
+.navbar-nav .dropdown-divider { margin: 2px 0; }
+.nav-user { font-size: .8rem; opacity: .8; }
+
+/* Demo-mode additions */
+.demo-badge {
+  background: #6f42c1; color: #fff; font-size: .7rem; font-weight: 600;
+  padding: 2px 8px; border-radius: 10px; letter-spacing: .5px; margin-left: 8px;
+}
+.demo-toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
+.demo-inert { cursor: not-allowed; opacity: .55; }

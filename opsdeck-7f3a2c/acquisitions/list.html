@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acquisitions — Buyback Pipeline — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Buyback Pipeline</h4>
+    <div class="d-flex gap-2">
+      <a href="cases.html" class="btn btn-sm btn-outline-secondary">Case Tracker</a>
+      <a href="new.html" class="btn btn-sm btn-success">+ New Buyback</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4" id="statCards"></div>
+
+  <form class="d-flex gap-2 mb-3 align-items-center" onsubmit="return false">
+    <input type="text" id="searchBox" placeholder="Search facility…"
+           class="form-control form-control-sm" style="max-width:280px">
+    <button class="btn btn-sm btn-outline-secondary" onclick="render()">Search</button>
+    <button type="button" class="btn btn-sm btn-outline-danger" id="btnClear">Clear</button>
+    <span id="activeFilterBadge"></span>
+  </form>
+
+  <div id="tableWrap"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  let DATA = null;
+  let statusFilter = '';
+
+  const STAT_MAP = [
+    ['pending_approval', 'Pending Approval', 'warning'],
+    ['approved',         'Ready to Send',    'info'],
+    ['offered',          'Offered',          'primary'],
+    ['accepted',         'Accepted',         'success'],
+    ['denied',           'Denied',           'danger'],
+    ['countered',        'Countered',        'warning'],
+  ];
+
+  const STATUS_PRIORITY = {
+    pending_approval: 1, approved: 2, offered: 3, countered: 4,
+    accepted: 5, denied: 6, cancelled: 7,
+  };
+
+  fetch('../data/acquisitions/buybacks.json').then(r => r.json()).then(d => {
+    DATA = d;
+    renderStatCards();
+    render();
+  });
+
+  function allBuybacks() {
+    // Demo-created buybacks (from new.html's "New Buyback" fake-live flow)
+    // are appended here and merged in for the rest of this browser session.
+    const demo = window.demoStore.get('acquisitions_buybacks', []);
+    return DATA.buybacks.concat(demo);
+  }
+
+  function computeStats(buybacks) {
+    const stats = {};
+    buybacks.forEach(b => { stats[b.status] = (stats[b.status] || 0) + 1; });
+    return stats;
+  }
+
+  function renderStatCards() {
+    const stats = computeStats(allBuybacks());
+    const wrap = document.getElementById('statCards');
+    wrap.innerHTML = STAT_MAP.map(([key, label, color]) => `
+      <div class="col-6 col-md-2">
+        <a href="#" class="text-decoration-none stat-card-link" data-status="${key}">
+          <div class="card text-center border-0 shadow-sm h-100 ${statusFilter === key ? 'border-' + color : ''}"
+               style="${statusFilter === key ? 'border-width:2px !important' : ''}">
+            <div class="card-body py-3">
+              <div class="fs-3 fw-bold text-${color}">${stats[key] || 0}</div>
+              <div class="small text-muted">${label}</div>
+            </div>
+          </div>
+        </a>
+      </div>`).join('');
+
+    wrap.querySelectorAll('.stat-card-link').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const key = a.dataset.status;
+        statusFilter = (statusFilter === key) ? '' : key;
+        renderStatCards();
+        render();
+      });
+    });
+  }
+
+  function money(v) { return (v || v === 0) ? '$' + Number(v).toFixed(2) : '—'; }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = iso.slice(0, 10).split('-');
+    return `${d[1]}/${d[2]}/${d[0]}`;
+  }
+
+  function rowHtml(b) {
+    const color = DATA.STATUS_COLORS[b.status] || 'secondary';
+    const label = DATA.STATUS_LABELS[b.status] || b.status;
+    return `
+      <tr>
+        <td class="text-muted" style="font-size:.8rem">${b.id}</td>
+        <td class="fw-semibold">${b.facility_name}</td>
+        <td class="text-muted" style="font-size:.85rem">${b.contact_name || '—'}</td>
+        <td class="text-center">${b.item_count}</td>
+        <td>${money(b.total_credit_offer)}</td>
+        <td>${money(b.total_cash_offer)}</td>
+        <td><span class="badge bg-${color}">${label}</span></td>
+        <td class="text-muted" style="font-size:.85rem">${b.created_by_name || '—'}</td>
+        <td class="text-nowrap text-muted" style="font-size:.85rem">${fmtDate(b.created_at)}</td>
+        <td><a href="detail.html?id=${b.id}" class="btn btn-sm btn-outline-primary py-0 px-2">View</a></td>
+      </tr>`;
+  }
+
+  function render() {
+    const q = (document.getElementById('searchBox').value || '').toLowerCase().trim();
+    let rows = allBuybacks();
+    if (statusFilter) rows = rows.filter(b => b.status === statusFilter);
+    if (q) rows = rows.filter(b => (b.facility_name || '').toLowerCase().includes(q));
+
+    rows = rows.slice().sort((a, b) => {
+      const pa = STATUS_PRIORITY[a.status] ?? 99, pb = STATUS_PRIORITY[b.status] ?? 99;
+      if (pa !== pb) return pa - pb;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    const badgeEl = document.getElementById('activeFilterBadge');
+    if (statusFilter) {
+      const color = DATA.STATUS_COLORS[statusFilter] || 'secondary';
+      const label = DATA.STATUS_LABELS[statusFilter] || statusFilter;
+      badgeEl.innerHTML = `<span class="badge bg-${color} ms-1">${label} <a href="#" id="clearStatusX" class="text-white text-decoration-none ms-1">×</a></span>`;
+      document.getElementById('clearStatusX').addEventListener('click', e => {
+        e.preventDefault(); statusFilter = ''; renderStatCards(); render();
+      });
+    } else {
+      badgeEl.innerHTML = '';
+    }
+
+    const wrap = document.getElementById('tableWrap');
+    if (!rows.length) {
+      wrap.innerHTML = `
+        <div class="text-center text-muted py-5">
+          <p>No buybacks found.</p>
+          <a href="new.html" class="btn btn-success btn-sm">+ Create First Buyback</a>
+        </div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div class="card shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover table-sm mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>#</th><th>Facility</th><th>Contact</th><th>Items</th>
+                <th>Credit Offer</th><th>Cash Offer</th><th>Status</th>
+                <th>Created By</th><th>Date</th><th></th>
+              </tr>
+            </thead>
+            <tbody>${rows.map(rowHtml).join('')}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('searchBox').addEventListener('input', render);
+  document.getElementById('btnClear').addEventListener('click', () => {
+    document.getElementById('searchBox').value = '';
+    statusFilter = '';
+    renderStatCards();
+    render();
+  });
+</script>
+</body>
+</html>

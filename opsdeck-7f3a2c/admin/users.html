@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Management — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">User Management</h4>
+    <a href="roles.html" class="btn btn-outline-secondary btn-sm">Manage Roles →</a>
+  </div>
+
+  <div class="alert alert-secondary small py-2 mb-3">
+    Portfolio demo — the two real SurgiCentral accounts, read-only. Activate/Deactivate and Roles
+    editing are visually present but not wired up in this static site.
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover align-middle" style="font-size:.85rem">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Roles</th>
+          <th>Status</th>
+          <th>Last Login</th>
+          <th>Created</th>
+          <th style="width:220px">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersTbody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  function escHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function fmtDateTime(s) {
+    if (!s) return '—';
+    const d = new Date(s.replace(' ', 'T'));
+    if (isNaN(d)) return '—';
+    return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' }) + ' ' +
+           d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+  function fmtDate(s) {
+    if (!s) return '—';
+    const d = new Date(s.replace(' ', 'T'));
+    if (isNaN(d)) return '—';
+    return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
+  }
+
+  fetch('../data/admin/users.json').then(r => r.json()).then(data => {
+    document.getElementById('usersTbody').innerHTML = data.users.map(u => {
+      const statusBadge = u.is_active
+        ? '<span class="badge bg-success">Active</span>'
+        : '<span class="badge bg-warning text-dark">Pending</span>';
+
+      const rolesCheckboxes = data.all_roles.map(role => {
+        const checked = u.role_names.split(', ').includes(role.display_name) ? 'checked' : '';
+        return `<div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" ${checked} disabled
+                   id="role_${u.id}_${role.id}">
+            <label class="form-check-label" for="role_${u.id}_${role.id}">${escHtml(role.display_name)}</label>
+          </div>
+        </div>`;
+      }).join('');
+
+      return `<tr>
+        <td>${escHtml(u.name || '—')}</td>
+        <td>${escHtml(u.email)}</td>
+        <td><small class="text-muted">${escHtml(u.role_names)}</small></td>
+        <td>${statusBadge}</td>
+        <td><small class="text-muted">${fmtDateTime(u.last_login_at)}</small></td>
+        <td><small class="text-muted">${fmtDate(u.created_at)}</small></td>
+        <td>
+          <div class="d-flex gap-1 flex-wrap">
+            ${u.is_active
+              ? `<button class="btn btn-outline-danger btn-sm" data-demo-inert="Deactivate User">Deactivate</button>`
+              : `<button class="btn btn-success btn-sm" data-demo-inert="Activate User">Activate</button>`}
+            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#rolesModal${u.id}">Roles</button>
+          </div>
+
+          <div class="modal fade" id="rolesModal${u.id}" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Roles — ${escHtml(u.name || u.email)}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-2">${rolesCheckboxes}</div>
+                  <p class="text-muted small mt-3 mb-0">Read-only in this demo — checkboxes reflect the real assignment.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary btn-sm" data-demo-inert="Save Roles">Save Roles</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" class="text-center text-muted py-4">No users yet.</td></tr>';
+
+    window.wireInertLinks();
+  });
+</script>
+</body>
+</html>

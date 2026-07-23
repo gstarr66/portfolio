@@ -1,0 +1,45 @@
+{
+  "today": "2026-07-23",
+  "stats": {
+    "Offer Sent": 1,
+    "Shipping Label Sent": 1
+  },
+  "CASE_STATUSES": [
+    "Offer Sent",
+    "PO Issued",
+    "Shipping Label Sent",
+    "In Transit",
+    "Received",
+    "Received - Pending Verification",
+    "Payment Pending",
+    "SF Case Closed"
+  ],
+  "cases": [
+    {
+      "id": 2,
+      "buyback_id": 2,
+      "sf_case_number": "00001574",
+      "customer_name": "Osborn Medical Center",
+      "po_number": "14181",
+      "case_owner": "Gary Starr",
+      "status": "Shipping Label Sent",
+      "post_date": "2026-06-17",
+      "notes": null,
+      "created_at": "2026-06-17 15:24:32.171727+00",
+      "updated_at": "2026-06-17 15:30:02.018202+00"
+    },
+    {
+      "id": 1,
+      "buyback_id": null,
+      "sf_case_number": "00001574",
+      "customer_name": "Osborn",
+      "po_number": "14181",
+      "case_owner": "Gary Starr",
+      "status": "Offer Sent",
+      "post_date": "2026-06-17",
+      "notes": null,
+      "created_at": "2026-06-17 15:22:31.242043+00",
+      "updated_at": "2026-06-17 15:22:31.242043+00"
+    }
+  ]
+}

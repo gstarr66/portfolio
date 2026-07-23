@@ -1,0 +1,101 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{PREFIX}}profile.html">
+      <img src="{{PREFIX}}assets/img/logo.png" alt="">SurgiCentral<span class="demo-badge">DEMO</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Admin</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{PREFIX}}admin/users.html">Users</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}admin/roles.html">Roles &amp; Permissions</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item demo-inert" href="#" data-demo-inert="QBO Auth">QBO Auth</a></li>
+            <li><a class="dropdown-item demo-inert" href="#" data-demo-inert="QBO Full Sync">QBO Full Sync</a></li>
+            <li><a class="dropdown-item demo-inert" href="#" data-demo-inert="QBO Incremental Sync">QBO Incremental Sync</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item demo-inert" href="#" data-demo-inert="Competitor Sync">↻ Competitor Sync</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Inv Control</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{PREFIX}}inventory/holds.html">Holds</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}inventory/summary.html">Inventory</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}inventory/item_master.html">Item Master</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}new_items/dashboard.html">New Items</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}recalls/dashboard.html">FDA Recalls</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Outbound</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{PREFIX}}outbound/invoices.html">Invoice Approver</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}outbound/dashboard.html">Orders</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Procurement</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{PREFIX}}procurement/competitor_intel.html">Competitor Intel</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}procurement/index.html">Dashboard</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}suppliers/list.html">Supplier CRM</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Sales</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{PREFIX}}acquisitions/list.html">Acquisitions</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}sales/daily_orders.html">Daily Order List</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}sales/holds_sheet.html">Holds Sheet</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}sales/hot_codes.html">Hot Codes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}warranty/list.html">Warranty Claims</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Warehouse</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{PREFIX}}inventory/cycle_count.html">Cycle Count</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}warehouse/inbound.html">Inbound Scan Log</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}warehouse/scan_start.html">Inbound Scanning</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}shipments/index.html">Incoming Shipments</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}new_items/dashboard.html">New Items</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}warehouse/outbound.html">Outbound Scan Log</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}qc/lead.html">QC Lead</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}qc/notes.html">QC Notes</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}qc/index.html">QC Receiving</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}qc/locations.html">W/H Locations</a></li>
+            <li><a class="dropdown-item" href="{{PREFIX}}inventory/zone_moves.html">Zone Moves</a></li>
+          </ul>
+        </li>
+
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle nav-user" href="#" data-bs-toggle="dropdown">Gary Starr (Demo)</a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text text-muted" style="font-size:.8rem">Portfolio demo — static data, no live backend</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item demo-inert" href="#" data-demo-inert="Sign Out">Sign Out</a></li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</nav>

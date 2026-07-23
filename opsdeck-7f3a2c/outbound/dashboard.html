@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dispatch Dashboard — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0">Dispatch Dashboard</h5>
+    <a href="invoices.html" class="btn btn-sm btn-success">+ Approve Invoices</a>
+  </div>
+
+  <div class="alert alert-secondary small py-2 mb-3">
+    Portfolio demo — static snapshot of real outbound orders taken 2026-07-23. Use
+    <strong>Pull / Pack / Ship</strong> on Order #10 (Unity Physicians Hospital) to walk the
+    full dispatch flow — status advances in your browser only (<code>demoStore</code>), nothing
+    is saved to a server.
+  </div>
+
+  <!-- Date selector -->
+  <div class="card mb-3" style="max-width:320px">
+    <div class="card-body py-2">
+      <div class="d-flex gap-2 align-items-end">
+        <div class="flex-grow-1">
+          <label class="form-label mb-1 small text-muted">Date</label>
+          <select id="dateSelect" class="form-select form-select-sm"></select>
+        </div>
+        <button id="loadBtn" class="btn btn-sm btn-primary">Load</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="emptyMsg" class="alert alert-info" style="max-width:500px;display:none">
+    No dispatch orders for this date.
+  </div>
+
+  <div id="ordersWrap" style="display:none">
+    <!-- Summary bar -->
+    <div class="summary-bar mb-3 d-flex gap-4 flex-wrap">
+      <span><strong id="sumTotal">0</strong> orders</span>
+      <span class="text-success"><strong id="sumShipped">0</strong> shipped</span>
+      <span class="text-warning"><strong id="sumPending">0</strong> pending</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-hover table-bordered align-middle" style="font-size:0.83rem">
+        <thead class="table-dark">
+          <tr>
+            <th class="text-center">#</th>
+            <th>Invoice</th>
+            <th>Customer</th>
+            <th>Shipping</th>
+            <th>Rep</th>
+            <th class="text-center">Lines</th>
+            <th>Status</th>
+            <th>Tracking</th>
+            <th style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody id="ordersTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  let ALL_ORDERS = [];
+
+  function escHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Merge in any demoStore status override for an order (keyed by order id)
+  function withOverride(o) {
+    const ov = window.demoStore.get('outbound_order_' + o.id, null);
+    return ov ? Object.assign({}, o, ov) : o;
+  }
+
+  function statusBadge(status) {
+    if (status === 'shipped') return '<span class="badge bg-success">Shipped</span>';
+    if (status === 'packed') return '<span class="badge bg-primary">Packed</span>';
+    if (status === 'packing') return '<span class="badge bg-warning text-dark">Packing</span>';
+    return '<span class="badge bg-secondary">Approved</span>';
+  }
+
+  function renderDate(date) {
+    const orders = ALL_ORDERS.filter(o => o.order_date === date).map(withOverride);
+    const wrap = document.getElementById('ordersWrap');
+    const empty = document.getElementById('emptyMsg');
+
+    if (!orders.length) {
+      wrap.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    wrap.style.display = 'block';
+
+    document.getElementById('sumTotal').textContent = orders.length;
+    document.getElementById('sumShipped').textContent = orders.filter(o => o.status === 'shipped').length;
+    document.getElementById('sumPending').textContent =
+      orders.filter(o => ['approved', 'packing', 'packed'].includes(o.status)).length;
+
+    document.getElementById('ordersTbody').innerHTML = orders.map(o => `
+      <tr>
+        <td class="text-center fw-bold">${o.daily_order_number}</td>
+        <td><strong>${escHtml(o.invoice_number || '—')}</strong></td>
+        <td>${escHtml(o.customer_name || '—')}</td>
+        <td class="small">
+          ${o.custom_shipping ? '<span class="badge bg-secondary">' + escHtml(o.custom_shipping) + '</span>' : ''}
+          ${o.ship_method ? '<span class="text-muted ms-1">' + escHtml(o.ship_method) + '</span>' : ''}
+        </td>
+        <td class="small text-muted">${escHtml(o.sales_rep || '—')}</td>
+        <td class="text-center">${o.line_count}</td>
+        <td>${statusBadge(o.status)}</td>
+        <td class="small text-muted">${escHtml(o.tracking_number || '—')}</td>
+        <td class="text-nowrap">
+          <a href="pull.html?order=${o.id}" class="btn btn-sm btn-outline-secondary py-0 px-2" title="Pull List">Pull</a>
+          <a href="pack.html?order=${o.id}" class="btn btn-sm btn-outline-primary py-0 px-2" title="Pack/Scan">Pack</a>
+          <a href="ship.html?order=${o.id}" class="btn btn-sm ${o.status === 'shipped' ? 'btn-outline-secondary' : 'btn-warning text-dark'} py-0 px-2" title="Ship">Ship</a>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  fetch('../data/outbound/orders.json').then(r => r.json()).then(data => {
+    ALL_ORDERS = data.orders;
+    const dates = [...new Set(ALL_ORDERS.map(o => o.order_date))].sort().reverse();
+    const sel = document.getElementById('dateSelect');
+    sel.innerHTML = dates.map(d => `<option value="${d}">${d}</option>`).join('');
+    // Default to the date with the most orders so the demo isn't empty on load
+    const counts = {};
+    ALL_ORDERS.forEach(o => counts[o.order_date] = (counts[o.order_date] || 0) + 1);
+    const bestDate = dates.slice().sort((a, b) => counts[b] - counts[a])[0];
+    sel.value = bestDate;
+    renderDate(bestDate);
+    sel.addEventListener('change', () => renderDate(sel.value));
+    document.getElementById('loadBtn').addEventListener('click', () => renderDate(sel.value));
+  });
+</script>
+</body>
+</html>

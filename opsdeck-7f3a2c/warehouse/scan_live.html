@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inbound Scan — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+  <style>
+    #scan-flash {
+      height: 90px; border-radius: 10px; background: #dee2e6;
+      transition: background-color 0.12s ease;
+      display: flex; align-items: center; justify-content: center;
+      cursor: default; user-select: none;
+    }
+    #flash-inner { display: flex; align-items: center; gap: 14px; font-size: 1.3rem; font-weight: 600; color: #495057; }
+    #scan-flash.flash-green  { background: #28a745; } #scan-flash.flash-green  #flash-inner { color: #fff; }
+    #scan-flash.flash-yellow { background: #ffc107; } #scan-flash.flash-yellow #flash-inner { color: #333; }
+    #scan-flash.flash-red    { background: #dc3545; } #scan-flash.flash-red    #flash-inner { color: #fff; }
+    .row-expired     { background-color: #f8d7da !important; }
+    .row-short-dated { background-color: #fff3cd !important; }
+    .badge-new { background: #fd7e14; }
+    .badge-dup { background: #6c757d; }
+    .badge-exp { background: #dc3545; }
+    .badge-sd  { background: #ffc107; color: #333 !important; }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div id="notFound" class="alert alert-warning" style="display:none">
+    Session not found. <a href="scan_start.html">← Start a new session</a>
+  </div>
+
+  <div id="page" style="display:none">
+
+    <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+      <div>
+        <h5 class="mb-1">Inbound Scan</h5>
+        <div class="small text-muted" id="sessHeader"></div>
+      </div>
+      <a href="scan_start.html" class="btn btn-sm btn-outline-secondary">&larr; New Session</a>
+    </div>
+
+    <div class="alert alert-secondary small py-2 mb-3">
+      Portfolio demo — no scanner hardware attached. Click one of the
+      <strong>Simulate Scan</strong> buttons below to append a real product/lot
+      combination to this session (stored via <code>demoStore</code> in your
+      browser, not a server). Scanning the same item twice will flag as a duplicate,
+      exactly like the real scanner workflow.
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-3" id="simulateBtns"></div>
+
+    <div id="scan-flash" class="mb-1">
+      <div id="flash-inner">
+        <span id="flash-icon">&#9635;</span>
+        <span id="flash-text">SCANNER READY &mdash; Click a Simulate Scan button</span>
+      </div>
+    </div>
+
+    <div class="table-responsive mb-3 mt-3">
+      <table class="table table-sm table-bordered align-middle" id="scan-table" style="font-size:0.82rem">
+        <thead class="table-dark">
+          <tr>
+            <th style="width:36px">#</th>
+            <th>Item #</th>
+            <th>SKU</th>
+            <th style="min-width:200px">Description</th>
+            <th>Lot</th>
+            <th>Expiration</th>
+            <th style="min-width:130px">Zone</th>
+            <th style="width:36px">U</th>
+            <th style="width:80px"></th>
+            <th style="width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="scan-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4" style="max-width:560px">
+      <div class="card-body d-flex align-items-center gap-4 flex-wrap">
+        <div class="fs-5">Items scanned: <strong id="scan-count">0</strong></div>
+        <div class="form-check mb-0">
+          <input class="form-check-input" type="checkbox" id="count-verified">
+          <label class="form-check-label" for="count-verified">Physical count matches scanned count</label>
+        </div>
+        <button class="btn btn-success" data-demo-inert="Submit to QC">Submit to QC &rarr;</button>
+      </div>
+    </div>
+    <div class="small text-muted mb-4">Demo — scans are saved to your browser only, not a server.</div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  const TODAY = new Date('2026-07-23');
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = parseInt(params.get('session_id'), 10);
+
+  const tbody   = document.getElementById('scan-tbody');
+  const countEl = document.getElementById('scan-count');
+  const flashEl = document.getElementById('scan-flash');
+  const flashText = document.getElementById('flash-text');
+  const flashIcon = document.getElementById('flash-icon');
+  let rowNum = 0;
+  let flashTimer = null;
+
+  function nsScans(id)   { return 'warehouse:scans:' + id; }
+  function nsDeletes(id) { return 'warehouse:scan_deletes:' + id; }
+  function nsZones(id)   { return 'warehouse:scan_zones:' + id; }
+
+  function escHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ── Minimal GS1 bracket-format parser (port of warehouse/gs1.py, bracket path) ──
+  function parseGs1(raw) {
+    const result = { gtin: null, lot: null, exp_date: null };
+    const re = /\((\d{2,4})\)([^(]*)/g;
+    let m;
+    while ((m = re.exec(raw)) !== null) applyAi(result, m[1], m[2].trim());
+    return result;
+  }
+  function applyAi(result, ai, val) {
+    if (!val) return;
+    if (ai === '01' && val.length >= 14) result.gtin = val.slice(0, 14);
+    else if (['17', '15', '12', '11', '13'].includes(ai) && val.length >= 6 && !result.exp_date) {
+      result.exp_date = parseYYMMDD(val.slice(0, 6));
+    } else if (ai === '10' && !result.lot) result.lot = val || null;
+  }
+  function parseYYMMDD(s) {
+    const yy = parseInt(s.slice(0, 2), 10), mm = parseInt(s.slice(2, 4), 10);
+    let dd = parseInt(s.slice(4, 6), 10);
+    const year = yy < 50 ? 2000 + yy : 1900 + yy;
+    if (dd === 0) dd = new Date(year, mm, 0).getDate(); // GS1 rule: 00 = last day of month
+    return year + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+  }
+
+  function normalizeGtin(g) {
+    const digits = (g || '').replace(/\D/g, '');
+    return digits.padStart(14, '0');
+  }
+
+  function expStatus(expDate) {
+    if (!expDate) return 'ok';
+    const days = Math.floor((new Date(expDate) - TODAY) / 86400000);
+    if (days < 0) return 'expired';
+    if (days <= 90) return 'short_dated';
+    return 'ok';
+  }
+
+  let SESS = null, PRODUCTS = {}, GTIN_MAP = {}, CANNED = [];
+  let activeScans = []; // merged, de-duped, in display order
+
+  fetch('../data/warehouse/scan_sessions.json').then(r => r.json()).then(d => {
+    PRODUCTS = d.products;
+    CANNED    = d.canned_barcodes;
+    Object.keys(PRODUCTS).forEach(sku => {
+      GTIN_MAP[normalizeGtin(PRODUCTS[sku].gtin)] = sku;
+    });
+
+    const newSessions = window.demoStore.get('warehouse:sessions_new', []);
+    SESS = d.sessions.find(s => s.id === sessionId) || newSessions.find(s => s.id === sessionId);
+    if (!SESS) {
+      document.getElementById('notFound').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('page').style.display = 'block';
+    document.getElementById('sessHeader').innerHTML =
+      'PO <strong>' + escHtml(SESS.po_number) + '</strong>' +
+      (SESS.supplier ? ' &mdash; ' + escHtml(SESS.supplier) : '') +
+      (SESS.box_current && SESS.box_total ? ' &mdash; Box <strong>' + SESS.box_current + '</strong> of ' + SESS.box_total : '') +
+      ' &mdash; ' + escHtml(SESS.scanned_by) + ' &mdash; ' + escHtml(SESS.scan_date);
+
+    // Simulate-scan buttons — one per canned barcode, labelled by resolved SKU
+    const btnWrap = document.getElementById('simulateBtns');
+    btnWrap.innerHTML = CANNED.map((barcode, i) => {
+      const parsed = parseGs1(barcode);
+      const sku = GTIN_MAP[normalizeGtin(parsed.gtin)] || '?';
+      const prod = PRODUCTS[sku] || {};
+      return '<button class="btn btn-sm btn-outline-primary" data-barcode-idx="' + i + '">' +
+             'Simulate Scan: ' + escHtml(sku) + ' <span class="text-muted">(' + escHtml(prod.name || '') + ')</span></button>';
+    }).join('');
+    btnWrap.querySelectorAll('[data-barcode-idx]').forEach(btn => {
+      btn.addEventListener('click', () => processBarcode(CANNED[parseInt(btn.dataset.barcodeIdx, 10)]));
+    });
+
+    loadScans(d);
+    // Note: the "Submit to QC" button is static in this page's initial HTML
+    // (just hidden inside #page), so site.js's own nav-load wireInertLinks()
+    // call already wires it — no need to call it again here.
+  });
+
+  function loadScans(d) {
+    const seed = d.scans_by_session[String(sessionId)] || [];
+    const appended = window.demoStore.get(nsScans(sessionId), []);
+    const deletes = new Set(window.demoStore.get(nsDeletes(sessionId), []));
+    const zoneOverrides = window.demoStore.get(nsZones(sessionId), {});
+
+    activeScans = seed.concat(appended)
+      .filter(s => !deletes.has(s.id))
+      .map(s => Object.assign({}, s, { zone: zoneOverrides[s.id] || s.zone }));
+
+    tbody.innerHTML = '';
+    rowNum = 0;
+    activeScans.slice().reverse().forEach(s => addRow(s, false));
+    updateCount();
+  }
+
+  function showFlash(type, msg) {
+    clearTimeout(flashTimer);
+    flashEl.className = 'mb-1 flash-' + type;
+    const icons = { green: '✓', red: '✗', yellow: '⚠' };
+    flashIcon.textContent = icons[type] || '▣';
+    flashText.textContent = msg;
+    flashTimer = setTimeout(() => {
+      flashEl.className = 'mb-1';
+      flashIcon.textContent = '▣';
+      flashText.textContent = 'SCANNER READY — Click a Simulate Scan button';
+    }, 3000);
+  }
+
+  function processBarcode(barcode) {
+    const parsed = parseGs1(barcode);
+    if (!parsed.gtin) { showFlash('red', 'Could not parse barcode'); return; }
+
+    const sku = GTIN_MAP[normalizeGtin(parsed.gtin)] || null;
+    const prod = sku ? PRODUCTS[sku] : null;
+    const isNew = !sku;
+    const isDup = activeScans.some(s => s.gtin === parsed.gtin && (s.lot || '') === (parsed.lot || ''));
+    const status = expStatus(parsed.exp_date);
+    const zone = (status === 'short_dated' || status === 'expired') ? 'short_dated' : 'main';
+    const u = (sku || '').toUpperCase();
+    const unitType = u.endsWith('B') ? 'B' : (u.endsWith('E') ? 'E' : '');
+
+    if (isDup)      showFlash('red', 'DUPLICATE — ' + (sku || parsed.gtin) + ' already in session');
+    else if (isNew) showFlash('yellow', 'NEW ITEM — ' + parsed.gtin + ' not in product database');
+    else            showFlash('green', (sku || '') + ' — ' + (prod ? prod.name : ''));
+
+    const scan = {
+      id: 'demo-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+      gtin: parsed.gtin,
+      sku: sku,
+      item_number: prod ? prod.item_number : null,
+      name: prod ? prod.name : null,
+      lot: parsed.lot,
+      exp_date: parsed.exp_date,
+      exp_status: status,
+      zone: zone,
+      unit_type: unitType,
+      is_new: isNew,
+      is_duplicate: isDup,
+    };
+    window.demoStore.append(nsScans(sessionId), scan);
+    activeScans.push(scan);
+    addRow(scan, true);
+    updateCount();
+  }
+
+  function addRow(scan, prepend) {
+    rowNum++;
+    const tr = document.createElement('tr');
+    tr.dataset.scanId = scan.id;
+    if (scan.exp_status === 'expired') tr.classList.add('row-expired');
+    else if (scan.exp_status === 'short_dated') tr.classList.add('row-short-dated');
+
+    const expDisplay = scan.exp_date || '—';
+    const expClass = scan.exp_status === 'expired' ? 'text-danger fw-bold'
+                    : scan.exp_status === 'short_dated' ? 'text-warning fw-bold' : '';
+
+    const zoneOpts = [
+      { val: 'main', label: 'Main' },
+      { val: 'short_dated', label: 'Short-Dated' },
+      { val: 'damaged', label: 'Damaged' },
+    ].map(z => '<option value="' + z.val + '"' + (scan.zone === z.val ? ' selected' : '') + '>' + z.label + '</option>').join('');
+
+    const unitBadge = scan.unit_type ? '<span class="badge bg-secondary">' + scan.unit_type + '</span>' : '';
+
+    let badges = '';
+    if (scan.is_new) badges += '<span class="badge badge-new me-1">NEW</span>';
+    if (scan.is_duplicate) badges += '<span class="badge badge-dup me-1">DUP</span>';
+    if (scan.exp_status === 'expired') badges += '<span class="badge badge-exp me-1">EXP</span>';
+    else if (scan.exp_status === 'short_dated') badges += '<span class="badge badge-sd me-1">SD</span>';
+
+    const nameCell = scan.name ? escHtml(scan.name) : (scan.is_new ? '<em class="text-muted">Unknown — New Item</em>' : '—');
+
+    tr.innerHTML =
+      '<td class="text-center text-muted">' + rowNum + '</td>' +
+      '<td>' + escHtml(scan.item_number || '—') + '</td>' +
+      '<td><strong>' + escHtml(scan.sku || '—') + '</strong></td>' +
+      '<td>' + nameCell + '</td>' +
+      '<td>' + escHtml(scan.lot || '—') + '</td>' +
+      '<td class="' + expClass + '">' + escHtml(expDisplay) + '</td>' +
+      '<td><select class="form-select form-select-sm zone-select">' + zoneOpts + '</select></td>' +
+      '<td class="text-center">' + unitBadge + '</td>' +
+      '<td>' + badges + '</td>' +
+      '<td class="text-center"><button class="btn btn-sm btn-outline-danger py-0 px-1 delete-btn" title="Remove">&times;</button></td>';
+
+    if (prepend) tbody.insertBefore(tr, tbody.firstChild);
+    else tbody.appendChild(tr);
+
+    tr.querySelector('.zone-select').addEventListener('change', function () {
+      const overrides = window.demoStore.get(nsZones(sessionId), {});
+      overrides[scan.id] = this.value;
+      window.demoStore.set(nsZones(sessionId), overrides);
+    });
+    tr.querySelector('.delete-btn').addEventListener('click', function () {
+      const list = window.demoStore.get(nsDeletes(sessionId), []);
+      list.push(scan.id);
+      window.demoStore.set(nsDeletes(sessionId), Array.from(new Set(list)));
+      tr.remove();
+      activeScans = activeScans.filter(s => s.id !== scan.id);
+      renumberRows();
+      updateCount();
+    });
+  }
+
+  function renumberRows() {
+    rowNum = 0;
+    tbody.querySelectorAll('tr').forEach(tr => {
+      rowNum++;
+      tr.cells[0].textContent = rowNum;
+    });
+  }
+
+  function updateCount() {
+    countEl.textContent = tbody.querySelectorAll('tr').length;
+  }
+</script>
+</body>
+</html>

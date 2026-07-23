@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FDA Recall Dashboard — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">FDA Recall Dashboard</h4>
+    <div class="d-flex gap-2">
+      <a href="all_recalls.html" class="btn btn-outline-secondary btn-sm">All Recalls</a>
+      <button class="btn btn-outline-primary btn-sm" data-demo-inert="Run Recall Check Now">↻ Run Recall Check Now</button>
+    </div>
+  </div>
+
+  <div class="summary-bar mb-3">
+    <div class="row g-3 text-center" id="statRow">
+      <div class="col-6 col-md-3"><div class="fw-bold fs-4">—</div><div class="text-muted small">Total Recalls Tracked</div></div>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <h5 class="mb-2">Inventory Matches <span id="matchesBadge"></span></h5>
+    <div id="matchesAlert"></div>
+    <div id="matchesTable"></div>
+  </div>
+
+  <div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="mb-0">Recent FDA Recalls <small class="text-muted fw-normal">(last 30 days)</small></h5>
+      <a href="all_recalls.html" class="btn btn-outline-secondary btn-sm">View All</a>
+    </div>
+    <div id="recentTable"></div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  function statusBadge(status, size) {
+    if (!status) return '';
+    const terminal = ['terminated', 'completed'].includes(status.toLowerCase());
+    const cls = terminal ? 'bg-secondary' : (size === 'sm' ? 'bg-warning text-dark' : 'bg-danger');
+    return `<span class="badge ${cls}">${status}</span>`;
+  }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return `${m}/${d}/${y}`;
+  }
+  function trunc(s, n) {
+    if (!s) return '—';
+    return s.length > n ? s.slice(0, n) + '…' : s;
+  }
+
+  fetch('../data/recalls/dashboard.json').then(r => r.json()).then(data => {
+    document.getElementById('statRow').innerHTML = `
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4">${data.total_recalls.toLocaleString()}</div>
+        <div class="text-muted small">Total Recalls Tracked</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4 text-warning">${data.active_recalls.toLocaleString()}</div>
+        <div class="text-muted small">Active Recalls</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4 ${data.active_matches > 0 ? 'text-danger' : 'text-success'}">${data.active_matches}</div>
+        <div class="text-muted small">Active Inventory Matches</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-5">${data.last_run ? data.last_run.run_at_est + ' EST' : '<span class="text-muted">Never</span>'}</div>
+        <div class="text-muted small">Last Check
+          ${data.last_run ? `<span class="text-muted">(+${data.last_run.recalls_fetched} fetched, ${data.last_run.matches_found} matched)</span>` : ''}
+        </div>
+      </div>`;
+
+    document.getElementById('matchesBadge').innerHTML = data.active_matches > 0
+      ? `<span class="badge bg-danger ms-1">${data.active_matches} Active</span>`
+      : `<span class="badge bg-success ms-1">None Active</span>`;
+
+    if (data.active_matches > 0) {
+      document.getElementById('matchesAlert').innerHTML = `
+        <div class="alert alert-danger py-2 mb-3">
+          <strong>Action Required:</strong> ${data.active_matches} item(s) in your inventory have active FDA recalls.
+          Verify stock and take appropriate action for each item below.
+        </div>`;
+    }
+
+    if (data.matches && data.matches.length) {
+      document.getElementById('matchesTable').innerHTML = `
+        <div class="table-responsive">
+          <table class="table table-sm table-hover table-bordered align-middle">
+            <thead><tr><th>Item Code</th><th>Product Name</th><th>Brand</th><th>Recall #</th><th>Status</th><th>Date</th><th>Reason</th><th>Firm</th><th>Details</th><th>Alerted</th></tr></thead>
+            <tbody>${data.matches.map(m => `
+              <tr class="${['terminated','completed'].includes((m.status||'').toLowerCase()) ? 'table-secondary' : 'table-danger'}">
+                <td><strong>${m.product_code}</strong></td>
+                <td>${m.product_name || '—'}</td>
+                <td>${m.brand || '—'}</td>
+                <td><code>${m.recall_number}</code></td>
+                <td>${statusBadge(m.status)}</td>
+                <td class="text-nowrap">${fmtDate(m.recall_date)}</td>
+                <td style="max-width:280px;white-space:normal;font-size:.8rem">${trunc(m.reason, 180)}</td>
+                <td style="font-size:.8rem">${m.recall_firm || '—'}</td>
+                <td class="text-center"><a href="recall_detail.html?id=${m.recall_id}" class="btn btn-outline-danger btn-sm py-0 px-2">View Details</a></td>
+                <td class="text-center">${m.alert_sent ? '<span class="badge bg-success">✓</span>' : '<span class="badge bg-secondary">—</span>'}</td>
+              </tr>`).join('')}</tbody>
+          </table>
+        </div>`;
+    } else {
+      document.getElementById('matchesTable').innerHTML =
+        '<div class="text-muted fst-italic">No inventory matches on record. Run a recall check to populate.</div>';
+    }
+
+    if (data.recent && data.recent.length) {
+      document.getElementById('recentTable').innerHTML = `
+        <div class="table-responsive">
+          <table class="table table-sm table-hover table-bordered align-middle">
+            <thead><tr><th>Date</th><th>Recall #</th><th>Device / Product</th><th>Firm</th><th>Status</th><th>Reason</th><th>Details</th></tr></thead>
+            <tbody>${data.recent.map(r => `
+              <tr>
+                <td class="text-nowrap">${fmtDate(r.recall_date)}</td>
+                <td><code>${r.recall_number}</code></td>
+                <td style="font-size:.85rem">${trunc(r.device_name, 100)}</td>
+                <td style="font-size:.8rem">${r.recall_firm || '—'}</td>
+                <td>${statusBadge(r.status, 'sm')}</td>
+                <td style="max-width:220px;white-space:normal;font-size:.8rem">${trunc(r.reason, 120)}</td>
+                <td class="text-center"><a href="recall_detail.html?id=${r.id}" class="btn btn-outline-secondary btn-sm py-0 px-2">View Details</a></td>
+              </tr>`).join('')}</tbody>
+          </table>
+        </div>`;
+    } else {
+      document.getElementById('recentTable').innerHTML =
+        '<div class="text-muted fst-italic">No recalls in the last 30 days.</div>';
+    }
+  });
+</script>
+</body>
+</html>

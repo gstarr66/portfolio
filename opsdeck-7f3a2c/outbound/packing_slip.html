@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Packing List — SurgiCentral</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    color: #222;
+    background: white;
+    padding: 28px 36px;
+  }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+  .header-left { font-size: 10pt; line-height: 1.55; }
+  .header-left strong { font-size: 11pt; }
+  .header-right { text-align: right; }
+  .header-right .title { font-size: 22pt; font-weight: bold; letter-spacing: 1px; color: #003366; line-height: 1.1; }
+  .header-right img { height: 52px; margin-top: 6px; }
+  .meta { margin-bottom: 16px; font-size: 10.5pt; line-height: 1.7; }
+  .meta strong { font-size: 11pt; }
+  .ship-to { margin-bottom: 18px; font-size: 10.5pt; line-height: 1.55; }
+  .ship-to .label { font-size: 9pt; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin-bottom: 2px; }
+  .ship-to .name { font-weight: bold; }
+  .ship-to .addr { white-space: pre-line; color: #333; }
+  table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10pt; }
+  thead tr { border-top: 2px solid #003366; border-bottom: 1px solid #ccc; }
+  thead th { padding: 5px 8px; text-align: left; font-weight: bold; color: #003366; }
+  thead th.right { text-align: right; }
+  tbody tr { border-bottom: 1px solid #e0e0e0; }
+  tbody td { padding: 5px 8px; vertical-align: top; }
+  td.center { text-align: center; }
+  td.right { text-align: right; }
+  td.bold { font-weight: bold; }
+  tfoot tr { border-top: 2px solid #003366; }
+  tfoot td { padding: 5px 8px; font-weight: bold; }
+  .screen-only { margin-bottom: 18px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; font-size: 10pt; text-decoration: none; color: #222; background: #f8f8f8; }
+  .btn-primary { background: #003366; color: white; border-color: #003366; }
+  .demo-note { font-size: 9pt; color: #666; background: #fff8e1; border: 1px solid #ffe082; border-radius: 4px; padding: 4px 10px; }
+  @media print {
+    .screen-only { display: none !important; }
+    body { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="notFound" style="display:none">
+  Order not found. <a href="dashboard.html">← Back to dashboard</a>
+</div>
+
+<div id="page" style="display:none">
+
+<!-- Screen controls -->
+<div class="screen-only">
+  <button class="btn btn-primary" onclick="window.print()">Print</button>
+  <a href="dashboard.html" class="btn">← Dashboard</a>
+  <span id="demoNote" class="demo-note" style="display:none">Demo — not saved to a server. Status changes exist only in this browser.</span>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <strong>SurgiShop</strong><br>
+    19235 N US Highway 41<br>
+    Lutz, FL 33549<br>
+    +1 855-720-2285<br>
+    accounting@surgishop.com<br>
+    www.SurgiShop.com
+  </div>
+  <div class="header-right">
+    <div class="title">PACKING LIST</div>
+    <img src="../assets/img/logo.png" alt="SurgiShop">
+  </div>
+</div>
+
+<!-- Date / PO -->
+<div class="meta">
+  <strong>DATE:</strong> <span id="metaDate"></span><br>
+  <strong>PO #:</strong> <span id="metaPo"></span>
+</div>
+
+<!-- Ship To -->
+<div class="ship-to">
+  <div class="label">Ship To</div>
+  <div class="name" id="shipToCustomer"></div>
+  <div id="shipToName"></div>
+  <div class="addr" id="shipToAddr"></div>
+</div>
+
+<!-- Line items -->
+<table>
+  <thead>
+    <tr>
+      <th style="width:36px">No</th>
+      <th style="width:130px">Item Code</th>
+      <th>Description</th>
+      <th class="right" style="width:60px">Qty</th>
+    </tr>
+  </thead>
+  <tbody id="linesTbody"></tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" style="text-align:right">Total Items:</td>
+      <td style="text-align:right" id="totalQty"></td>
+    </tr>
+  </tfoot>
+</table>
+
+</div>
+
+<script src="../assets/js/site.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const orderId = parseInt(params.get('order'), 10);
+  const autoprint = params.get('autoprint') === '1';
+
+  function escHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  fetch('../data/outbound/orders.json').then(r => r.json()).then(data => {
+    const id = orderId || data.demo_order_id;
+    const base = data.orders.find(o => o.id === id);
+    if (!base) { document.getElementById('notFound').style.display = 'block'; return; }
+
+    let order = Object.assign({}, base);
+    const ov = window.demoStore.get('outbound_order_' + order.id, null);
+    if (ov) {
+      Object.assign(order, { status: ov.status, tracking_number: ov.tracking_number, ship_date: ov.ship_date });
+      document.getElementById('demoNote').style.display = '';
+    }
+
+    const lines = data.lines[String(order.id)] || [];
+
+    document.title = 'Packing List — ' + (order.invoice_number || order.daily_order_number);
+    document.getElementById('page').style.display = 'block';
+    document.getElementById('metaDate').textContent = order.ship_date || order.order_date || '—';
+    document.getElementById('metaPo').textContent = order.po_number || 'N/A';
+    document.getElementById('shipToCustomer').textContent = order.customer_name || '—';
+    if (order.ship_to_name) document.getElementById('shipToName').textContent = order.ship_to_name;
+    if (order.ship_addr) document.getElementById('shipToAddr').textContent = order.ship_addr;
+
+    let total = 0;
+    document.getElementById('linesTbody').innerHTML = lines.map((l, i) => {
+      total += l.qty_ordered || 0;
+      return `<tr>
+        <td class="center">${i + 1}</td>
+        <td class="bold">${escHtml(l.ref_ea || '—')}</td>
+        <td>${escHtml(l.description || '')}</td>
+        <td class="right bold">${Math.round(l.qty_ordered || 0)}</td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="4" style="text-align:center;color:#999;padding:12px">No items</td></tr>';
+    document.getElementById('totalQty').textContent = Math.round(total);
+
+    if (autoprint) window.addEventListener('load', () => window.print());
+  });
+</script>
+</body>
+</html>

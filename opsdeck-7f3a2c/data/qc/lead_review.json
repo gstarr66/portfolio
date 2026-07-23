@@ -1,0 +1,304 @@
+{
+"2026-05-20|14094": {
+"selected_date": "2026-05-20",
+"po_num": "14094",
+"supplier": "Quincy",
+"batches": [
+{
+"id": 1,
+"checker_name": "Angel Santiago",
+"status": "submitted",
+"submitted_at": null
+},
+{
+"id": 2,
+"checker_name": "Angel Santiago",
+"status": "submitted",
+"submitted_at": null
+}
+],
+"items": [
+{
+"ref": "470179E",
+"lot": "K10260213",
+"exp_date": null,
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Intuitive",
+"scanned_qty": 2.0,
+"accepted_qty": 0.0,
+"rejected_qty": 0.0,
+"damaged_qty": 0.0,
+"rejection_reason": null,
+"notes": "recalled versions 19 & below, and 22",
+"box_verified": false,
+"checkers_str": "Angel Santiago",
+"wh_location": "R21, R22",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "470179E",
+"lot": "K18260129",
+"exp_date": null,
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Intuitive",
+"scanned_qty": 2.0,
+"accepted_qty": 0.0,
+"rejected_qty": 0.0,
+"damaged_qty": 0.0,
+"rejection_reason": null,
+"notes": "recalled versions 19 & below, and 22",
+"box_verified": false,
+"checkers_str": "Angel Santiago",
+"wh_location": "R21, R22",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "471049E",
+"lot": "K10260122",
+"exp_date": null,
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Intuitive",
+"scanned_qty": 2.0,
+"accepted_qty": 0.0,
+"rejected_qty": 0.0,
+"damaged_qty": 0.0,
+"rejection_reason": null,
+"notes": "Voluntary Recall",
+"box_verified": false,
+"checkers_str": "Angel Santiago",
+"wh_location": "R11",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "471309E",
+"lot": "K12260205",
+"exp_date": null,
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Intuitive",
+"scanned_qty": 2.0,
+"accepted_qty": 0.0,
+"rejected_qty": 0.0,
+"damaged_qty": 0.0,
+"rejection_reason": null,
+"notes": "recalled versions 16 & bellow",
+"box_verified": false,
+"checkers_str": "Angel Santiago",
+"wh_location": "R25",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+}
+],
+"all_submitted": true,
+"is_finalized": false
+},
+"2026-05-20|14113": {
+"selected_date": "2026-05-20",
+"po_num": "14113",
+"supplier": "Quincy",
+"batches": [
+{
+"id": 3,
+"checker_name": "Angel Santiago",
+"status": "submitted",
+"submitted_at": null
+}
+],
+"items": [
+{
+"ref": "7510200E",
+"lot": "MNM6843ABD",
+"exp_date": "2027-12-31",
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Medtronic",
+"scanned_qty": 4.0,
+"accepted_qty": 0.0,
+"rejected_qty": 0.0,
+"damaged_qty": 0.0,
+"rejection_reason": null,
+"notes": "Bio(!), reject if seal tampered or jammed or broken",
+"box_verified": false,
+"checkers_str": "Angel Santiago",
+"wh_location": "I11, I12",
+"sd_lt3mo": false,
+"sd_3to18mo": true
+}
+],
+"all_submitted": true,
+"is_finalized": false
+},
+"2026-06-22|14080": {
+"selected_date": "2026-06-22",
+"po_num": "14080",
+"supplier": "Roger King",
+"batches": [
+{
+"id": 4,
+"checker_name": "Gary Starr",
+"status": "submitted",
+"submitted_at": "2026-06-22 17:11:14.197943+00"
+}
+],
+"items": [
+{
+"ref": "23-112-1E",
+"lot": "AQ25032050",
+"exp_date": "2030-03-24",
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Medtronic",
+"scanned_qty": 2.0,
+"accepted_qty": 1.0,
+"rejected_qty": 1.0,
+"damaged_qty": 0.0,
+"rejection_reason": "Rejected: Other",
+"notes": "4 patient labels, Reject any loose. Note: If made in Mexico-pls accept until new instructions",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "J13, RK22, RK24, RK31",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "5500-25S-301E",
+"lot": "24089037",
+"exp_date": "2026-04-01",
+"short_dated_lt3mo": true,
+"short_dated_3to18mo": false,
+"brand": "Stryker",
+"scanned_qty": 2.0,
+"accepted_qty": 0.0,
+"rejected_qty": 2.0,
+"damaged_qty": 0.0,
+"rejection_reason": "Rejected: Expired",
+"notes": "",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "L34",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "EMP-FBX200HSE",
+"lot": "H213272",
+"exp_date": "2026-08-05",
+"short_dated_lt3mo": true,
+"short_dated_3to18mo": false,
+"brand": "Olympus",
+"scanned_qty": 2.0,
+"accepted_qty": 1.0,
+"rejected_qty": 1.0,
+"damaged_qty": 0.0,
+"rejection_reason": "Rejected: Other",
+"notes": "",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "",
+"sd_lt3mo": true,
+"sd_3to18mo": false
+},
+{
+"ref": "EMP-FBX200HSE",
+"lot": "H213272?11210806",
+"exp_date": "2026-08-05",
+"short_dated_lt3mo": true,
+"short_dated_3to18mo": false,
+"brand": "Olympus",
+"scanned_qty": 1.0,
+"accepted_qty": 0.0,
+"rejected_qty": 1.0,
+"damaged_qty": 0.0,
+"rejection_reason": "Rejected: Other",
+"notes": "",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "",
+"sd_lt3mo": true,
+"sd_3to18mo": false
+}
+],
+"all_submitted": true,
+"is_finalized": false
+},
+"2026-06-22|14081": {
+"selected_date": "2026-06-22",
+"po_num": "14081",
+"supplier": "Quincy Enterprises Inc. - NJ",
+"batches": [
+{
+"id": 5,
+"checker_name": "Gary Starr",
+"status": "submitted",
+"submitted_at": null
+}
+],
+"items": [
+{
+"ref": "23-112-1E",
+"lot": "AQ25032050",
+"exp_date": "2030-03-24",
+"short_dated_lt3mo": false,
+"short_dated_3to18mo": false,
+"brand": "Medtronic",
+"scanned_qty": 1.0,
+"accepted_qty": 1.0,
+"rejected_qty": 0.0,
+"damaged_qty": 0.0,
+"rejection_reason": null,
+"notes": "4 patient labels, Reject any loose. Note: If made in Mexico-pls accept until new instructions",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "J13, RK22, RK24, RK31",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "5500-25S-301E",
+"lot": "24089037",
+"exp_date": "2026-04-01",
+"short_dated_lt3mo": true,
+"short_dated_3to18mo": false,
+"brand": "Stryker",
+"scanned_qty": 1.0,
+"accepted_qty": 0.0,
+"rejected_qty": 1.0,
+"damaged_qty": 0.0,
+"rejection_reason": "Rejected: Expired",
+"notes": "",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "L34",
+"sd_lt3mo": false,
+"sd_3to18mo": false
+},
+{
+"ref": "EMP-FBX200HSE",
+"lot": "H213272",
+"exp_date": "2026-08-05",
+"short_dated_lt3mo": true,
+"short_dated_3to18mo": false,
+"brand": "Olympus",
+"scanned_qty": 1.0,
+"accepted_qty": 0.0,
+"rejected_qty": 0.0,
+"damaged_qty": 1.0,
+"rejection_reason": null,
+"notes": "",
+"box_verified": false,
+"checkers_str": "Gary Starr",
+"wh_location": "",
+"sd_lt3mo": true,
+"sd_3to18mo": false
+}
+],
+"all_submitted": true,
+"is_finalized": false
+}
+}

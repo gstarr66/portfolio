@@ -1,0 +1,277 @@
+{
+"note": "The 6 real inbound_scan_sessions rows from the 2026-07-23 snapshot. Sessions 1,3,5 (PO 14080) and 4 (PO 14081) carry their real scanned lines; session 6 (PO 14080, box 2 of 2) was left open with nothing scanned yet \u2014 starting a new session in this demo behaves the same way, then the 'Simulate Scan' button appends real product/lot data via demoStore, exactly like a physical barcode scanner would.",
+"sessions": [
+{
+"id": 1,
+"po_number": "14080",
+"supplier": "Roger King",
+"scanned_by": "Gary Starr",
+"box_current": 1,
+"box_total": 1,
+"scan_date": "2026-06-22",
+"status": "open",
+"physical_count_verified": false
+},
+{
+"id": 2,
+"po_number": "14080",
+"supplier": "Roger King",
+"scanned_by": "Gary Starr",
+"box_current": 1,
+"box_total": 2,
+"scan_date": "2026-06-22",
+"status": "open",
+"physical_count_verified": false
+},
+{
+"id": 3,
+"po_number": "14080",
+"supplier": "Roger King",
+"scanned_by": "Gary Starr",
+"box_current": 1,
+"box_total": 1,
+"scan_date": "2026-06-22",
+"status": "submitted",
+"physical_count_verified": true
+},
+{
+"id": 4,
+"po_number": "14081",
+"supplier": "Quincy Enterprises Inc. - NJ",
+"scanned_by": "Gary Starr",
+"box_current": 1,
+"box_total": 1,
+"scan_date": "2026-06-22",
+"status": "submitted",
+"physical_count_verified": true
+},
+{
+"id": 5,
+"po_number": "14080",
+"supplier": "Roger King",
+"scanned_by": "Gary Starr",
+"box_current": 1,
+"box_total": 2,
+"scan_date": "2026-06-22",
+"status": "submitted",
+"physical_count_verified": true
+},
+{
+"id": 6,
+"po_number": "14080",
+"supplier": "Roger King",
+"scanned_by": "Gary Starr",
+"box_current": 2,
+"box_total": 2,
+"scan_date": "2026-06-22",
+"status": "open",
+"physical_count_verified": false
+}
+],
+"scans_by_session": {
+"1": [
+{
+"id": 1085068,
+"gtin": "00763000738501",
+"sku": "23-112-1E",
+"item_number": "23-112-1",
+"name": "Medtronic Aquamantys Sealer 6.0 Bipolar Sealer",
+"lot": "AQ25032050",
+"exp_date": "2030-03-24",
+"exp_status": "ok",
+"zone": "main",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085069,
+"gtin": "07613327422474",
+"sku": "5500-25S-301E",
+"item_number": "5500-25S-301",
+"name": "Stryker Sonopet iQ 20cm Standard",
+"lot": "24089037",
+"exp_date": "2026-04-01",
+"exp_status": "expired",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085070,
+"gtin": "08033945938413",
+"sku": "EMP-FBX200HSE",
+"item_number": "EMP-FBX200HS",
+"name": "Olympus Empower Surgical Laser Fiber Ball Tip 200 Series",
+"lot": "H213272?11210806",
+"exp_date": "2026-08-05",
+"exp_status": "short_dated",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+}
+],
+"2": [
+{
+"id": 1085071,
+"gtin": "08033945938413",
+"sku": "EMP-FBX200HSE",
+"item_number": "EMP-FBX200HS",
+"name": "Olympus Empower Surgical Laser Fiber Ball Tip 200 Series",
+"lot": "H213272",
+"exp_date": "2026-08-05",
+"exp_status": "short_dated",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+}
+],
+"3": [
+{
+"id": 1085072,
+"gtin": "00763000738501",
+"sku": "23-112-1E",
+"item_number": "23-112-1",
+"name": "Medtronic Aquamantys Sealer 6.0 Bipolar Sealer",
+"lot": "AQ25032050",
+"exp_date": "2030-03-24",
+"exp_status": "ok",
+"zone": "main",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085073,
+"gtin": "07613327422474",
+"sku": "5500-25S-301E",
+"item_number": "5500-25S-301",
+"name": "Stryker Sonopet iQ 20cm Standard",
+"lot": "24089037",
+"exp_date": "2026-04-01",
+"exp_status": "expired",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085074,
+"gtin": "08033945938413",
+"sku": "EMP-FBX200HSE",
+"item_number": "EMP-FBX200HS",
+"name": "Olympus Empower Surgical Laser Fiber Ball Tip 200 Series",
+"lot": "H213272",
+"exp_date": "2026-08-05",
+"exp_status": "short_dated",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+}
+],
+"4": [
+{
+"id": 1085079,
+"gtin": "00763000738501",
+"sku": "23-112-1E",
+"item_number": "23-112-1",
+"name": "Medtronic Aquamantys Sealer 6.0 Bipolar Sealer",
+"lot": "AQ25032050",
+"exp_date": "2030-03-24",
+"exp_status": "ok",
+"zone": "main",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085080,
+"gtin": "07613327422474",
+"sku": "5500-25S-301E",
+"item_number": "5500-25S-301",
+"name": "Stryker Sonopet iQ 20cm Standard",
+"lot": "24089037",
+"exp_date": "2026-04-01",
+"exp_status": "expired",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085081,
+"gtin": "08033945938413",
+"sku": "EMP-FBX200HSE",
+"item_number": "EMP-FBX200HS",
+"name": "Olympus Empower Surgical Laser Fiber Ball Tip 200 Series",
+"lot": "H213272",
+"exp_date": "2026-08-05",
+"exp_status": "short_dated",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+}
+],
+"5": [
+{
+"id": 1085082,
+"gtin": "00763000738501",
+"sku": "23-112-1E",
+"item_number": "23-112-1",
+"name": "Medtronic Aquamantys Sealer 6.0 Bipolar Sealer",
+"lot": "AQ25032050",
+"exp_date": "2030-03-24",
+"exp_status": "ok",
+"zone": "main",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085083,
+"gtin": "08033945938413",
+"sku": "EMP-FBX200HSE",
+"item_number": "EMP-FBX200HS",
+"name": "Olympus Empower Surgical Laser Fiber Ball Tip 200 Series",
+"lot": "H213272",
+"exp_date": "2026-08-05",
+"exp_status": "short_dated",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+},
+{
+"id": 1085084,
+"gtin": "07613327422474",
+"sku": "5500-25S-301E",
+"item_number": "5500-25S-301",
+"name": "Stryker Sonopet iQ 20cm Standard",
+"lot": "24089037",
+"exp_date": "2026-04-01",
+"exp_status": "expired",
+"zone": "short_dated",
+"unit_type": "E",
+"is_new": false
+}
+]
+},
+"products": {
+"EMP-FBX200HSE": {
+"sku": "EMP-FBX200HSE",
+"item_number": "EMP-FBX200HS",
+"name": "Olympus Empower Surgical Laser Fiber Ball Tip 200 Series",
+"gtin": "08033945938413"
+},
+"5500-25S-301E": {
+"sku": "5500-25S-301E",
+"item_number": "5500-25S-301",
+"name": "Stryker Sonopet iQ 20cm Standard",
+"gtin": "07613327422474"
+},
+"23-112-1E": {
+"sku": "23-112-1E",
+"item_number": "23-112-1",
+"name": "Medtronic Aquamantys Sealer 6.0 Bipolar Sealer",
+"gtin": "00763000738501"
+}
+},
+"canned_barcodes": [
+"(01)00763000738501(17)300324(10)AQ25032050",
+"(01)07613327422474(17)260401(10)24089037",
+"(01)08033945938413(17)260805(10)H213272"
+]
+}

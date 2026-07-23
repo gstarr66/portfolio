@@ -1,0 +1,2140 @@
+{
+"notes": [
+{
+"id": 1,
+"ref_ea": "0101-900SE",
+"ref_bx": "0101-900SB",
+"note": "2 sets of patient labels"
+},
+{
+"id": 2,
+"ref_ea": "0112660E",
+"ref_bx": "0112660B",
+"note": "No Box = Loose"
+},
+{
+"id": 3,
+"ref_ea": "038010E",
+"ref_bx": "038010B",
+"note": "Set of patient labels"
+},
+{
+"id": 4,
+"ref_ea": "10-401FCE",
+"ref_bx": "10-401FCB",
+"note": "Set of patient labels, Broken seal = Loose, Reject damaged/no box"
+},
+{
+"id": 5,
+"ref_ea": "134048E",
+"ref_bx": "134048B",
+"note": "Set of patient labels"
+},
+{
+"id": 6,
+"ref_ea": "174006E",
+"ref_bx": "174006B",
+"note": "Set of patient labels"
+},
+{
+"id": 7,
+"ref_ea": "176630E",
+"ref_bx": "176630B",
+"note": "Set of patient labels"
+},
+{
+"id": 8,
+"ref_ea": "176657E",
+"ref_bx": "176657B",
+"note": "Set of patient labels"
+},
+{
+"id": 9,
+"ref_ea": "1884030HREE",
+"ref_bx": "1884030HREB",
+"note": "Two Components"
+},
+{
+"id": 10,
+"ref_ea": "202050E",
+"ref_bx": "202050B",
+"note": "Bio(!), open box to inspect, If powder in vial is blue - reject"
+},
+{
+"id": 11,
+"ref_ea": "206520E",
+"ref_bx": "206520B",
+"note": "Bio(!), open box to inspect, If powder in vial is blue - reject"
+},
+{
+"id": 12,
+"ref_ea": "23-112-1E",
+"ref_bx": "23-112-1B",
+"note": "4 patient labels, Reject any loose. Note: If made in Mexico-pls accept until new instructions"
+},
+{
+"id": 13,
+"ref_ea": "23-113-1E",
+"ref_bx": "23-113-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 14,
+"ref_ea": "23-301-1E",
+"ref_bx": "23-301-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 15,
+"ref_ea": "2994E",
+"ref_bx": "2994B",
+"note": "KIT; Reject Broken Seals"
+},
+{
+"id": 16,
+"ref_ea": "30-401LITEE",
+"ref_bx": "30-401LITEB",
+"note": "4 patient labels, Broken seal = Loose, Reject damaged/no box"
+},
+{
+"id": 17,
+"ref_ea": "4403E",
+"ref_bx": "4403B",
+"note": "Set of patient labels"
+},
+{
+"id": 18,
+"ref_ea": "44420E",
+"ref_bx": "44420B",
+"note": "Contains: 1 sealed manual w/4 patient label, 2 strata nsc lumboperitonel shunt kit, closed tip"
+},
+{
+"id": 19,
+"ref_ea": "4565E",
+"ref_bx": "4565B",
+"note": "Set of patient labels"
+},
+{
+"id": 20,
+"ref_ea": "470347E",
+"ref_bx": "470347B",
+"note": "Reject Ver.12"
+},
+{
+"id": 21,
+"ref_ea": "50-501XLE",
+"ref_bx": "50-501XLB",
+"note": "4 patient labels, Broken seal = Loose, Reject damaged/no box"
+},
+{
+"id": 22,
+"ref_ea": "50-601XLE",
+"ref_bx": "50-601XLB",
+"note": "4 patient labels, Broken seal = Loose, Reject damaged/no box"
+},
+{
+"id": 23,
+"ref_ea": "5036964E",
+"ref_bx": "5036964B",
+"note": "1 pack of powder & 1 ampule, 8 patient labels"
+},
+{
+"id": 24,
+"ref_ea": "5955680E",
+"ref_bx": "5955680B",
+"note": "Contains: 1 positioning system inflation assembly, 1 Ventralight ST mesh & manual"
+},
+{
+"id": 25,
+"ref_ea": "6194-1-001E",
+"ref_bx": "6194-1-001B",
+"note": "Check Vial"
+},
+{
+"id": 26,
+"ref_ea": "6197-9-001E",
+"ref_bx": "6197-9-001B",
+"note": "Set of patient labels"
+},
+{
+"id": 27,
+"ref_ea": "620-020E",
+"ref_bx": "620-020B",
+"note": "Set of patient labels"
+},
+{
+"id": 28,
+"ref_ea": "6FENE",
+"ref_bx": "6FENB",
+"note": "Contains 2 Components"
+},
+{
+"id": 29,
+"ref_ea": "72201494E",
+"ref_bx": "72201494B",
+"note": "Set of patient labels"
+},
+{
+"id": 30,
+"ref_ea": "72201495E",
+"ref_bx": "72201495B",
+"note": "Set of patient labels"
+},
+{
+"id": 31,
+"ref_ea": "72201993E",
+"ref_bx": "72201993B",
+"note": "Set of patient labels"
+},
+{
+"id": 32,
+"ref_ea": "72201994E",
+"ref_bx": "72201994B",
+"note": "Set of patient labels"
+},
+{
+"id": 33,
+"ref_ea": "72202467E",
+"ref_bx": "72202467B",
+"note": "Set of patient labels"
+},
+{
+"id": 34,
+"ref_ea": "72202468E",
+"ref_bx": "72202468B",
+"note": "Set of patient labels"
+},
+{
+"id": 35,
+"ref_ea": "72202469E",
+"ref_bx": "72202469B",
+"note": "Set of patient labels"
+},
+{
+"id": 36,
+"ref_ea": "72202901E",
+"ref_bx": "72202901B",
+"note": "Set of patient labels"
+},
+{
+"id": 37,
+"ref_ea": "72203290E",
+"ref_bx": "72203290B",
+"note": "Set of patient labels"
+},
+{
+"id": 38,
+"ref_ea": "72203705E",
+"ref_bx": "72203705B",
+"note": "Set of patient labels"
+},
+{
+"id": 39,
+"ref_ea": "72203721E",
+"ref_bx": "72203721B",
+"note": "Set of patient labels"
+},
+{
+"id": 40,
+"ref_ea": "72204687E",
+"ref_bx": "72204687B",
+"note": "Set of patient labels"
+},
+{
+"id": 41,
+"ref_ea": "72205135E",
+"ref_bx": "72205135B",
+"note": "Set of patient labels"
+},
+{
+"id": 42,
+"ref_ea": "8229708E",
+"ref_bx": "8229708B",
+"note": "No Box = Loose"
+},
+{
+"id": 43,
+"ref_ea": "8FENE",
+"ref_bx": "8FENB",
+"note": "Contains 2 Components"
+},
+{
+"id": 44,
+"ref_ea": "9058E",
+"ref_bx": "9058B",
+"note": "Reject open boxes and loose"
+},
+{
+"id": 45,
+"ref_ea": "9734887XOME",
+"ref_bx": "9734887XOMB",
+"note": "Set of patient labels"
+},
+{
+"id": 46,
+"ref_ea": "9735317E",
+"ref_bx": "9735317B",
+"note": "Set of patient labels"
+},
+{
+"id": 47,
+"ref_ea": "ABSTACK15E",
+"ref_bx": "ABSTACK15B",
+"note": "Bio(!), Temp tag & 4 Patient label inside"
+},
+{
+"id": 48,
+"ref_ea": "ABSTACK30E",
+"ref_bx": "ABSTACK30B",
+"note": "Bio(!), Temp tag & 4 Patient label inside"
+},
+{
+"id": 49,
+"ref_ea": "ABSTACK30XE",
+"ref_bx": "ABSTACK30XB",
+"note": "Bio(!), Temp tag & 4 Patient label inside"
+},
+{
+"id": 50,
+"ref_ea": "ADS201845E",
+"ref_bx": "ADS201845B",
+"note": "Broken Seal accepted same way as sealed ones (Alan 1/15/2025)\""
+},
+{
+"id": 51,
+"ref_ea": "ADS202105E",
+"ref_bx": "ADS202105B",
+"note": "Broken Seal accepted same way as sealed ones (Alan 1/15/2025)\""
+},
+{
+"id": 52,
+"ref_ea": "ADS202110E",
+"ref_bx": "ADS202110B",
+"note": "Broken Seal accepted same way as sealed ones (Alan 1/15/2025)\""
+},
+{
+"id": 53,
+"ref_ea": "AR-1250RSE",
+"ref_bx": "AR-1250RSB",
+"note": "Set of patient labels"
+},
+{
+"id": 54,
+"ref_ea": "AR-1360CST-CPE",
+"ref_bx": "AR-1360CST-CPB",
+"note": "6 Patient labels, Temp tag on box"
+},
+{
+"id": 55,
+"ref_ea": "AR-1360TR-BCE",
+"ref_bx": "AR-1360TR-BCB",
+"note": "Temp tag on box"
+},
+{
+"id": 56,
+"ref_ea": "AR-1588AU-CPE",
+"ref_bx": "AR-1588AU-CPB",
+"note": "Set of patient labels"
+},
+{
+"id": 57,
+"ref_ea": "AR-1588BTBE",
+"ref_bx": "AR-1588BTBB",
+"note": "Set of patient labels"
+},
+{
+"id": 58,
+"ref_ea": "AR-1588RT-JE",
+"ref_bx": "AR-1588RT-JB",
+"note": "Set of patient labels"
+},
+{
+"id": 59,
+"ref_ea": "AR-1588RTE",
+"ref_bx": "AR-1588RTB",
+"note": "Set of patient labels"
+},
+{
+"id": 60,
+"ref_ea": "AR-1588RTEE",
+"ref_bx": "AR-1588RTEB",
+"note": "Set of patient labels"
+},
+{
+"id": 61,
+"ref_ea": "AR-1588TNE",
+"ref_bx": "AR-1588TNB",
+"note": "Set of patient labels"
+},
+{
+"id": 62,
+"ref_ea": "AR-1592E",
+"ref_bx": "AR-1592B",
+"note": "Set of patient labels"
+},
+{
+"id": 63,
+"ref_ea": "AR-1593-BCE",
+"ref_bx": "AR-1593-BCB",
+"note": "Bio(!), KIT; Reject Broken Seals"
+},
+{
+"id": 64,
+"ref_ea": "AR-1593-PE",
+"ref_bx": "AR-1593-PB",
+"note": "KIT; Reject Broken Seals"
+},
+{
+"id": 65,
+"ref_ea": "AR-1788J-CPE",
+"ref_bx": "AR-1788J-CPB",
+"note": "Bio(!), KIT; Reject broken seals, has temp tag"
+},
+{
+"id": 66,
+"ref_ea": "AR-1789J-CPE",
+"ref_bx": "AR-1789J-CPB",
+"note": "Bio(!), KIT; Reject broken seals, has temp tag"
+},
+{
+"id": 67,
+"ref_ea": "AR-2290E",
+"ref_bx": "AR-2290B",
+"note": "Bio(!), KIT; Reject Broken Seals"
+},
+{
+"id": 68,
+"ref_ea": "AR-2600SBS-10E",
+"ref_bx": "AR-2600SBS-10B",
+"note": "Bio(!), KIT; Reject Broken Seals"
+},
+{
+"id": 69,
+"ref_ea": "AR-2600SCRE",
+"ref_bx": "AR-2600SCRB",
+"note": "Bio(!), Temp tag on box"
+},
+{
+"id": 70,
+"ref_ea": "AR-4550E",
+"ref_bx": "AR-4550B",
+"note": "KIT; Reject Broken Seals"
+},
+{
+"id": 71,
+"ref_ea": "AR-4570E",
+"ref_bx": "AR-4570B",
+"note": "Set of patient labels"
+},
+{
+"id": 72,
+"ref_ea": "AR-7298E",
+"ref_bx": "AR-7298B",
+"note": "Set of patient labels"
+},
+{
+"id": 73,
+"ref_ea": "AR-8925TEE",
+"ref_bx": "AR-8925TEB",
+"note": "Set of patient labels"
+},
+{
+"id": 74,
+"ref_ea": "AR-8928BCJ-CPE",
+"ref_bx": "AR-8928BCJ-CPB",
+"note": "Bio(!), Reject Broken Seals, Temp tag on box"
+},
+{
+"id": 75,
+"ref_ea": "AR-8929BC-CPE",
+"ref_bx": "AR-8929BC-CPB",
+"note": "Bio(!), Pin holes acceptable"
+},
+{
+"id": 76,
+"ref_ea": "AR-8936BC-CPE",
+"ref_bx": "AR-8936BC-CPB",
+"note": "Bio(!), KIT; Reject Broken Seals"
+},
+{
+"id": 77,
+"ref_ea": "AR-9811E",
+"ref_bx": "AR-9811B",
+"note": "Set of patient labels"
+},
+{
+"id": 78,
+"ref_ea": "AR-9821E",
+"ref_bx": "AR-9821B",
+"note": "Set of patient labels"
+},
+{
+"id": 79,
+"ref_ea": "AR-ABS-1000E",
+"ref_bx": "AR-ABS-1000B",
+"note": "Contains: \"Fat Pad Retractor\" & \"With 3.0\" Tuohy Needle, obturator, 3cc mixing syringe, female luer cap, funnel\""
+},
+{
+"id": 80,
+"ref_ea": "BG3510-5-USE",
+"ref_bx": "BG3510-5-USB",
+"note": "Contains: Bioglue, Tips & 5 Patient Labels"
+},
+{
+"id": 81,
+"ref_ea": "BG3515-5-USE",
+"ref_bx": "BG3515-5-USB",
+"note": "Contains: Bioglue, Tips & 5 Patient Labels"
+},
+{
+"id": 82,
+"ref_ea": "C826GE",
+"ref_bx": "C826GB",
+"note": "Each PKG missing G"
+},
+{
+"id": 83,
+"ref_ea": "C8XX2E",
+"ref_bx": "C8XX2B",
+"note": "Contains 2 components"
+},
+{
+"id": 84,
+"ref_ea": "DP1011E",
+"ref_bx": "DP1011B",
+"note": "5 patient labels, No box = Loose"
+},
+{
+"id": 85,
+"ref_ea": "DP1022E",
+"ref_bx": "DP1022B",
+"note": "5 patient labels, No box = Loose"
+},
+{
+"id": 86,
+"ref_ea": "DP1033E",
+"ref_bx": "DP1033B",
+"note": "5 patient labels, No box = Loose"
+},
+{
+"id": 87,
+"ref_ea": "DP1045E",
+"ref_bx": "DP1045B",
+"note": "5 patient labels, No box = Loose"
+},
+{
+"id": 88,
+"ref_ea": "DP1057E",
+"ref_bx": "DP1057B",
+"note": "5 patient labels, No box = Loose"
+},
+{
+"id": 89,
+"ref_ea": "DTF-31E",
+"ref_bx": "DTF-31B",
+"note": "Contains 2 components & 5 patient labels"
+},
+{
+"id": 90,
+"ref_ea": "ECH60RE",
+"ref_bx": "ECH60RB",
+"note": "Bio(!), Temp tag on box"
+},
+{
+"id": 91,
+"ref_ea": "GEM2752-FCE",
+"ref_bx": "GEM2752-FCB",
+"note": "Set of patient labels"
+},
+{
+"id": 92,
+"ref_ea": "GEM2754-FCE",
+"ref_bx": "GEM2754-FCB",
+"note": "Set of patient labels"
+},
+{
+"id": 93,
+"ref_ea": "GEM2755-FCE",
+"ref_bx": "GEM2755-FCB",
+"note": "Set of patient labels"
+},
+{
+"id": 94,
+"ref_ea": "GEM2756-FCE",
+"ref_bx": "GEM2756-FCB",
+"note": "Set of patient labels"
+},
+{
+"id": 95,
+"ref_ea": "GIA6038SE",
+"ref_bx": "GIA6038SB",
+"note": "Set of patient labels"
+},
+{
+"id": 96,
+"ref_ea": "GIA8038SE",
+"ref_bx": "GIA8038SB",
+"note": "Set of patient labels"
+},
+{
+"id": 97,
+"ref_ea": "HP2000E",
+"ref_bx": "HP2000B",
+"note": "Set of patient labels"
+},
+{
+"id": 98,
+"ref_ea": "HP3500E",
+"ref_bx": "HP3500B",
+"note": "Contains 2 components w/the same lot number as box"
+},
+{
+"id": 99,
+"ref_ea": "LF4418E",
+"ref_bx": "LF4418B",
+"note": "Check for pin holes"
+},
+{
+"id": 100,
+"ref_ea": "LPG1510ALE",
+"ref_bx": "LPG1510ALB",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 101,
+"ref_ea": "LPG1510ARE",
+"ref_bx": "LPG1510ARB",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 102,
+"ref_ea": "LPG1510E",
+"ref_bx": "LPG1510B",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 103,
+"ref_ea": "LPG1612ALE",
+"ref_bx": "LPG1612ALB",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 104,
+"ref_ea": "LPG1612ARE",
+"ref_bx": "LPG1612ARB",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 105,
+"ref_ea": "LPG1612E",
+"ref_bx": "LPG1612B",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 106,
+"ref_ea": "NS2000USE",
+"ref_bx": "NS2000USB",
+"note": "Set of patient labels"
+},
+{
+"id": 107,
+"ref_ea": "NS2007USE",
+"ref_bx": "NS2007USB",
+"note": "Set of patient labels"
+},
+{
+"id": 108,
+"ref_ea": "NS2013KITUSE",
+"ref_bx": "NS2013KITUSB",
+"note": "Set of patient labels"
+},
+{
+"id": 109,
+"ref_ea": "PHSE6E",
+"ref_bx": "PHSE6B",
+"note": "Set of patient labels if is a box"
+},
+{
+"id": 110,
+"ref_ea": "PHSEE",
+"ref_bx": "PHSEB",
+"note": "Set of patient labels if is a box"
+},
+{
+"id": 111,
+"ref_ea": "PHSLE",
+"ref_bx": "PHSLB",
+"note": "Set of patient labels if is a box"
+},
+{
+"id": 112,
+"ref_ea": "PHSME",
+"ref_bx": "PHSMB",
+"note": "Set of patient labels if is a box"
+},
+{
+"id": 113,
+"ref_ea": "PS210-030S-LIGHTE",
+"ref_bx": "PS210-030S-LIGHTB",
+"note": "No patient labels"
+},
+{
+"id": 114,
+"ref_ea": "PS210-030SE",
+"ref_bx": "PS210-030SB",
+"note": "No patient labels"
+},
+{
+"id": 115,
+"ref_ea": "T3048SE",
+"ref_bx": "T3048SB",
+"note": "Set of patient labels"
+},
+{
+"id": 116,
+"ref_ea": "T9035SE",
+"ref_bx": "T9035SB",
+"note": "Set of patient labels"
+},
+{
+"id": 117,
+"ref_ea": "TA4548SE",
+"ref_bx": "TA4548SB",
+"note": "Set of patient labels"
+},
+{
+"id": 118,
+"ref_ea": "TRIEEA31XTE",
+"ref_bx": "TRIEEA31XTB",
+"note": "Set of patient labels"
+},
+{
+"id": 119,
+"ref_ea": "UL400-4E",
+"ref_bx": "UL400-4B",
+"note": "Set of patient labels, voluntary recall"
+},
+{
+"id": 120,
+"ref_ea": "BID30E",
+"ref_bx": "BID30B",
+"note": "No box = Loose"
+},
+{
+"id": 121,
+"ref_ea": "WA90500USE",
+"ref_bx": "WA90500USB",
+"note": "No Box = Loose, note: scanner reads box as each. Please, double check"
+},
+{
+"id": 122,
+"ref_ea": "DP1013E",
+"ref_bx": "DP1013B",
+"note": "5 patient labels, No box = Loose"
+},
+{
+"id": 123,
+"ref_ea": "ABSTACK20SE",
+"ref_bx": "ABSTACK20SB",
+"note": "Bio(!), Temp tag in box"
+},
+{
+"id": 124,
+"ref_ea": "PC0404NBIOE",
+"ref_bx": "PC0404NBIOB",
+"note": "Temp tag on box"
+},
+{
+"id": 125,
+"ref_ea": "LXMJ44LE",
+"ref_bx": "LXMJ44LB",
+"note": "No Box = Loose"
+},
+{
+"id": 126,
+"ref_ea": "LXMJ44SE",
+"ref_bx": "LXMJ44SB",
+"note": "No Box = Loose"
+},
+{
+"id": 127,
+"ref_ea": "NUS-106E",
+"ref_bx": "NUS-106B",
+"note": "Small Holes can be accepted"
+},
+{
+"id": 128,
+"ref_ea": "1012529-80E",
+"ref_bx": "1012529-80B",
+"note": "Temp tag inside, Open to check"
+},
+{
+"id": 129,
+"ref_ea": "2B12LTE",
+"ref_bx": "2B12LTB",
+"note": "Make sure the brand is Stryker or Ethicon"
+},
+{
+"id": 130,
+"ref_ea": "CM-9145E",
+"ref_bx": "CM-9145B",
+"note": "If seal is open, Set of 4 patient labels"
+},
+{
+"id": 131,
+"ref_ea": "2504-1E",
+"ref_bx": "2504-1B",
+"note": "Set of patient labels // Temp Tag"
+},
+{
+"id": 132,
+"ref_ea": "480422E",
+"ref_bx": "480422B",
+"note": "on recall but OK to accept"
+},
+{
+"id": 133,
+"ref_ea": "14BA50E",
+"ref_bx": "14BA50B",
+"note": "if received this product with trade name \"Stealth Midas\" please, note it in inbound report"
+},
+{
+"id": 134,
+"ref_ea": "HP054E",
+"ref_bx": "HP054B",
+"note": "no loose acceptable, if box damaged-reject"
+},
+{
+"id": 135,
+"ref_ea": "HPBLUE",
+"ref_bx": "HPBLUB",
+"note": "no loose acceptable, if box damaged-reject"
+},
+{
+"id": 136,
+"ref_ea": "0113115E",
+"ref_bx": "0113115B",
+"note": "Bio(!), check color of temp tag-grey color is OK, black color to reject"
+},
+{
+"id": 137,
+"ref_ea": "0113116E",
+"ref_bx": "0113116B",
+"note": "Bio(!), check color of temp tag-grey color is OK, black color to reject"
+},
+{
+"id": 138,
+"ref_ea": "23-313-1E",
+"ref_bx": "23-313-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 139,
+"ref_ea": "23-322-1E",
+"ref_bx": "23-322-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 140,
+"ref_ea": "23-321-1E",
+"ref_bx": "23-321-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 141,
+"ref_ea": "23-314-1E",
+"ref_bx": "23-314-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 142,
+"ref_ea": "23-312-1E",
+"ref_bx": "23-312-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 143,
+"ref_ea": "23-317-1E",
+"ref_bx": "23-317-1B",
+"note": "4 patient labels, Reject any loose"
+},
+{
+"id": 144,
+"ref_ea": "50011E",
+"ref_bx": "50011B",
+"note": "loose accepted as long as a unit glued to box inside"
+},
+{
+"id": 145,
+"ref_ea": "60011E",
+"ref_bx": "60011B",
+"note": "loose accepted as long as a unit glued to box inside"
+},
+{
+"id": 146,
+"ref_ea": "70011E",
+"ref_bx": "70011B",
+"note": "loose accepted as long as a unit glued to box inside"
+},
+{
+"id": 147,
+"ref_ea": "WA22702SE",
+"ref_bx": "WA22702SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 148,
+"ref_ea": "WA22703SE",
+"ref_bx": "WA22703SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 149,
+"ref_ea": "WA22706SE",
+"ref_bx": "WA22706SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 150,
+"ref_ea": "WA22760SE",
+"ref_bx": "WA22760SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 151,
+"ref_ea": "WA47755Se",
+"ref_bx": "WA47755SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 152,
+"ref_ea": "WA22721Se",
+"ref_bx": "WA22721SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 225,
+"ref_ea": "BXB071902AE",
+"ref_bx": "BXB071902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 153,
+"ref_ea": "WA22741Se",
+"ref_bx": "WA22741SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 154,
+"ref_ea": "WA22737Se",
+"ref_bx": "WA22737SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 155,
+"ref_ea": "WA22651Se",
+"ref_bx": "WA22651SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 156,
+"ref_ea": "WA47788AE",
+"ref_bx": "WA47788AB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 157,
+"ref_ea": "WA22602SE",
+"ref_bx": "WA22602SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 158,
+"ref_ea": "WA35057AE",
+"ref_bx": "WA35057AB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 159,
+"ref_ea": "WA22621SE",
+"ref_bx": "WA22621SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 160,
+"ref_ea": "WA22707SE",
+"ref_bx": "WA22707SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 161,
+"ref_ea": "WA22657SE",
+"ref_bx": "WA22657SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 162,
+"ref_ea": "WA22755SE",
+"ref_bx": "WA22755SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 163,
+"ref_ea": "WA22723SE",
+"ref_bx": "WA22723SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 164,
+"ref_ea": "WA22306DE",
+"ref_bx": "WA22306DB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 165,
+"ref_ea": "WA22503DE",
+"ref_bx": "WA22503DB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 166,
+"ref_ea": "WA22351CE",
+"ref_bx": "WA22351CB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 167,
+"ref_ea": "WA22355CE",
+"ref_bx": "WA22355CB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 168,
+"ref_ea": "WA22302DE",
+"ref_bx": "WA22302DB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 169,
+"ref_ea": "WA00014AE",
+"ref_bx": "WA00014AB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 170,
+"ref_ea": "WA22737SB",
+"ref_bx": "WA22737SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 171,
+"ref_ea": "WA22740SE",
+"ref_bx": "WA22740SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 172,
+"ref_ea": "WA22603SE",
+"ref_bx": "WA22603SB",
+"note": "(!) note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 173,
+"ref_ea": "UL400E",
+"ref_bx": "UL400B",
+"note": "Set of patient labels, voluntary recall"
+},
+{
+"id": 174,
+"ref_ea": "WA22766SE",
+"ref_bx": "WA22766SB",
+"note": "No Box = Loose, note: scanner wrongly reads EACH as BOX. Please, double check"
+},
+{
+"id": 175,
+"ref_ea": "81-1000E",
+"ref_bx": "81-1000B",
+"note": "Check box QTY (96 or 24)"
+},
+{
+"id": 176,
+"ref_ea": "DP5033E",
+"ref_bx": "DP5033B",
+"note": "No box = REF change to DP1033E"
+},
+{
+"id": 177,
+"ref_ea": "AR-9815E",
+"ref_bx": "AR-9815B",
+"note": "If open: 6 patient label"
+},
+{
+"id": 178,
+"ref_ea": "72205136E",
+"ref_bx": "72205136B",
+"note": "Set of patient labels"
+},
+{
+"id": 179,
+"ref_ea": "BB23X30E",
+"ref_bx": "BB23X30B",
+"note": "Temp tag inside, Open to check"
+},
+{
+"id": 180,
+"ref_ea": "BB40X60E",
+"ref_bx": "BB40X60B",
+"note": "Temp tag inside, Open to check"
+},
+{
+"id": 181,
+"ref_ea": "BB5X250E",
+"ref_bx": "BB5X250B",
+"note": "Temp tag inside, Open to check"
+},
+{
+"id": 182,
+"ref_ea": "EGIA60AMTE",
+"ref_bx": "EGIA60AMTB",
+"note": "Set of patient labels on the back"
+},
+{
+"id": 183,
+"ref_ea": "SIG60CTAMTE",
+"ref_bx": "SIG60CTAMTB",
+"note": "Set of patient labels on the back"
+},
+{
+"id": 184,
+"ref_ea": "12BSGEC60E",
+"ref_bx": "12BSGEC60B",
+"note": "(!)Attention, a Box scans as Each, please confirm if received Each or Box"
+},
+{
+"id": 185,
+"ref_ea": "12BSGEC60AE",
+"ref_bx": "12BSGEC60AB",
+"note": "Attention! an Each scans as Box, please confirm if received Each or Box"
+},
+{
+"id": 186,
+"ref_ea": "BXB061902AE",
+"ref_bx": "BXB061902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 187,
+"ref_ea": "BXB082902AE",
+"ref_bx": "BXB082902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 188,
+"ref_ea": "BXB061501AE",
+"ref_bx": "BXB061501AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 189,
+"ref_ea": "BXB051902AE",
+"ref_bx": "BXB051902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 190,
+"ref_ea": "BXB063902AE",
+"ref_bx": "BXB063902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 191,
+"ref_ea": "BXB065902AE",
+"ref_bx": "BXB065902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 192,
+"ref_ea": "BXB067902AE",
+"ref_bx": "BXB067902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 193,
+"ref_ea": "BXBL085902AE",
+"ref_bx": "BXBL085902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 194,
+"ref_ea": "BXB083902AE",
+"ref_bx": "BXB083902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 195,
+"ref_ea": "BXB093902AE",
+"ref_bx": "BXB093902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 196,
+"ref_ea": "BXB051501AE",
+"ref_bx": "BXB051501AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 197,
+"ref_ea": "BXB053901AE",
+"ref_bx": "BXB053901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 198,
+"ref_ea": "BXB063901AE",
+"ref_bx": "BXB063901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 199,
+"ref_ea": "BXB071501AE",
+"ref_bx": "BXB071501AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 200,
+"ref_ea": "BXB073901AE",
+"ref_bx": "BXB073901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 201,
+"ref_ea": "BXB082901AE",
+"ref_bx": "BXB082901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 202,
+"ref_ea": "BXB087901AE",
+"ref_bx": "BXB087901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 203,
+"ref_ea": "BXBL085901AE",
+"ref_bx": "BXBL085901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 204,
+"ref_ea": "BXB093901AE",
+"ref_bx": "BXB093901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 205,
+"ref_ea": "BXB073901JE",
+"ref_bx": "BXB073901JB",
+"note": "recalled but voluntary"
+},
+{
+"id": 206,
+"ref_ea": "BXB051502AE",
+"ref_bx": "BXB051502AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 207,
+"ref_ea": "BXB053902AE",
+"ref_bx": "BXB053902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 208,
+"ref_ea": "BXB061502AE",
+"ref_bx": "BXB061502AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 209,
+"ref_ea": "BXB071502AE",
+"ref_bx": "BXB071502AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 210,
+"ref_ea": "BXB073902AE",
+"ref_bx": "BXB073902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 211,
+"ref_ea": "BXB087902AE",
+"ref_bx": "BXB087902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 212,
+"ref_ea": "BXB073902JE",
+"ref_bx": "BXB073902JB",
+"note": "recalled but voluntary"
+},
+{
+"id": 213,
+"ref_ea": "BXB051901AE",
+"ref_bx": "BXB051901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 214,
+"ref_ea": "BXB055901AE",
+"ref_bx": "BXB055901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 215,
+"ref_ea": "BXB061901AE",
+"ref_bx": "BXB061901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 216,
+"ref_ea": "BXB065901AE",
+"ref_bx": "BXB065901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 217,
+"ref_ea": "BXB071901AE",
+"ref_bx": "BXB071901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 218,
+"ref_ea": "BXB075901AE",
+"ref_bx": "BXB075901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 219,
+"ref_ea": "BXB083901AE",
+"ref_bx": "BXB083901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 220,
+"ref_ea": "BXBL082901AE",
+"ref_bx": "BXBL082901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 221,
+"ref_ea": "BXBL087901AE",
+"ref_bx": "BXBL087901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 222,
+"ref_ea": "BXB095901AE",
+"ref_bx": "BXB095901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 223,
+"ref_ea": "BXB075901JE",
+"ref_bx": "BXB075901JB",
+"note": "recalled but voluntary"
+},
+{
+"id": 224,
+"ref_ea": "BXB055902AE",
+"ref_bx": "BXB055902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 226,
+"ref_ea": "BXB075902AE",
+"ref_bx": "BXB075902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 227,
+"ref_ea": "BXBL082902AE",
+"ref_bx": "BXBL082902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 228,
+"ref_ea": "BXBL087902AE",
+"ref_bx": "BXBL087902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 229,
+"ref_ea": "BXB095902AE",
+"ref_bx": "BXB095902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 230,
+"ref_ea": "BXB075902JE",
+"ref_bx": "BXB075902JB",
+"note": "recalled but voluntary"
+},
+{
+"id": 231,
+"ref_ea": "BXB052901AE",
+"ref_bx": "BXB052901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 232,
+"ref_ea": "BXB057901AE",
+"ref_bx": "BXB057901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 233,
+"ref_ea": "BXB062901AE",
+"ref_bx": "BXB062901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 234,
+"ref_ea": "BXB067901AE",
+"ref_bx": "BXB067901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 235,
+"ref_ea": "BXB072901AE",
+"ref_bx": "BXB072901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 236,
+"ref_ea": "BXB077901AE",
+"ref_bx": "BXB077901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 237,
+"ref_ea": "BXB085901AE",
+"ref_bx": "BXB085901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 238,
+"ref_ea": "BXBL083901AE",
+"ref_bx": "BXBL083901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 239,
+"ref_ea": "BXB092901AE",
+"ref_bx": "BXB092901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 240,
+"ref_ea": "BXB097901AE",
+"ref_bx": "BXB097901AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 241,
+"ref_ea": "BXB077901JE",
+"ref_bx": "BXB077901JB",
+"note": "recalled but voluntary"
+},
+{
+"id": 242,
+"ref_ea": "BXB052902AE",
+"ref_bx": "BXB052902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 243,
+"ref_ea": "BXB057902AE",
+"ref_bx": "BXB057902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 244,
+"ref_ea": "BXB062902AE",
+"ref_bx": "BXB062902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 245,
+"ref_ea": "BXB072902AE",
+"ref_bx": "BXB072902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 246,
+"ref_ea": "BXB077902AE",
+"ref_bx": "BXB077902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 247,
+"ref_ea": "BXB085902AE",
+"ref_bx": "BXB085902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 248,
+"ref_ea": "BXBL083902AE",
+"ref_bx": "BXBL083902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 249,
+"ref_ea": "BXB092902AE",
+"ref_bx": "BXB092902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 250,
+"ref_ea": "BXB097902AE",
+"ref_bx": "BXB097902AB",
+"note": "recalled but voluntary"
+},
+{
+"id": 251,
+"ref_ea": "BXB077902JE",
+"ref_bx": "BXB077902JB",
+"note": "recalled but voluntary"
+},
+{
+"id": 252,
+"ref_ea": "7510200E",
+"ref_bx": "7510200B",
+"note": "Bio(!), reject if seal tampered or jammed or broken"
+},
+{
+"id": 253,
+"ref_ea": "7510400E",
+"ref_bx": "7510400B",
+"note": "Bio(!), reject if seal tampered or jammed or broken"
+},
+{
+"id": 254,
+"ref_ea": "7510600E",
+"ref_bx": "7510600B",
+"note": "Bio(!), reject if seal tampered or jammed or broken"
+},
+{
+"id": 255,
+"ref_ea": "7510800E",
+"ref_bx": "7510800B",
+"note": "Bio(!), reject if seal tampered or jammed or broken"
+},
+{
+"id": 256,
+"ref_ea": "72205319E",
+"ref_bx": "72205319B",
+"note": "2 Components inside( if not, reject)"
+},
+{
+"id": 257,
+"ref_ea": "2991E",
+"ref_bx": "2991B",
+"note": "Reject Broken Seal"
+},
+{
+"id": 258,
+"ref_ea": "HP3000E",
+"ref_bx": "HP3000B",
+"note": "Contains 2 components w/the same lot number as box"
+},
+{
+"id": 259,
+"ref_ea": "ONE3000E",
+"ref_bx": "ONE3000B",
+"note": "Contains 2 components w/the same lot number as box"
+},
+{
+"id": 260,
+"ref_ea": "72205325E",
+"ref_bx": "72205325B",
+"note": "Contains 2 components w/the same lot number as box"
+},
+{
+"id": 261,
+"ref_ea": "AR-2600SBS-8E",
+"ref_bx": "AR-2600SBS-8B",
+"note": "Bio(!), Reject Broken Seal"
+},
+{
+"id": 262,
+"ref_ea": "1012529-40E",
+"ref_bx": "1012529-40B",
+"note": "Temp tag inside, Open to check"
+},
+{
+"id": 263,
+"ref_ea": "1012534-40E",
+"ref_bx": "1012534-40B",
+"note": "Temp tag inside, Open to check"
+},
+{
+"id": 264,
+"ref_ea": "3905E",
+"ref_bx": "3905B",
+"note": "Reject - Quaratine - Notifty Director of Ops - Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 265,
+"ref_ea": "038100E",
+"ref_bx": "038100B",
+"note": "Implant docs inside with set of patient labels"
+},
+{
+"id": 266,
+"ref_ea": "470405-TE",
+"ref_bx": "470405-TB",
+"note": "Reject-not for human use"
+},
+{
+"id": 267,
+"ref_ea": "82-8804PLE",
+"ref_bx": "82-8804PLB",
+"note": "If seal is broken, set of patient labels inside"
+},
+{
+"id": 268,
+"ref_ea": "72201490E",
+"ref_bx": "72201490B",
+"note": "Set of 4 patient label"
+},
+{
+"id": 269,
+"ref_ea": "03.000.004SE",
+"ref_bx": "03.000.004SB",
+"note": "Reject any Loose or no box"
+},
+{
+"id": 270,
+"ref_ea": "03.000.052SE",
+"ref_bx": "03.000.052SB",
+"note": "Reject any Loose or no box"
+},
+{
+"id": 271,
+"ref_ea": "03.000.071SE",
+"ref_bx": "03.000.071SB",
+"note": "Reject any Loose or no box"
+},
+{
+"id": 272,
+"ref_ea": "03.000.086SE",
+"ref_bx": "03.000.086SB",
+"note": "Reject any Loose or no box"
+},
+{
+"id": 273,
+"ref_ea": "03.000.327SE",
+"ref_bx": "03.000.327SB",
+"note": "Reject any Loose or no box"
+},
+{
+"id": 274,
+"ref_ea": "05.000.007.01SE",
+"ref_bx": "05.000.007.01SB",
+"note": "Reject any Loose or no box"
+},
+{
+"id": 275,
+"ref_ea": "470230E",
+"ref_bx": "470230B",
+"note": "Voluntary Recall"
+},
+{
+"id": 276,
+"ref_ea": "471172E",
+"ref_bx": "471172B",
+"note": "recalled versions 17 & bellow"
+},
+{
+"id": 277,
+"ref_ea": "471344E",
+"ref_bx": "471344B",
+"note": "Voluntary Recall"
+},
+{
+"id": 278,
+"ref_ea": "471405E",
+"ref_bx": "471405B",
+"note": "Voluntary Recall"
+},
+{
+"id": 279,
+"ref_ea": "470207E",
+"ref_bx": "470207B",
+"note": "recalled versions 4,7,8,10"
+},
+{
+"id": 280,
+"ref_ea": "470205e",
+"ref_bx": "470205B",
+"note": "recalled versions 17 & bellow"
+},
+{
+"id": 281,
+"ref_ea": "470318E",
+"ref_bx": "470318B",
+"note": "recalled versions 4,7,8,10,14"
+},
+{
+"id": 282,
+"ref_ea": "471309E",
+"ref_bx": "471309B",
+"note": "recalled versions 16 & bellow"
+},
+{
+"id": 283,
+"ref_ea": "470179E",
+"ref_bx": "470179B",
+"note": "recalled versions 19 & below, and 22"
+},
+{
+"id": 284,
+"ref_ea": "471049E",
+"ref_bx": "471049B",
+"note": "Voluntary Recall"
+},
+{
+"id": 285,
+"ref_ea": "470007E",
+"ref_bx": "470007B",
+"note": "Voluntary Recall"
+},
+{
+"id": 286,
+"ref_ea": "470327E",
+"ref_bx": "470327B",
+"note": "Voluntary Recall"
+},
+{
+"id": 287,
+"ref_ea": "471093E",
+"ref_bx": "471093B",
+"note": "recalled versions 11 & below"
+},
+{
+"id": 288,
+"ref_ea": "471205E",
+"ref_bx": "471205B",
+"note": "recalled versions 18 & bellow"
+},
+{
+"id": 289,
+"ref_ea": "471296E",
+"ref_bx": "471296B",
+"note": "recalled versions 08 & bellow"
+},
+{
+"id": 290,
+"ref_ea": "471400E",
+"ref_bx": "471400B",
+"note": "recalled versions 10 & below"
+},
+{
+"id": 291,
+"ref_ea": "82-3162E",
+"ref_bx": "82-3162B",
+"note": "If seal is broekn, set of patient labels inside"
+},
+{
+"id": 292,
+"ref_ea": "82-3164E",
+"ref_bx": "82-3164B",
+"note": "If seal is broekn, set of patient labels inside"
+},
+{
+"id": 293,
+"ref_ea": "82-3283E",
+"ref_bx": "82-3283B",
+"note": "If seal is broekn, set of patient labels inside"
+},
+{
+"id": 294,
+"ref_ea": "00-5901-020-00E",
+"ref_bx": "00-5901-020-00B",
+"note": "Attention! an Each scans as Box, please confirm if received Each or Box"
+},
+{
+"id": 295,
+"ref_ea": "TB-0510ICE",
+"ref_bx": "TB-0510ICB",
+"note": "RECALLED"
+},
+{
+"id": 296,
+"ref_ea": "TB-0520FCE",
+"ref_bx": "TB-0520FCB",
+"note": "RECALLED"
+},
+{
+"id": 297,
+"ref_ea": "TB-0520FCSE",
+"ref_bx": "TB-0520FCSB",
+"note": "RECALLED"
+},
+{
+"id": 298,
+"ref_ea": "TB-0520ICE",
+"ref_bx": "TB-0520ICB",
+"note": "RECALLED"
+},
+{
+"id": 299,
+"ref_ea": "TB-0535FCE",
+"ref_bx": "TB-0535FCB",
+"note": "RECALLED"
+},
+{
+"id": 300,
+"ref_ea": "TB-0535FCSE",
+"ref_bx": "TB-0535FCSB",
+"note": "RECALLED"
+},
+{
+"id": 301,
+"ref_ea": "TB-0535ICE",
+"ref_bx": "TB-0535ICB",
+"note": "RECALLED"
+},
+{
+"id": 302,
+"ref_ea": "TB-0535PCE",
+"ref_bx": "TB-0535PCB",
+"note": "RECALLED"
+},
+{
+"id": 303,
+"ref_ea": "TB-0545FCE",
+"ref_bx": "TB-0545FCB",
+"note": "RECALLED"
+},
+{
+"id": 304,
+"ref_ea": "TB-0545FCSE",
+"ref_bx": "TB-0545FCSB",
+"note": "RECALLED"
+},
+{
+"id": 305,
+"ref_ea": "TB-0545ICE",
+"ref_bx": "TB-0545ICB",
+"note": "RECALLED"
+},
+{
+"id": 306,
+"ref_ea": "TB-0545PCE",
+"ref_bx": "TB-0545PCB",
+"note": "RECALLED"
+},
+{
+"id": 307,
+"ref_ea": "5081287E",
+"ref_bx": "5081287B",
+"note": "RECALLED, check Heraeus"
+},
+{
+"id": 308,
+"ref_ea": "5081286E",
+"ref_bx": "5081286B",
+"note": "RECALLED, check Heraeus"
+},
+{
+"id": 309,
+"ref_ea": "031350E",
+"ref_bx": "031350B",
+"note": "031350E box contains 2 unseparable units-accept as Each"
+},
+{
+"id": 310,
+"ref_ea": "9733065E",
+"ref_bx": "9733065B",
+"note": "Set of patient label"
+},
+{
+"id": 311,
+"ref_ea": "TDP0005ZE",
+"ref_bx": "TDP0005ZB",
+"note": "(!) a scanner does not read an expiration date, please double check"
+},
+{
+"id": 312,
+"ref_ea": "96499E",
+"ref_bx": "96499B",
+"note": "No Box = Loose"
+},
+{
+"id": 313,
+"ref_ea": "42365E",
+"ref_bx": "42365B",
+"note": "Set of Patient label inside"
+},
+{
+"id": 314,
+"ref_ea": "KI613/10E",
+"ref_bx": "KI613/10B",
+"note": "Check EXP date"
+},
+{
+"id": 315,
+"ref_ea": "AR-9929BC-CPE",
+"ref_bx": "AR-9929BC-CPB",
+"note": "Bio(!), KIT; Reject broken seals, has temp tag"
+},
+{
+"id": 316,
+"ref_ea": "EVT5024E",
+"ref_bx": "EVT5024B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 317,
+"ref_ea": "VST04E",
+"ref_bx": "VST04B",
+"note": "Reject, This product must be frozen, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 318,
+"ref_ea": "G26908E",
+"ref_bx": "G26908B",
+"note": "KIT, 5 Pieces inside"
+},
+{
+"id": 319,
+"ref_ea": "VST10E",
+"ref_bx": "VST10B",
+"note": "Reject, This product must be frozen, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 320,
+"ref_ea": "1529010E",
+"ref_bx": "1529010B",
+"note": "Temp Tag inside, cut seal to check"
+},
+{
+"id": 321,
+"ref_ea": "ABS-1000-LE",
+"ref_bx": "ABS-1000-LB",
+"note": "Kit, 3 pieces inside, Reject if missing"
+},
+{
+"id": 322,
+"ref_ea": "P151015E",
+"ref_bx": "P151015B",
+"note": "Temp Tag  on the back"
+},
+{
+"id": 323,
+"ref_ea": "NSV5US-001E",
+"ref_bx": "NSV5US-001B",
+"note": "loose accepted as long as component glued to the blister inside"
+},
+{
+"id": 324,
+"ref_ea": "479179E",
+"ref_bx": "479179B",
+"note": "DO NOT PUT AWAY/GIVE TO ZACH"
+},
+{
+"id": 325,
+"ref_ea": "7510050E",
+"ref_bx": "7510050B",
+"note": "Bio(!), DO NOT PUT AWAY/GIVE TO ZACH"
+},
+{
+"id": 326,
+"ref_ea": "7510100E",
+"ref_bx": "7510100B",
+"note": "Bio(!), DO NOT PUT AWAY/GIVE TO ZACH"
+},
+{
+"id": 327,
+"ref_ea": "471048E",
+"ref_bx": "471048B",
+"note": "Voluntary Recall"
+},
+{
+"id": 328,
+"ref_ea": "WA22666SE",
+"ref_bx": "WA22666SB",
+"note": "Check if is Box or Each (Same Gtin)"
+},
+{
+"id": 329,
+"ref_ea": "022310E",
+"ref_bx": "022310B",
+"note": "please, verify that the reference does not content \"G\" at the end"
+},
+{
+"id": 330,
+"ref_ea": "NONB5SHFE",
+"ref_bx": "NONB5SHFB",
+"note": "Please verify that  REF if have \"N\" or not"
+},
+{
+"id": 331,
+"ref_ea": "ONB5SHFE",
+"ref_bx": "ONB5SHFB",
+"note": "Please verify that  REF if have \"N\" or not"
+},
+{
+"id": 332,
+"ref_ea": "471190E",
+"ref_bx": "471190B",
+"note": "Voluntary Recall"
+},
+{
+"id": 333,
+"ref_ea": "AR-4030C-10E",
+"ref_bx": "AR-4030C-10B",
+"note": "Check temp tag"
+},
+{
+"id": 334,
+"ref_ea": "N352601E",
+"ref_bx": "N352601B",
+"note": "Confirm Box or Each, scanner reads Each as Box(!)"
+},
+{
+"id": 335,
+"ref_ea": "4350E",
+"ref_bx": "4350B",
+"note": "Double check lot # Scans x Physically"
+},
+{
+"id": 336,
+"ref_ea": "M0068502050E",
+"ref_bx": "M0068502050B",
+"note": "No Box = Loose"
+},
+{
+"id": 337,
+"ref_ea": "EICA5874-01E",
+"ref_bx": "EICA5874-01B",
+"note": "No Box = Loose"
+},
+{
+"id": 338,
+"ref_ea": "MAXTACK30E",
+"ref_bx": "MAXTACK30B",
+"note": "Bio(!), Temp tag in box, cut seal to check"
+},
+{
+"id": 339,
+"ref_ea": "125035E",
+"ref_bx": "125035B",
+"note": "KIT, 3 pcs inside box"
+},
+{
+"id": 340,
+"ref_ea": "96313E",
+"ref_bx": "96313B",
+"note": "No Box = Loose"
+},
+{
+"id": 341,
+"ref_ea": "8CN85HE",
+"ref_bx": "8CN85HB",
+"note": "No Box = Loose"
+},
+{
+"id": 342,
+"ref_ea": "8229705E",
+"ref_bx": "8229705B",
+"note": "No Box = Loose"
+},
+{
+"id": 343,
+"ref_ea": "1211015E",
+"ref_bx": "1211015B",
+"note": "Bio(!), Temp tag outside of the package"
+},
+{
+"id": 344,
+"ref_ea": "978B128E",
+"ref_bx": "978B128B",
+"note": "Kit - Reject broken seal"
+},
+{
+"id": 345,
+"ref_ea": "CAL-VLY2643E",
+"ref_bx": "CAL-VLY2643B",
+"note": "Please double check the EXP date"
+},
+{
+"id": 346,
+"ref_ea": "UL2-CHKE",
+"ref_bx": "UL2-CHKB",
+"note": "Kit - Reject no box"
+},
+{
+"id": 347,
+"ref_ea": "48230ME",
+"ref_bx": "48230MB",
+"note": "Recalled ver 2, 5 and 6, all S/N"
+},
+{
+"id": 348,
+"ref_ea": "XT44700E",
+"ref_bx": "XT44700B",
+"note": "Bio(!), Temp tag outside of the package"
+},
+{
+"id": 349,
+"ref_ea": "1144922E",
+"ref_bx": "1144922B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 350,
+"ref_ea": "1144923E",
+"ref_bx": "1144923B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 351,
+"ref_ea": "1501250E",
+"ref_bx": "1501250B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 352,
+"ref_ea": "1501251E",
+"ref_bx": "1501251B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 353,
+"ref_ea": "1504515E",
+"ref_bx": "1504515B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 354,
+"ref_ea": "1504516E",
+"ref_bx": "1504516B",
+"note": "Reject -Quaratine - Notifty Director of Ops- Return, NDC Code, Contains Fibrin/Thrombin"
+},
+{
+"id": 355,
+"ref_ea": "480545E",
+"ref_bx": "480545B",
+"note": "check FDA site for update"
+},
+{
+"id": 356,
+"ref_ea": "480460E",
+"ref_bx": "480460B",
+"note": "check FDA site for update"
+}
+]
+}

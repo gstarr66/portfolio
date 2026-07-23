@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invoice Approver — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0">Invoice Approver</h5>
+    <div class="d-flex gap-2">
+      <a href="#" class="btn btn-sm btn-outline-primary" data-demo-inert="Sync Now">↻ Sync Now</a>
+      <a href="dashboard.html" class="btn btn-sm btn-outline-secondary">← Outbound</a>
+    </div>
+  </div>
+
+  <div class="alert alert-secondary small py-2 mb-3">
+    Portfolio demo — read-only snapshot of 2,506 real QBO-synced invoices (2026-07-23).
+    Approve / Deny / Restore / Sync are visually present but not wired up in this static site.
+  </div>
+
+  <!-- Filters -->
+  <div class="d-flex gap-3 mb-3 flex-wrap align-items-end">
+    <div class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1 small text-muted">Show last N days</label>
+        <input type="number" id="daysInput" value="7" min="1" max="730" class="form-control form-control-sm" style="width:80px">
+      </div>
+      <button id="loadBtn" class="btn btn-sm btn-primary">Load</button>
+    </div>
+
+    <div class="btn-group btn-group-sm" id="statusGroup">
+      <button class="btn btn-outline-secondary" data-status="pending">Pending</button>
+      <button class="btn btn-outline-secondary" data-status="denied">Denied</button>
+      <button class="btn btn-outline-secondary active" data-status="all">All</button>
+    </div>
+  </div>
+
+  <p class="text-muted small mb-2">
+    Invoices from the last <strong id="daysLabel">7</strong> day(s) (relative to the snapshot date
+    2026-07-23) — <strong id="statusLabel">all</strong>.
+  </p>
+
+  <div class="d-flex gap-3 align-items-center mb-3 small">
+    <span class="text-muted">Pricing alerts:</span>
+    <span><span class="badge bg-danger">⚠ True Low</span> &nbsp;Line priced below IC-set floor — must acknowledge to approve</span>
+    <span><span class="badge bg-warning text-dark">⚠ Approval</span> &nbsp;Line below Approval Only threshold — manager acknowledgment required</span>
+  </div>
+
+  <div id="emptyMsg" class="alert alert-info" style="max-width:500px;display:none">
+    No invoices found for this filter.
+  </div>
+
+  <div id="tableWrap" class="table-responsive" style="display:none">
+    <table class="table table-sm table-hover table-bordered align-middle" style="font-size:0.83rem">
+      <thead class="table-dark">
+        <tr>
+          <th>Invoice #</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th class="text-center">Lines</th>
+          <th class="text-end">Amount</th>
+          <th>Ship Method</th>
+          <th>Rep</th>
+          <th class="text-center">Alerts</th>
+          <th>Status</th>
+          <th style="width:130px"></th>
+        </tr>
+      </thead>
+      <tbody id="invTbody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  const REFERENCE_TODAY = new Date('2026-07-23T00:00:00');
+  let ALL_INVOICES = [];
+  let currentStatus = 'all';
+
+  function escHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function fmtMoney(v) { return '$' + (v || 0).toFixed(2); }
+
+  function daysAgo(dateStr) {
+    if (!dateStr) return Infinity;
+    const d = new Date(dateStr + 'T00:00:00');
+    return Math.round((REFERENCE_TODAY - d) / 86400000);
+  }
+
+  function render() {
+    const days = parseInt(document.getElementById('daysInput').value, 10) || 7;
+    document.getElementById('daysLabel').textContent = days;
+    document.getElementById('statusLabel').textContent = currentStatus;
+
+    let rows = ALL_INVOICES.filter(inv => daysAgo(inv.invoice_date) <= days);
+    if (currentStatus === 'pending') rows = rows.filter(inv => inv.approval_status === 'pending');
+    else if (currentStatus === 'denied') rows = rows.filter(inv => inv.approval_status === 'denied');
+
+    const wrap = document.getElementById('tableWrap');
+    const empty = document.getElementById('emptyMsg');
+    if (!rows.length) {
+      wrap.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    wrap.style.display = 'block';
+
+    document.getElementById('invTbody').innerHTML = rows.map(inv => {
+      let rowClass = '';
+      if (inv.approval_status === 'denied') rowClass = 'table-danger';
+      else if (inv.approval_status === 'approved') rowClass = 'table-success';
+
+      let alerts = '';
+      if (inv.true_low_violations > 0) {
+        alerts += `<span class="badge bg-danger" title="${inv.true_low_violations} line(s) below True Low floor">⚠ True Low</span> `;
+      }
+      if (inv.approval_only_violations > 0) {
+        alerts += `<span class="badge bg-warning text-dark" title="${inv.approval_only_violations} line(s) require manager approval">⚠ Approval</span>`;
+      }
+
+      let statusBadge = '';
+      if (inv.approval_status === 'pending') statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+      else if (inv.approval_status === 'denied') statusBadge = `<span class="badge bg-danger" title="${escHtml(inv.denial_reason || '')}">Denied</span>`;
+      else if (inv.approval_status === 'approved') statusBadge = '<span class="badge bg-success">Approved</span>';
+
+      let actions = '';
+      if (inv.approval_status === 'pending') {
+        actions = `<button class="btn btn-sm btn-success py-0 px-2" data-demo-inert="Approve Invoice">Approve</button>
+                   <button class="btn btn-sm btn-outline-danger py-0 px-2" data-demo-inert="Deny Invoice">Deny</button>`;
+      } else if (inv.approval_status === 'denied') {
+        actions = `<button class="btn btn-sm btn-outline-secondary py-0 px-2" data-demo-inert="Restore Invoice">Restore</button>`;
+      }
+
+      return `<tr class="${rowClass}">
+        <td><strong>${escHtml(inv.invoice_number || '—')}</strong></td>
+        <td>${escHtml(inv.customer_name || '—')}</td>
+        <td class="text-nowrap">${escHtml(inv.invoice_date || '—')}</td>
+        <td class="text-center">${inv.line_count || 0}</td>
+        <td class="text-end">${fmtMoney(inv.total_amount)}</td>
+        <td class="small">${escHtml(inv.ship_method || '—')}</td>
+        <td class="small text-muted">${escHtml(inv.sales_rep || '—')}</td>
+        <td class="text-center">${alerts}</td>
+        <td>${statusBadge}</td>
+        <td class="text-nowrap">${actions}</td>
+      </tr>`;
+    }).join('');
+
+    window.wireInertLinks();
+  }
+
+  document.getElementById('statusGroup').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-status]');
+    if (!btn) return;
+    currentStatus = btn.dataset.status;
+    document.querySelectorAll('#statusGroup button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+  document.getElementById('loadBtn').addEventListener('click', render);
+
+  fetch('../data/outbound/invoices.json').then(r => r.json()).then(data => {
+    ALL_INVOICES = data.invoices;
+    render();
+  });
+</script>
+</body>
+</html>

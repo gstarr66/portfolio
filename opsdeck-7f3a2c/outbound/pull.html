@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pull List — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+  <style>
+    @media print {
+      .d-print-none { display: none !important; }
+      .d-none.d-print-block { display: block !important; }
+      body { background: white; }
+      .navbar, #nav-placeholder { display: none !important; }
+      .summary-bar { border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder" class="d-print-none"></div>
+
+<div class="container-fluid px-4">
+
+  <div id="notFound" class="alert alert-warning" style="display:none">
+    Order not found. <a href="dashboard.html">← Back to dashboard</a>
+  </div>
+
+  <div id="page" style="display:none">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 d-print-none flex-wrap gap-2">
+      <h5 class="mb-0">Pull List — Order #<span id="orderNum"></span></h5>
+      <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-sm btn-outline-secondary">Print</button>
+        <a id="packLink" href="#" class="btn btn-sm btn-primary">Go to Pack Screen →</a>
+        <a href="dashboard.html" class="btn btn-sm btn-outline-secondary">← Dashboard</a>
+      </div>
+    </div>
+
+    <div class="d-none d-print-block mb-3">
+      <h4>SurgiShop — Pull List</h4>
+    </div>
+
+    <!-- Order header -->
+    <div class="row g-3 mb-3">
+      <div class="col-auto">
+        <div class="summary-bar">
+          <div class="small text-muted">Order #</div>
+          <div class="fw-bold fs-5" id="hdrOrderNum"></div>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="summary-bar">
+          <div class="small text-muted">Invoice</div>
+          <div class="fw-bold" id="hdrInvoice"></div>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="summary-bar">
+          <div class="small text-muted">Ship To</div>
+          <div class="fw-bold" id="hdrCustomer"></div>
+          <div class="small" id="hdrShipToName"></div>
+          <div class="small text-muted" id="hdrShipAddr" style="white-space:pre-line"></div>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="summary-bar">
+          <div class="small text-muted">Date</div>
+          <div class="fw-bold" id="hdrDate"></div>
+        </div>
+      </div>
+      <div class="col-auto" id="hdrShipMethodWrap" style="display:none">
+        <div class="summary-bar">
+          <div class="small text-muted">Ship Method</div>
+          <div class="fw-bold" id="hdrShipMethod"></div>
+        </div>
+      </div>
+      <div class="col-auto" id="hdrCustomShippingWrap" style="display:none">
+        <div class="summary-bar">
+          <div class="small text-muted">Shipping</div>
+          <div class="fw-bold" id="hdrCustomShipping"></div>
+        </div>
+      </div>
+      <div class="col-auto" id="hdrRepWrap" style="display:none">
+        <div class="summary-bar">
+          <div class="small text-muted">Rep</div>
+          <div class="fw-bold" id="hdrRep"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="noLines" class="alert alert-warning" style="display:none">No line items found for this order.</div>
+
+    <div id="linesWrap" class="table-responsive" style="display:none">
+      <table class="table table-sm table-bordered align-middle" style="font-size:0.85rem">
+        <thead class="table-dark">
+          <tr>
+            <th style="width:40px">#</th>
+            <th>Ref / Item Code</th>
+            <th>Description</th>
+            <th class="text-center" style="width:70px">Qty</th>
+            <th>W/H Location</th>
+            <th style="width:80px">Pulled <span class="d-print-none text-muted small">(check)</span></th>
+          </tr>
+        </thead>
+        <tbody id="linesTbody"></tbody>
+        <tfoot>
+          <tr class="table-secondary fw-bold">
+            <td colspan="3" class="text-end">Total Items:</td>
+            <td class="text-center" id="totalQty"></td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  function escHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const orderId = parseInt(params.get('order'), 10);
+
+  fetch('../data/outbound/orders.json').then(r => r.json()).then(data => {
+    const id = orderId || data.demo_order_id;
+    let order = data.orders.find(o => o.id === id);
+    if (!order) { document.getElementById('notFound').style.display = 'block'; return; }
+
+    const ov = window.demoStore.get('outbound_order_' + order.id, null);
+    if (ov) order = Object.assign({}, order, ov);
+
+    const lines = data.lines[String(order.id)] || [];
+
+    document.getElementById('page').style.display = 'block';
+    document.getElementById('orderNum').textContent = order.daily_order_number;
+    document.getElementById('packLink').href = 'pack.html?order=' + order.id;
+    document.getElementById('hdrOrderNum').textContent = order.daily_order_number;
+    document.getElementById('hdrInvoice').textContent = order.invoice_number || '—';
+    document.getElementById('hdrCustomer').textContent = order.customer_name || '—';
+    if (order.ship_to_name && order.ship_to_name !== order.customer_name) {
+      document.getElementById('hdrShipToName').textContent = order.ship_to_name;
+    }
+    if (order.ship_addr) document.getElementById('hdrShipAddr').textContent = order.ship_addr;
+    document.getElementById('hdrDate').textContent = order.order_date || '—';
+
+    if (order.ship_method) {
+      document.getElementById('hdrShipMethodWrap').style.display = '';
+      document.getElementById('hdrShipMethod').textContent = order.ship_method;
+    }
+    if (order.custom_shipping) {
+      document.getElementById('hdrCustomShippingWrap').style.display = '';
+      document.getElementById('hdrCustomShipping').textContent = order.custom_shipping;
+    }
+    if (order.sales_rep) {
+      document.getElementById('hdrRepWrap').style.display = '';
+      document.getElementById('hdrRep').textContent = order.sales_rep;
+    }
+
+    if (!lines.length) {
+      document.getElementById('noLines').style.display = 'block';
+      return;
+    }
+    document.getElementById('linesWrap').style.display = 'block';
+    let total = 0;
+    document.getElementById('linesTbody').innerHTML = lines.map((l, i) => {
+      total += l.qty_ordered || 0;
+      return `<tr>
+        <td class="text-center text-muted">${i + 1}</td>
+        <td><strong>${escHtml(l.ref_ea || '—')}</strong></td>
+        <td>${escHtml(l.description || '')}</td>
+        <td class="text-center fw-bold">${Math.round(l.qty_ordered || 0)}</td>
+        <td class="fw-bold ${l.wh_location ? 'text-primary' : 'text-muted'}">${escHtml(l.wh_location || '—')}</td>
+        <td><span style="font-size:1.4rem">&#9744;</span></td>
+      </tr>`;
+    }).join('');
+    document.getElementById('totalQty').textContent = Math.round(total);
+  });
+</script>
+</body>
+</html>

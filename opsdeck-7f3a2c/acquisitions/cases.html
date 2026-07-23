@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case Tracker — Acquisitions — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-3">
+      <a href="list.html" class="btn btn-sm btn-outline-secondary">← Pipeline</a>
+      <h4 class="mb-0">BuyBack Case Tracker</h4>
+    </div>
+  </div>
+
+  <div class="row g-2 mb-4" id="statCards"></div>
+
+  <div id="pendingBuybacksWrap"></div>
+
+  <div id="casesWrap"></div>
+
+  <div class="card shadow-sm" style="max-width:640px">
+    <div class="card-header bg-secondary text-white py-2">Add Case Manually</div>
+    <div class="card-body">
+      <form onsubmit="return false" id="addCaseForm">
+        <div class="row g-2 mb-2">
+          <div class="col-4"><input type="text" class="form-control form-control-sm" placeholder="SF Case # *"></div>
+          <div class="col-8"><input type="text" class="form-control form-control-sm" placeholder="Customer / Facility Name *"></div>
+        </div>
+        <div class="row g-2 mb-2">
+          <div class="col-4"><input type="text" class="form-control form-control-sm" placeholder="PO #"></div>
+          <div class="col-4">
+            <select class="form-select form-select-sm" id="addCaseStatus"></select>
+          </div>
+          <div class="col-4"><input type="date" class="form-control form-control-sm" value="2026-07-23"></div>
+        </div>
+        <div class="mb-2"><input type="text" class="form-control form-control-sm" placeholder="Notes"></div>
+        <button type="submit" class="btn btn-sm btn-success" data-demo-inert="Add Case Manually">Add Case</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  let DATA = null;
+  let statusFilter = '';
+
+  const CASE_COLORS = {
+    'Offer Sent': 'info',
+    'PO Issued': 'primary',
+    'Shipping Label Sent': 'warning',
+    'In Transit': 'warning',
+    'Received': 'success',
+    'Received - Pending Verification': 'secondary',
+    'Payment Pending': 'danger',
+    'SF Case Closed': 'dark',
+  };
+
+  fetch('../data/acquisitions/cases.json').then(r => r.json()).then(d => {
+    DATA = d;
+    document.getElementById('addCaseStatus').innerHTML =
+      d.CASE_STATUSES.map(s => `<option>${s}</option>`).join('');
+    renderStatCards();
+    renderPendingBuybacks();
+    render();
+    wireInert();
+  });
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = iso.slice(0, 10).split('-');
+    return `${d[1]}/${d[2]}/${d[0]}`;
+  }
+
+  function renderStatCards() {
+    const stats = {};
+    DATA.cases.forEach(c => { stats[c.status] = (stats[c.status] || 0) + 1; });
+    const wrap = document.getElementById('statCards');
+    wrap.innerHTML = DATA.CASE_STATUSES.map(s => `
+      <div class="col-auto">
+        <a href="#" class="text-decoration-none stat-link" data-status="${s}">
+          <div class="card text-center border-0 shadow-sm px-3 py-2 ${statusFilter === s ? 'bg-dark text-white' : ''}">
+            <div class="fw-bold">${stats[s] || 0}</div>
+            <div class="small text-muted ${statusFilter === s ? 'text-white-50' : ''}">${s}</div>
+          </div>
+        </a>
+      </div>`).join('') + (statusFilter ? `
+      <div class="col-auto d-flex align-items-center">
+        <a href="#" id="clearStatFilter" class="btn btn-sm btn-outline-danger">Clear Filter</a>
+      </div>` : '');
+
+    wrap.querySelectorAll('.stat-link').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        statusFilter = (statusFilter === a.dataset.status) ? '' : a.dataset.status;
+        renderStatCards(); render();
+      });
+    });
+    const clearBtn = document.getElementById('clearStatFilter');
+    if (clearBtn) clearBtn.addEventListener('click', e => {
+      e.preventDefault(); statusFilter = ''; renderStatCards(); render();
+    });
+  }
+
+  // "New Buyback" (acquisitions/new.html) is the module's one fake-live flow.
+  // Real Case Tracker rows only exist once a buyback is accepted with an SF
+  // case #, which can't happen in this static demo (Approve/Accept actions
+  // are inert). So instead of fabricating a fake SF case number for a brand
+  // new buyback, we surface any demo-created buybacks here as a distinct
+  // "awaiting approval" strip, linked back to the Pipeline -- this keeps
+  // Case Tracker's data honest while still reflecting the new submission.
+  function renderPendingBuybacks() {
+    const demo = window.demoStore.get('acquisitions_buybacks', []);
+    const wrap = document.getElementById('pendingBuybacksWrap');
+    if (!demo.length) { wrap.innerHTML = ''; return; }
+    wrap.innerHTML = `
+      <div class="alert alert-info py-2 mb-4">
+        <strong>Newly created this session (not yet a Salesforce case):</strong>
+        <ul class="mb-0 mt-1">
+          ${demo.map(b => `<li><a href="detail.html?id=${b.id}">${b.facility_name}</a> — <span class="badge bg-warning text-dark">Pending Approval</span> — a case entry will appear here once it's accepted with an SF Case #.</li>`).join('')}
+        </ul>
+      </div>`;
+  }
+
+  function rowHtml(c) {
+    const color = CASE_COLORS[c.status] || 'secondary';
+    return `
+      <tr>
+        <td class="fw-bold">
+          ${c.sf_case_number}
+          ${c.buyback_id ? `<a href="detail.html?id=${c.buyback_id}" class="text-decoration-none ms-1" title="View buyback">↗</a>` : ''}
+        </td>
+        <td>${c.customer_name}</td>
+        <td>${c.po_number || '—'}</td>
+        <td class="text-muted" style="font-size:.85rem">${c.case_owner || '—'}</td>
+        <td><span class="badge bg-${color}">${c.status}</span></td>
+        <td class="text-nowrap text-muted" style="font-size:.85rem">${fmtDate(c.post_date)}</td>
+        <td style="max-width:220px; font-size:.85rem" class="text-muted">${c.notes || ''}</td>
+        <td><button class="btn btn-sm btn-outline-primary py-0 px-2" data-demo-inert="Edit Case">Edit</button></td>
+      </tr>`;
+  }
+
+  function render() {
+    let rows = DATA.cases;
+    if (statusFilter) rows = rows.filter(c => c.status === statusFilter);
+
+    const wrap = document.getElementById('casesWrap');
+    if (!rows.length) {
+      wrap.innerHTML = '<p class="text-muted">No cases found.</p>';
+      return;
+    }
+    wrap.innerHTML = `
+      <div class="card shadow-sm mb-4">
+        <div class="table-responsive">
+          <table class="table table-hover table-sm mb-0 align-middle">
+            <thead>
+              <tr><th>SF Case #</th><th>Customer</th><th>PO #</th><th>Case Owner</th>
+                  <th>Status</th><th>Post Date</th><th>Notes</th><th></th></tr>
+            </thead>
+            <tbody>${rows.map(rowHtml).join('')}</tbody>
+          </table>
+        </div>
+      </div>`;
+    wireInert();
+  }
+
+  // Scoped to this page's own containers (not the shared nav, which site.js
+  // already wires once on load) so re-rendering the cases table doesn't
+  // stack duplicate click listeners.
+  function wireInert() {
+    document.querySelectorAll('#casesWrap [data-demo-inert], #addCaseForm [data-demo-inert]').forEach(el => {
+      if (el.__wired) return;
+      el.__wired = true;
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        toast('"' + el.getAttribute('data-demo-inert') + '" needs the live SurgiCentral backend — not wired up in this static portfolio demo.', 'secondary');
+      });
+    });
+  }
+</script>
+</body>
+</html>

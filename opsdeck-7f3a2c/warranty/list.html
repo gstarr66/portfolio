@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warranty Claims — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Warranty Claims</h4>
+    <a href="new.html" class="btn btn-primary btn-sm">+ New Claim</a>
+  </div>
+
+  <div class="summary-bar mb-3">
+    <div class="row g-3 text-center">
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4" id="cntOpen">—</div>
+        <div class="text-muted small">Open</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4 text-warning" id="cntPending">—</div>
+        <div class="text-muted small">Awaiting Approval</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4 text-info" id="cntReady">—</div>
+        <div class="text-muted small">Ready to Resolve</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-bold fs-4 text-success" id="cntClosed">—</div>
+        <div class="text-muted small">Closed</div>
+      </div>
+    </div>
+  </div>
+
+  <form class="row g-2 mb-3" onsubmit="return false">
+    <div class="col-auto">
+      <select id="statusFilter" class="form-select form-select-sm"></select>
+    </div>
+    <div class="col-auto">
+      <button type="button" class="btn btn-outline-secondary btn-sm" id="btnClear">Clear</button>
+    </div>
+  </form>
+
+  <div id="tableWrap"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  let DATA = null;
+
+  fetch('../data/warranty/list.json').then(r => r.json()).then(d => {
+    DATA = d;
+    document.getElementById('cntOpen').textContent = d.counts.open_count;
+    document.getElementById('cntPending').textContent = d.counts.pending_approval;
+    document.getElementById('cntReady').textContent = d.counts.ready_to_resolve;
+    document.getElementById('cntClosed').textContent = d.counts.closed_count;
+
+    const sel = document.getElementById('statusFilter');
+    sel.innerHTML = '<option value="">All Statuses</option>' +
+      d.statuses.map(s => `<option value="${s}">${s}</option>`).join('');
+    sel.addEventListener('change', render);
+
+    render();
+  });
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = iso.slice(0, 10).split('-');
+    return `${d[1]}/${d[2]}/${d[0]}`;
+  }
+
+  function statusBadge(status) {
+    if (status === 'Closed') return `<span class="badge bg-success">${status}</span>`;
+    if (status === 'Cancelled') return `<span class="badge bg-secondary">${status}</span>`;
+    if (status === 'Work in Progress') return `<span class="badge bg-info text-dark">WIP</span>`;
+    return `<span class="badge bg-warning text-dark">${status}</span>`;
+  }
+
+  function approvalBadge(v) {
+    if (v === 'Approved') return '<span class="badge bg-success">✓</span>';
+    if (v === 'Rejected') return '<span class="badge bg-danger">✗</span>';
+    return '<span class="badge bg-secondary">—</span>';
+  }
+
+  function rowHtml(c) {
+    return `
+      <tr>
+        <td><a href="detail.html?id=${c.id}" class="fw-bold text-decoration-none">${c.claim_number}</a></td>
+        <td>${statusBadge(c.status)}</td>
+        <td style="font-size:.8rem">${c.claim_type || '—'}</td>
+        <td class="text-nowrap">${fmtDate(c.date_initiated)}</td>
+        <td><code>${c.sales_invoice || '—'}</code></td>
+        <td style="font-size:.85rem">${c.customer_name || '—'}</td>
+        <td><code>${c.sku || '—'}</code></td>
+        <td style="font-size:.8rem">${c.initiated_by_name || '—'}</td>
+        <td class="text-center">${approvalBadge(c.ops_approval)}</td>
+        <td class="text-center">${approvalBadge(c.acct_approval)}</td>
+        <td class="text-center text-nowrap" style="font-size:.75rem">
+          ${c.submitted_at ? '<span class="text-success">✓ Submitted</span>' : '<span class="text-muted">Draft</span>'}
+        </td>
+      </tr>`;
+  }
+
+  function render() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    let claims = DATA.claims;
+    if (statusFilter) claims = claims.filter(c => c.status === statusFilter);
+
+    const wrap = document.getElementById('tableWrap');
+    if (!claims.length) {
+      wrap.innerHTML = `<div class="text-muted fst-italic">No warranty claims found${statusFilter ? ` with status "${statusFilter}"` : ''}.</div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-sm table-hover table-bordered align-middle">
+          <thead>
+            <tr>
+              <th>Claim #</th><th>Status</th><th>Type</th><th>Date</th><th>Invoice</th>
+              <th>Customer</th><th>SKU</th><th>Initiated By</th><th>Ops</th><th>Acct</th><th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody>${claims.map(rowHtml).join('')}</tbody>
+        </table>
+      </div>`;
+  }
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    document.getElementById('statusFilter').value = '';
+    render();
+  });
+</script>
+</body>
+</html>

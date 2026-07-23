@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Warranty Claim — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">New Warranty Claim</h4>
+    <a href="list.html" class="btn btn-outline-secondary btn-sm">← Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form onsubmit="return false" id="claimForm">
+
+        <h6 class="text-muted text-uppercase fw-bold mb-3" style="font-size:.75rem;letter-spacing:.08em">Invoice Information</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Sales Invoice #</label>
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="e.g. 10234" autocomplete="off">
+              <button type="button" class="btn btn-outline-secondary" data-demo-inert="Invoice Lookup" title="Look up invoice">↗</button>
+            </div>
+            <div class="form-text text-muted">Looks up the invoice in QBO to auto-fill customer and pick lot/expiration from what actually shipped.</div>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label fw-semibold">Customer</label>
+            <input type="text" class="form-control" placeholder="Auto-populated from Invoice #">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Date Initiated</label>
+            <input type="date" class="form-control" value="2026-07-23">
+          </div>
+        </div>
+
+        <h6 class="text-muted text-uppercase fw-bold mb-3" style="font-size:.75rem;letter-spacing:.08em">Claim Details</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Claim Type <span class="text-danger">*</span></label>
+            <select class="form-select" required>
+              <option value="">— Select —</option>
+              <option>Standard Return</option>
+              <option>Defective Return</option>
+              <option>Expiry Return</option>
+              <option>Recall Return</option>
+              <option>Lost in Transit</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Status</label>
+            <input type="text" class="form-control" value="Open" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Warranty Initiated By</label>
+            <input type="text" class="form-control" value="Gary Starr (Demo)" disabled>
+          </div>
+        </div>
+
+        <h6 class="text-muted text-uppercase fw-bold mb-3" style="font-size:.75rem;letter-spacing:.08em">Product Information</h6>
+        <div class="row g-3 mb-2">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">SKU</label>
+            <div class="input-group">
+              <input type="text" class="form-control text-uppercase" placeholder="Enter SKU">
+              <button type="button" class="btn btn-outline-primary" data-demo-inert="Pick Item from Invoice" title="Pick from invoice items">Pick Item</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Lot #</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Expiration Date</label>
+            <input type="date" class="form-control">
+          </div>
+        </div>
+        <div class="mb-4">
+          <small class="text-muted">Enter an Invoice # above and click "Pick Item" to select a product with its lot and expiration automatically populated.</small>
+        </div>
+
+        <h6 class="text-muted text-uppercase fw-bold mb-2" style="font-size:.75rem;letter-spacing:.08em">Issue Description</h6>
+        <div class="mb-4">
+          <textarea class="form-control" rows="5" placeholder="Describe the issue in detail…"></textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" data-demo-inert="Save Claim">Save Claim (Draft)</button>
+          <a href="list.html" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

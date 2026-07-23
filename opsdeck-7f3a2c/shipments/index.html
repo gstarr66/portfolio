@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Incoming Shipments — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Incoming Shipments</h5>
+    <a href="form.html" class="btn btn-sm btn-success">+ Add Shipment</a>
+  </div>
+
+  <div class="alert alert-secondary small py-2 mb-3" style="max-width:500px">
+    Portfolio demo — only 2 shipment rows exist in the 2026-07-23 snapshot
+    (this log is populated ad hoc, not automatically). Add/Edit/Delete are
+    visually present but not wired up.
+  </div>
+
+  <form class="d-flex gap-2 mb-3" style="max-width:400px" onsubmit="return false">
+    <input type="text" id="searchBox" class="form-control form-control-sm" placeholder="Search vendor or PO#…">
+    <button class="btn btn-sm btn-primary" id="searchBtn">Search</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary" id="clearBtn">Clear</button>
+  </form>
+
+  <div id="tableWrap"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  function escHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function statusBadge(status) {
+    if (status === 'Received') return '<span class="badge bg-success">Received</span>';
+    if (status === 'Awaiting More Boxes') return '<span class="badge bg-warning text-dark">Awaiting More Boxes</span>';
+    return '<span class="badge bg-secondary">Pending</span>';
+  }
+
+  let SHIPMENTS = [];
+
+  function render() {
+    const q = document.getElementById('searchBox').value.trim().toLowerCase();
+    let rows = SHIPMENTS;
+    if (q) {
+      rows = rows.filter(s =>
+        (s.vendor || '').toLowerCase().includes(q) ||
+        (s.po_number || '').toLowerCase().includes(q));
+    }
+    const wrap = document.getElementById('tableWrap');
+    if (!rows.length) {
+      wrap.innerHTML = `<div class="alert alert-info" style="max-width:500px">No shipments found${q ? ` matching "${escHtml(q)}"` : ''}.</div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-sm table-hover table-bordered align-middle" style="font-size:0.83rem">
+          <thead class="table-dark">
+            <tr>
+              <th>Vendor</th><th>PO #</th><th>Date</th><th>Time</th><th>Status</th>
+              <th class="text-center">Total Boxes</th><th>Notes</th><th style="width:90px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(s => `
+              <tr class="${!s.po_number ? 'table-danger' : ''}">
+                <td>${escHtml(s.vendor || '—')}</td>
+                <td>${s.po_number ? '<strong>' + escHtml(s.po_number) + '</strong>' : '<span class="text-danger fw-bold">No PO</span>'}</td>
+                <td class="text-nowrap">${escHtml(s.received_date || '—')}</td>
+                <td class="text-nowrap">${escHtml(s.received_time || '—')}</td>
+                <td>${statusBadge(s.status)}</td>
+                <td class="text-center fw-bold">${s.total_boxes != null ? s.total_boxes : '—'}</td>
+                <td class="small text-muted">${escHtml(s.notes || '')}</td>
+                <td class="text-nowrap">
+                  <a href="form.html?id=${s.id}" class="btn btn-sm btn-outline-primary py-0 px-2">Edit</a>
+                  <button class="btn btn-sm btn-outline-danger py-0 px-2" data-demo-inert="Delete Shipment">Del</button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    window.wireInertLinks();
+  }
+
+  fetch('../data/shipments/index.json').then(r => r.json()).then(d => {
+    SHIPMENTS = d.shipments;
+    render();
+    document.getElementById('searchBtn').addEventListener('click', render);
+    document.getElementById('searchBox').addEventListener('input', render);
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      document.getElementById('searchBox').value = '';
+      render();
+    });
+  });
+</script>
+</body>
+</html>

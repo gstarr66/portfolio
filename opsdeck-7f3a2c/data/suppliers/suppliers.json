@@ -1,0 +1,52 @@
+{
+  "today": "2026-07-23",
+  "stats": {
+    "total": 1,
+    "preferred": 0,
+    "expiring": 0,
+    "unvetted": 1
+  },
+  "comm_types": [
+    "Meeting",
+    "Phone",
+    "Sent Email",
+    "Received Email",
+    "Other"
+  ],
+  "suppliers": [
+    {
+      "id": 1,
+      "name": "Reliable Inventory",
+      "address_line1": null,
+      "address_line2": null,
+      "city": null,
+      "state": null,
+      "zip_code": null,
+      "website": null,
+      "notes": null,
+      "tags": null,
+      "date_vetted": null,
+      "preferred_vendor": false,
+      "contract_expires_on": null,
+      "payment_terms": null,
+      "lead_time_days": null,
+      "is_active": true,
+      "primary_contact_name": null,
+      "primary_contact_email": null,
+      "primary_contact_phone": null,
+      "last_comm_date": null,
+      "contacts": [
+        {
+          "id": 1,
+          "name": "Reliable",
+          "title": null,
+          "email": "Reliableinventory311@gmail.com",
+          "phone": null,
+          "is_primary": false
+        }
+      ],
+      "comms": [],
+      "docs": []
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Complete New Item — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4" id="app">
+  <div class="text-muted py-5 text-center">Loading…</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const wantedId = params.get('id');
+
+  fetch('../data/new_items/new_items.json').then(r => r.json()).then(data => {
+    const req = data.requests.find(r => String(r.id) === String(wantedId));
+    const app = document.getElementById('app');
+
+    const catOptions = data.categories.map(([name, code]) =>
+      `<option value="${name}" data-code="${code}">${name}</option>`).join('');
+    const taxOptions = data.tax_classes.map(tc => `<option value="${tc}">${tc}</option>`).join('');
+
+    const header = req
+      ? `<h4 class="mb-0">New Item #${req.id} — Inventory Control</h4>`
+      : `<h4 class="mb-0">New Item — Inventory Control</h4>`;
+
+    const inboundBlock = req ? `
+      <div class="col-auto"><strong>GTIN:</strong> <code>${req.gtin}</code></div>
+      <div class="col-auto"><strong>Brand:</strong> ${req.brand || '—'}</div>
+      <div class="col-auto"><strong>Item #:</strong> ${req.item_number || '—'}</div>
+      <div class="col-auto"><strong>SKU:</strong> ${req.sku || '—'}</div>
+      <div class="col-auto"><strong>Unit:</strong> ${req.unit || '—'}</div>
+      <div class="col-auto"><strong>Conversion:</strong> ${req.conversion || '—'}</div>
+    ` : `
+      <div class="col-12 text-muted">No live inbound data — see note above.</div>
+    `;
+
+    app.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        ${header}
+        <a href="dashboard.html" class="btn btn-outline-secondary btn-sm">← Back</a>
+      </div>
+
+      ${!req ? `
+      <div class="alert alert-info" style="max-width:900px">
+        <strong>Demo note:</strong> this snapshot's <code>new_item_requests</code> table had no rows awaiting
+        Inventory Control on 2026-07-23, so there's no live request to load here. In the real app this page is
+        reached via the <strong>Complete</strong> link on a dashboard row with status "Awaiting IC" — the form
+        below is shown empty so you can see the layout Inventory Control uses to finish onboarding a new SKU.
+      </div>` : ''}
+
+      <div class="row g-4" style="max-width:900px">
+        <div class="col-12">
+          <div class="card border-secondary">
+            <div class="card-header bg-secondary text-white py-2">
+              <small>Step 1 — Inbound Data (read-only)</small>
+              ${req && req.inbound_by ? `<span class="ms-3 text-white-50">by ${req.inbound_by}</span>` : ''}
+            </div>
+            <div class="card-body py-2">
+              <div class="row g-2" style="font-size:.88rem">${inboundBlock}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-dark text-white py-2">Step 2 — Inventory Control</div>
+            <div class="card-body">
+              <form onsubmit="return false">
+                <div class="row g-3">
+                  <div class="col-8">
+                    <label class="form-label">Item Name <span class="text-danger">*</span></label>
+                    <input class="form-control form-control-sm" value="${req && req.item_name ? req.item_name : ''}">
+                  </div>
+                  <div class="col-4">
+                    <label class="form-label">Tax Class <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-sm">
+                      <option value="">— Select —</option>
+                      ${taxOptions}
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label">Category <small class="text-muted">(optional)</small></label>
+                    <select id="catSelect" class="form-select form-select-sm">
+                      <option value="">— Select —</option>
+                      ${catOptions}
+                    </select>
+                  </div>
+                  <div class="col-3">
+                    <label class="form-label">Category Code <small class="text-muted">(auto-fills)</small></label>
+                    <input id="catCode" class="form-control form-control-sm bg-light" readonly>
+                  </div>
+                  <div class="col-3">
+                    <label class="form-label">Retail Price <span class="text-danger">*</span></label>
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text">$</span>
+                      <input type="number" step="0.01" min="0" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Access GUDID Verified <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gudid_verified" id="gudidYes">
+                        <label class="form-check-label text-success fw-semibold" for="gudidYes">Yes — Verified on Access GUDID</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gudid_verified" id="gudidNo">
+                        <label class="form-check-label text-muted" for="gudidNo">Not yet</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="form-label text-muted">Your Name / Initials</label>
+                    <input class="form-control form-control-sm" placeholder="Future: auto from login">
+                  </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="collapse" data-bs-target="#overrideSection">
+                    Manager Override
+                  </button>
+                  <button type="button" class="btn btn-success" data-demo-inert="Submit to Inventory">Submit to Inventory</button>
+                </div>
+
+                <div class="collapse mt-3" id="overrideSection">
+                  <div class="card border-danger">
+                    <div class="card-header bg-danger text-white py-2">
+                      <strong>Manager Override</strong>
+                      <small class="ms-2">Submits without Item Name, Tax Class, Category, or Retail Price. GUDID Verified is still required.</small>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-6">
+                          <label class="form-label">Override Approved By <span class="text-danger">*</span></label>
+                          <input class="form-control form-control-sm" placeholder="Manager name/initials">
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label">Reason <span class="text-danger">*</span></label>
+                          <textarea class="form-control form-control-sm" rows="2" placeholder="e.g. Urgent customer order waiting…"></textarea>
+                        </div>
+                      </div>
+                      <div class="mt-3 text-end">
+                        <button type="button" class="btn btn-danger" data-demo-inert="Override Submit to Inventory">Override — Submit to Inventory</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('catSelect').addEventListener('change', function () {
+      const opt = this.options[this.selectedIndex];
+      document.getElementById('catCode').value = opt.dataset.code || '';
+    });
+
+    wireInertLinks();
+  });
+</script>
+</body>
+</html>

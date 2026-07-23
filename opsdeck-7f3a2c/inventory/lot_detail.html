@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lot Detail — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="mb-3">
+    <a href="summary.html" class="text-decoration-none">&larr; Inventory</a>
+  </div>
+
+  <div id="notFound" class="alert alert-warning d-none">
+    No <code id="notFoundRef"></code> found in inventory_lots for this snapshot.
+  </div>
+
+  <div id="content" style="display:none">
+
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <h4 class="mb-0" id="refTitle"></h4>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4" id="summaryCards"></div>
+
+    <h6>Lots on Hand</h6>
+    <div class="table-responsive mb-4">
+    <table class="table table-sm align-middle" style="font-size:.85rem">
+      <thead>
+        <tr>
+          <th>Lot</th><th>Exp Date</th><th>Zone</th><th>Location</th>
+          <th class="text-end">Qty</th><th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody id="lotsBody"></tbody>
+    </table>
+    </div>
+
+    <div id="holdsSection" style="display:none">
+      <h6>Active Holds</h6>
+      <div class="table-responsive mb-4">
+      <table class="table table-sm align-middle" style="font-size:.85rem">
+        <thead>
+          <tr><th>Type</th><th>Customer</th><th>Rep</th><th class="text-end">Qty</th><th class="text-end">Fulfilled</th><th>Expires</th><th>Status</th></tr>
+        </thead>
+        <tbody id="holdsBody"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <h6>Movement History <small class="text-muted">(last 100)</small></h6>
+    <div class="table-responsive">
+    <table class="table table-sm align-middle" style="font-size:.85rem">
+      <thead>
+        <tr><th>Date</th><th>Type</th><th>Qty Change</th><th>Reference</th><th>Notes</th><th>By</th></tr>
+      </thead>
+      <tbody id="movementsBody"></tbody>
+    </table>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+const SNAPSHOT_DATE = new Date('2026-07-23T00:00:00');
+
+function qs(name) {
+  return new URLSearchParams(location.search).get(name) || '';
+}
+
+function daysLeft(isoDate) {
+  if (!isoDate) return null;
+  const exp = new Date(isoDate + 'T00:00:00');
+  return Math.round((exp - SNAPSHOT_DATE) / 86400000);
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y,m,d] = iso.slice(0,10).split('-');
+  return `${m}/${d}/${y}`;
+}
+
+function fmtDateTime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d)) return '—';
+  return d.toLocaleDateString('en-US', {month:'2-digit', day:'2-digit', year:'2-digit'}) + ' ' +
+         d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:false});
+}
+
+fetch('../data/inventory/lot_detail.json').then(r => r.json()).then(all => {
+  const ref = qs('ref') || qs('sku');
+  document.getElementById('notFoundRef').textContent = ref;
+  const rec = all[ref];
+  if (!rec) {
+    document.getElementById('notFound').classList.remove('d-none');
+    return;
+  }
+  document.getElementById('content').style.display = '';
+  render(ref, rec);
+});
+
+function render(ref, rec) {
+  document.title = ref + ' — Inventory';
+  const p = rec.product;
+  document.getElementById('refTitle').innerHTML =
+    `${ref} ${p ? `<small class="text-muted fs-6">${p.manufacturer || ''} — ${p.name || ''}</small>` : ''}`;
+
+  const heldQty = rec.holds.filter(h => h.status === 'approved').reduce((a,h) => a + h.qty, 0);
+  const m = rec.metrics;
+
+  let cards = `
+    <div class="col-auto"><div class="card text-center px-4 py-2">
+      <div class="fs-4 fw-bold">${Math.trunc(rec.main_qty)}</div><div class="text-muted small">Main</div></div></div>
+    <div class="col-auto"><div class="card text-center px-4 py-2 ${rec.short_dated_qty > 0 ? 'border-danger' : ''}">
+      <div class="fs-4 fw-bold ${rec.short_dated_qty > 0 ? 'text-danger' : ''}">${Math.trunc(rec.short_dated_qty)}</div><div class="text-muted small">Short-Dated</div></div></div>
+    <div class="col-auto"><div class="card text-center px-4 py-2">
+      <div class="fs-4 fw-bold">${Math.trunc(rec.damaged_qty)}</div><div class="text-muted small">Damaged</div></div></div>
+    <div class="col-auto"><div class="card text-center px-4 py-2">
+      <div class="fs-4 fw-bold text-warning">${Math.trunc(heldQty)}</div><div class="text-muted small">On Hold</div></div></div>
+    <div class="col-auto"><div class="card text-center px-4 py-2 border-success">
+      <div class="fs-4 fw-bold text-success">${Math.trunc(rec.available_qty)}</div><div class="text-muted small">Available</div></div></div>`;
+
+  if (m) {
+    cards += `
+      <div class="col-auto"><div class="card text-center px-4 py-2">
+        <div class="fs-5 fw-bold">${m.vel_3mo ? m.vel_3mo.toFixed(1) : '—'}</div><div class="text-muted small">3mo Vel</div></div></div>
+      <div class="col-auto"><div class="card text-center px-4 py-2">
+        <div class="fs-5 fw-bold">${m.vel_12mo ? m.vel_12mo.toFixed(1) : '—'}</div><div class="text-muted small">12mo Vel</div></div></div>
+      <div class="col-auto"><div class="card text-center px-4 py-2">
+        <div class="fs-5 fw-bold">${m.min_par ? Math.trunc(m.min_par) : '—'}</div><div class="text-muted small">Min Par</div></div></div>`;
+  }
+  document.getElementById('summaryCards').innerHTML = cards;
+
+  const lotsBody = document.getElementById('lotsBody');
+  if (!rec.lots.length) {
+    lotsBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No lots on hand.</td></tr>`;
+  } else {
+    lotsBody.innerHTML = rec.lots.map(lot => {
+      const dl = daysLeft(lot.exp_date);
+      const rowCls = lot.zone === 'short_dated' ? 'table-danger' : (lot.zone === 'damaged' ? 'table-warning' : '');
+      let expBadge = '';
+      if (dl !== null) {
+        if (dl <= 30) expBadge = `<span class="badge bg-danger ms-1">${dl}d</span>`;
+        else if (dl <= 90) expBadge = `<span class="badge bg-warning text-dark ms-1">${dl}d</span>`;
+      }
+      const zoneBadgeCls = lot.zone === 'main' ? 'bg-success' : (lot.zone === 'short_dated' ? 'bg-danger' : 'bg-warning text-dark');
+      return `<tr class="${rowCls}">
+        <td>${lot.lot || '—'}</td>
+        <td>${fmtDate(lot.exp_date)}${expBadge}</td>
+        <td><span class="badge ${zoneBadgeCls}">${lot.zone.replace('_',' ').replace(/\b\w/g, c=>c.toUpperCase())}</span></td>
+        <td><small class="text-muted">${lot.wh_location || '—'}</small></td>
+        <td class="text-end fw-bold">${Math.trunc(lot.qty_on_hand)}</td>
+        <td><small class="text-muted">${fmtDate(lot.last_updated)}</small></td>
+      </tr>`;
+    }).join('');
+  }
+
+  if (rec.holds.length) {
+    document.getElementById('holdsSection').style.display = '';
+    document.getElementById('holdsBody').innerHTML = rec.holds.map(h => `
+      <tr>
+        <td><span class="badge ${h.hold_type === 'strategic' ? 'bg-primary' : 'bg-secondary'}">${h.hold_type[0].toUpperCase()+h.hold_type.slice(1)}</span></td>
+        <td>${h.customer_name || '—'}</td>
+        <td>${h.sales_rep || '—'}</td>
+        <td class="text-end">${Math.trunc(h.qty)}</td>
+        <td class="text-end">${h.fulfilled_qty ? Math.trunc(h.fulfilled_qty) : '—'}</td>
+        <td>${h.expires_at ? fmtDate(h.expires_at) : (h.hold_type === 'strategic' ? 'Never' : '—')}</td>
+        <td><span class="badge ${h.status === 'approved' ? 'bg-success' : 'bg-warning text-dark'}">${h.status[0].toUpperCase()+h.status.slice(1)}</span></td>
+      </tr>`).join('');
+  }
+
+  const movBody = document.getElementById('movementsBody');
+  if (!rec.movements.length) {
+    movBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No movement history yet.</td></tr>`;
+  } else {
+    movBody.innerHTML = rec.movements.map(m => `
+      <tr>
+        <td>${fmtDateTime(m.created_at)}</td>
+        <td><span class="badge bg-secondary">${(m.movement_type||'').replace('_',' ')}</span></td>
+        <td class="fw-bold ${m.qty_change > 0 ? 'text-success' : (m.qty_change < 0 ? 'text-danger' : '')}">${m.qty_change > 0 ? '+' : ''}${Math.trunc(m.qty_change)}</td>
+        <td><small>${m.reference_num || '—'}</small></td>
+        <td><small class="text-muted">${m.notes || '—'}</small></td>
+        <td><small class="text-muted">${m.created_by || '—'}</small></td>
+      </tr>`).join('');
+  }
+}
+</script>
+</body>
+</html>

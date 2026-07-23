@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warranty Claim — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4" id="content">
+  <div class="text-muted py-5 text-center">Loading…</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = iso.slice(0, 10).split('-');
+    return `${d[1]}/${d[2]}/${d[0]}`;
+  }
+  function fmtDateTime(iso) {
+    if (!iso) return '—';
+    const dt = new Date(iso);
+    if (isNaN(dt)) return iso;
+    return dt.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+  function approvalBadge(v) {
+    if (v === 'Approved') return '<span class="badge bg-success">Approved</span>';
+    if (v === 'Rejected') return '<span class="badge bg-danger">Rejected</span>';
+    return '<span class="badge bg-secondary">Pending</span>';
+  }
+
+  fetch('../data/warranty/detail.json').then(r => r.json()).then(data => {
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get('id'), 10);
+    const claim = data.claims.find(c => c.id === id);
+
+    if (!claim) {
+      document.getElementById('content').innerHTML = `
+        <div class="alert alert-warning mt-4">
+          Warranty Claim #${params.get('id') || '?'} not found.
+          <a href="list.html">Back to Warranty Claims</a>
+        </div>`;
+      return;
+    }
+    render(claim);
+  });
+
+  function statusBadge(status) {
+    if (status === 'Closed') return `<span class="badge bg-success ms-2">Closed</span>`;
+    if (status === 'Cancelled') return `<span class="badge bg-secondary ms-2">Cancelled</span>`;
+    if (status === 'Work in Progress') return `<span class="badge bg-info text-dark ms-2">Work in Progress</span>`;
+    return `<span class="badge bg-warning text-dark ms-2">${status}</span>`;
+  }
+
+  function render(claim) {
+    const bothOk = claim.ops_approval === 'Approved' && claim.acct_approval === 'Approved';
+    const notClosedOrCancelled = !['Closed', 'Cancelled'].includes(claim.status);
+
+    let resolutionHtml;
+    if (claim.status === 'Closed') {
+      resolutionHtml = `
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Resolution Date</dt><dd class="col-sm-8">${fmtDate(claim.resolution_date)}</dd>
+          <dt class="col-sm-4">Resolved By</dt><dd class="col-sm-8">${claim.resolved_by_name || '—'}</dd>
+          <dt class="col-sm-4">Details</dt><dd class="col-sm-8" style="white-space:pre-wrap">${claim.resolution_details || '—'}</dd>
+        </dl>`;
+    } else if (bothOk && claim.status !== 'Cancelled') {
+      resolutionHtml = `
+        <p class="text-muted small mb-3">Both Operations and Accounting have approved this claim. Enter the resolution details to close it.</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Resolution Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" disabled>
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Resolution Details <span class="text-danger">*</span></label>
+            <textarea class="form-control" rows="4" placeholder="Describe what was done to resolve this claim…" disabled></textarea>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success" data-demo-inert="Close Claim">Close Claim</button>
+          </div>
+        </div>`;
+    } else if (!bothOk && notClosedOrCancelled) {
+      resolutionHtml = `<span class="text-muted fst-italic">Resolution will be available once both Operations and Accounting have approved.</span>`;
+    } else {
+      resolutionHtml = `<span class="text-muted fst-italic">No resolution on record.</span>`;
+    }
+
+    let headerActions = `<a href="list.html" class="btn btn-outline-secondary btn-sm">← All Claims</a>`;
+    if (!claim.submitted_at && notClosedOrCancelled) {
+      headerActions += `<button class="btn btn-primary btn-sm" data-demo-inert="Submit Claim">Submit Claim</button>`;
+    }
+    if (notClosedOrCancelled) {
+      headerActions += `<button class="btn btn-outline-danger btn-sm" data-demo-inert="Cancel Claim">Cancel Claim</button>`;
+    }
+
+    function approvalPanel(role, label, approval, approvedBy, approvedAt) {
+      let actions = '';
+      if (claim.submitted_at && notClosedOrCancelled) {
+        actions = `
+          <div class="d-flex gap-1 mt-2">
+            <button class="btn btn-sm btn-success" data-demo-inert="${label} Approve" ${approval === 'Approved' ? 'disabled' : ''}>Approve</button>
+            <button class="btn btn-sm btn-outline-danger" data-demo-inert="${label} Reject" ${approval === 'Rejected' ? 'disabled' : ''}>Reject</button>
+          </div>`;
+      } else if (!claim.submitted_at) {
+        actions = `<div class="text-muted" style="font-size:.78rem">Claim must be submitted first.</div>`;
+      }
+      return `
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-semibold">${label}</span>
+            ${approvalBadge(approval)}
+          </div>
+          ${approvedBy ? `<div class="text-muted" style="font-size:.78rem">${approvedBy}${approvedAt ? ' — ' + fmtDateTime(approvedAt) : ''}</div>` : ''}
+          ${actions}
+        </div>`;
+    }
+
+    document.getElementById('content').innerHTML = `
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h4 class="mb-1">
+            ${claim.claim_number}
+            ${statusBadge(claim.status)}
+            <span class="badge bg-dark ms-1" style="font-weight:400;font-size:.75rem">${claim.claim_type || '—'}</span>
+          </h4>
+          <div class="text-muted small">Initiated by ${claim.initiated_by_name || '—'} on ${fmtDate(claim.date_initiated)}</div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap justify-content-end">${headerActions}</div>
+      </div>
+
+      ${(!claim.submitted_at && notClosedOrCancelled) ? `
+      <div class="alert alert-warning py-2 mb-3">
+        <strong>Draft — not yet submitted.</strong> Click "Submit Claim" above to notify Operations and Accounting.
+      </div>` : ''}
+
+      <div class="row g-3">
+        <div class="col-lg-8">
+          <div class="card mb-3">
+            <div class="card-header py-2"><strong>Invoice &amp; Customer</strong></div>
+            <div class="card-body py-2">
+              <dl class="row mb-0">
+                <dt class="col-sm-4">Sales Invoice #</dt><dd class="col-sm-8"><code>${claim.sales_invoice || '—'}</code></dd>
+                <dt class="col-sm-4">Customer</dt><dd class="col-sm-8">${claim.customer_name || '—'}</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header py-2"><strong>Product</strong></div>
+            <div class="card-body py-2">
+              <dl class="row mb-0">
+                <dt class="col-sm-4">SKU</dt><dd class="col-sm-8"><code>${claim.sku || '—'}</code></dd>
+                <dt class="col-sm-4">Lot #</dt><dd class="col-sm-8">${claim.lot_number || '—'}</dd>
+                <dt class="col-sm-4">Expiration</dt><dd class="col-sm-8">${fmtDate(claim.expiration_date)}</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header py-2"><strong>Issue Description</strong></div>
+            <div class="card-body py-2">
+              ${claim.issue ? `<p class="mb-0" style="white-space:pre-wrap">${claim.issue}</p>` : '<span class="text-muted fst-italic">No issue description provided.</span>'}
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header py-2 d-flex justify-content-between align-items-center">
+              <strong>Resolution</strong>
+              ${claim.status === 'Closed' ? '<span class="badge bg-success">Closed</span>' :
+                (bothOk && notClosedOrCancelled ? '<span class="badge bg-info text-dark">Both Approved — Ready to Close</span>' : '')}
+            </div>
+            <div class="card-body py-2">${resolutionHtml}</div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card mb-3">
+            <div class="card-header py-2"><strong>Approvals</strong></div>
+            <div class="card-body py-2">
+              ${approvalPanel('ops', 'Operations', claim.ops_approval, claim.ops_approved_by, claim.ops_approved_at)}
+              <hr class="my-2">
+              ${approvalPanel('acct', 'Accounting', claim.acct_approval, claim.acct_approved_by, claim.acct_approved_at)}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header py-2"><strong>Timeline</strong></div>
+            <div class="card-body py-2">
+              <ul class="list-unstyled mb-0" style="font-size:.82rem">
+                <li class="mb-2">
+                  <span class="text-muted">Created</span><br>
+                  <strong>${fmtDateTime(claim.created_at)}</strong>
+                  ${claim.initiated_by_name ? `<br><span class="text-muted">by ${claim.initiated_by_name}</span>` : ''}
+                </li>
+                <li class="mb-2">
+                  <span class="text-muted">Submitted</span><br>
+                  ${claim.submitted_at ? `<strong>${fmtDateTime(claim.submitted_at)}</strong>` : '<span class="text-muted fst-italic">Not yet submitted</span>'}
+                </li>
+                ${claim.ops_approved_at ? `<li class="mb-2"><span class="text-muted">Ops ${claim.ops_approval}</span><br><strong>${fmtDateTime(claim.ops_approved_at)}</strong>${claim.ops_approved_by ? `<br><span class="text-muted">by ${claim.ops_approved_by}</span>` : ''}</li>` : ''}
+                ${claim.acct_approved_at ? `<li class="mb-2"><span class="text-muted">Acct ${claim.acct_approval}</span><br><strong>${fmtDateTime(claim.acct_approved_at)}</strong>${claim.acct_approved_by ? `<br><span class="text-muted">by ${claim.acct_approved_by}</span>` : ''}</li>` : ''}
+                ${claim.resolved_at ? `<li class="mb-2"><span class="text-muted">Closed</span><br><strong>${fmtDateTime(claim.resolved_at)}</strong>${claim.resolved_by_name ? `<br><span class="text-muted">by ${claim.resolved_by_name}</span>` : ''}</li>` : ''}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    document.querySelectorAll('#content [data-demo-inert]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        toast('"' + el.getAttribute('data-demo-inert') + '" needs the live SurgiCentral backend — not wired up in this static portfolio demo.', 'secondary');
+      });
+    });
+  }
+</script>
+</body>
+</html>

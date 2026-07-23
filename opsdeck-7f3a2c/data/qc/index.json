@@ -1,0 +1,106 @@
+{
+"dates": {
+"2026-05-19": {
+"checkers": [
+"Angel Santiago",
+"Tim Khurshed",
+"Waldek Vieira"
+],
+"pos_by_checker": {
+"Angel Santiago": [
+[
+"14094",
+"III - 871724253879 Quincy"
+],
+[
+"14106",
+"II -1ZR0791H0310459338 Class1Inv."
+],
+[
+"14115",
+"XI - 871947327790 Quincy"
+]
+],
+"Tim Khurshed": [
+[
+"5/19/26",
+"renew scan recalled"
+]
+],
+"Waldek Vieira": [
+[
+"14073",
+"I - 871814076409 Advocates for World Health PO"
+]
+]
+}
+},
+"2026-05-20": {
+"checkers": [
+"Angel Santiago",
+"Juan Thomas",
+"Waldek Vieira"
+],
+"pos_by_checker": {
+"Angel Santiago": [
+[
+"14113",
+"X - 871930386392 Quincy"
+]
+],
+"Juan Thomas": [
+[
+"14119",
+"i - 1Z40E5740193525273 Med-Tan"
+]
+],
+"Waldek Vieira": [
+[
+"14097",
+"I - 871762915547 Interventional & Surgical Suites of Wilkes-Barre LLC\t PO"
+],
+[
+"14120",
+"II - 871923239050 Tampa General  PO"
+]
+]
+}
+},
+"2026-06-22": {
+"checkers": [
+"Angel Santiago",
+"Gary Starr",
+"Tim Khurshed"
+],
+"pos_by_checker": {
+"Angel Santiago": [
+[
+"14200",
+"I - 1Z40E5740292221494 Med-Tan"
+]
+],
+"Gary Starr": [
+[
+"14080",
+"Roger King"
+],
+[
+"14081",
+"Quincy Enterprises Inc. - NJ"
+]
+],
+"Tim Khurshed": [
+[
+"6/19/26",
+"sd scan"
+]
+]
+}
+}
+},
+"available_dates": [
+"2026-05-19",
+"2026-05-20",
+"2026-06-22"
+]
+}

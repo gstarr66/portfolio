@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Procurement Dashboard — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+  <style>
+    :root {
+      --proc-primary: #1B4F72;
+      --proc-accent:  #2E86C1;
+      --proc-bg:      #f4f6f9;
+    }
+
+    .proc-header {
+      background: linear-gradient(135deg, var(--proc-primary) 0%, var(--proc-accent) 100%);
+      color: #fff;
+      border-radius: 8px;
+      padding: 18px 24px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .proc-header h4 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+    .proc-header .sub { font-size: .8rem; opacity: .8; margin-top: 2px; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--proc-accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .stat-card.danger  { border-color: #dc3545; }
+    .stat-card.warning { border-color: #ffc107; }
+    .stat-card .val { font-size: 1.6rem; font-weight: 700; color: #1B4F72; line-height: 1; }
+    .stat-card .lbl { font-size: .72rem; color: #6c757d; margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+
+    .proc-tabs .nav-link {
+      color: #495057;
+      font-size: .85rem;
+      padding: 8px 14px;
+      border-radius: 4px 4px 0 0;
+    }
+    .proc-tabs .nav-link.active {
+      background: var(--proc-primary);
+      color: #fff;
+      font-weight: 600;
+    }
+    .tab-panel { background: #fff; border-radius: 0 8px 8px 8px; border: 1px solid #dee2e6; padding: 0; overflow: hidden; }
+
+    .proc-table { font-size: .8rem; margin: 0; }
+    .proc-table thead th {
+      background: #1B4F72;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      white-space: nowrap;
+      padding: 8px 10px;
+      font-weight: 600;
+      border: none;
+    }
+    .proc-table tbody tr:hover { background: #f0f4f8; }
+    .proc-table td { padding: 6px 10px; vertical-align: middle; border-color: #e9ecef; }
+    .tbl-wrapper { max-height: 600px; overflow-y: auto; }
+
+    .bucket-badge {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: .7rem;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 20px;
+    }
+    .risk-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: .7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .trend-up   { color: #198754; font-weight: 600; }
+    .trend-down { color: #dc3545; font-weight: 600; }
+    .trend-flat { color: #6c757d; }
+
+    .search-bar { padding: 10px 14px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; }
+    .search-bar input { font-size: .8rem; }
+
+    .risk-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; font-size: .72rem; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot  { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="proc-header">
+    <div>
+      <h4>Procurement Dashboard</h4>
+      <div class="sub">Source: QBO + SurgiCentral · Data is nightly · Buckets are rule-based
+        · Snapshot <span id="snapDate">—</span></div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-sm btn-warning fw-semibold" data-demo-inert="Run Analysis Now">↻ Run Analysis Now</button>
+      <button class="btn btn-sm btn-success fw-semibold" data-demo-inert="Download Excel">⬇ Download Excel</button>
+      <a href="competitor_intel.html" class="btn btn-sm btn-light fw-semibold">Competitor Intel →</a>
+    </div>
+  </div>
+
+  <div class="stat-grid" id="statGrid">
+    <div class="stat-card"><div class="val">—</div><div class="lbl">Active SKUs</div></div>
+  </div>
+
+  <ul class="nav proc-tabs mb-0" id="procTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabOverview">Overview</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBuyList">Buy List <span class="badge bg-danger ms-1" id="badgeBuy">0</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabOOS">Out of Stock <span class="badge bg-secondary ms-1" id="badgeOOS">0</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabExpiring">Expiring <span class="badge bg-warning text-dark ms-1" id="badgeExp">0</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabDNR">DNR <span class="badge bg-secondary ms-1" id="badgeDNR">0</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabProfit">Profitability</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabAll">All SKUs <span class="badge bg-secondary ms-1" id="badgeAll">0</span></button></li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div class="tab-pane fade show active" id="tabOverview">
+      <div class="p-3">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h6 class="fw-bold text-secondary mb-3" style="font-size:.8rem;text-transform:uppercase;letter-spacing:.5px">Risk Summary</h6>
+            <table class="table table-sm" style="font-size:.82rem"><tbody id="riskSummaryBody"></tbody></table>
+          </div>
+          <div class="col-md-3">
+            <h6 class="fw-bold text-secondary mb-3" style="font-size:.8rem;text-transform:uppercase;letter-spacing:.5px">Bucket Breakdown</h6>
+            <div id="bucketBreakdown"></div>
+          </div>
+          <div class="col-md-3">
+            <h6 class="fw-bold text-secondary mb-3" style="font-size:.8rem;text-transform:uppercase;letter-spacing:.5px">Top 10 — GP / Month</h6>
+            <div id="topProfit"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabBuyList">
+      <div class="search-bar">
+        <input type="text" class="form-control form-control-sm" placeholder="Filter buy list…" oninput="filterTable('buyTable',this.value)">
+      </div>
+      <div class="tbl-wrapper">
+        <table class="table proc-table table-bordered" id="buyTable">
+          <thead><tr>
+            <th>B</th><th>SKU</th><th>Brand</th><th>Risk</th><th>Reorder</th>
+            <th class="text-end">Stock</th><th class="text-end">MOS</th>
+            <th class="text-end">Vel 6mo</th><th class="text-end">COGS</th>
+            <th class="text-end">GP/mo</th><th class="text-end">Days Exp</th>
+          </tr></thead>
+          <tbody id="buyBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabOOS">
+      <div class="search-bar">
+        <input type="text" class="form-control form-control-sm" placeholder="Filter OOS…" oninput="filterTable('oosTable',this.value)">
+      </div>
+      <div class="tbl-wrapper">
+        <table class="table proc-table table-bordered" id="oosTable">
+          <thead><tr>
+            <th>B</th><th>SKU</th><th>Brand</th><th>Risk</th><th>Reorder</th>
+            <th class="text-end">Vel 6mo</th><th class="text-end">Vel 3mo</th>
+            <th class="text-end">Sold 12mo</th><th class="text-end">GP/mo</th>
+            <th class="text-end">COGS</th>
+          </tr></thead>
+          <tbody id="oosBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabExpiring">
+      <div class="search-bar">
+        <input type="text" class="form-control form-control-sm" placeholder="Filter expiring…" oninput="filterTable('expTable',this.value)">
+      </div>
+      <div class="tbl-wrapper">
+        <table class="table proc-table table-bordered" id="expTable">
+          <thead><tr>
+            <th>B</th><th>SKU</th><th>Brand</th><th>Risk</th>
+            <th class="text-end">Days Exp</th><th class="text-end">Days to Removal</th>
+            <th class="text-end">Stock</th><th class="text-end">At Risk Units</th>
+            <th class="text-end">Critical Units</th><th class="text-end">Vel 6mo</th><th>Action</th>
+          </tr></thead>
+          <tbody id="expBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabDNR">
+      <div class="search-bar">
+        <input type="text" class="form-control form-control-sm" placeholder="Filter DNR…" oninput="filterTable('dnrTable',this.value)">
+      </div>
+      <div class="tbl-wrapper">
+        <table class="table proc-table table-bordered" id="dnrTable">
+          <thead><tr>
+            <th>B</th><th>SKU</th><th>Brand</th><th>Risk</th><th>Reorder</th>
+            <th class="text-end">Stock</th><th class="text-end">MOS</th>
+            <th class="text-end">Vel 12mo</th><th class="text-end">Inv Value</th>
+          </tr></thead>
+          <tbody id="dnrBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabProfit">
+      <div class="search-bar">
+        <input type="text" class="form-control form-control-sm" placeholder="Filter profitability…" oninput="filterTable('profTable',this.value)">
+      </div>
+      <div class="tbl-wrapper">
+        <table class="table proc-table table-bordered" id="profTable">
+          <thead><tr>
+            <th>#</th><th>B</th><th>SKU</th><th>Brand</th>
+            <th class="text-end">Sold 12mo</th><th class="text-end">Revenue 12mo</th>
+            <th class="text-end">Gross Profit</th><th class="text-end">Margin%</th>
+            <th class="text-end">GP/Month</th><th class="text-end">Vel 6mo</th><th class="text-end">Trend</th>
+          </tr></thead>
+          <tbody id="profBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabAll">
+      <div class="search-bar d-flex gap-2">
+        <input type="text" class="form-control form-control-sm" id="allSearch" placeholder="Search SKU, brand, risk…" oninput="filterTable('allTable',this.value)">
+        <select class="form-select form-select-sm" style="max-width:130px" onchange="filterBucket('allTable',this.value)">
+          <option value="">All Buckets</option>
+          <option>A</option><option>B</option><option>C</option><option>D</option>
+          <option value="none">Unclassified</option>
+        </select>
+      </div>
+      <div class="tbl-wrapper">
+        <table class="table proc-table table-bordered" id="allTable">
+          <thead><tr>
+            <th>B</th><th>SKU</th><th>Brand</th><th>Risk</th>
+            <th class="text-end">Stock</th><th class="text-end">MOS</th>
+            <th class="text-end">Vel 6mo</th><th class="text-end">COGS</th>
+            <th class="text-end">Margin%</th><th class="text-end">GP/mo</th>
+            <th class="text-end">At Risk</th><th class="text-end">Days Exp</th><th class="text-end">Trend</th>
+          </tr></thead>
+          <tbody id="allBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-content -->
+
+  <div class="risk-legend mt-2" id="riskLegend"></div>
+
+  <div class="mt-4" style="font-size:.82rem">
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header fw-bold" style="background:#1B4F72;color:#fff;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px">Metric Definitions</div>
+          <div class="card-body p-3" style="font-size:.78rem">
+            <table class="table table-sm table-borderless mb-0">
+              <tbody>
+                <tr><td class="fw-bold text-nowrap pe-2">vel_6mo</td><td>Units sold/month over 6 months — normal sales only (excludes short-dated &amp; rep-discount). Primary reorder metric.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">vel_3mo</td><td>Units sold/month over 3 months (all sales). Shows recent trend direction.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">vel_12mo</td><td>Units sold/month over 12 months (all sales). Used for bucket scoring.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">MOS</td><td>Months of Stock — current inventory ÷ vel_6mo. How long stock will last at current pace.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">At Risk Units</td><td>Units that won't sell before expiration — FIFO lot-by-lot calculation using vel_6mo.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">Critical Units</td><td>Units in lots expiring within 30 days.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">Trend %</td><td>% change: recent 3mo vs prior 3mo (normal sales only). &gt;5% = up, &lt;−5% = down.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">GP/mo</td><td>Gross profit per month (annual gross profit ÷ 12).</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">COGS</td><td>Weighted average cost from purchase orders.</td></tr>
+                <tr><td class="fw-bold text-nowrap pe-2">Margin %</td><td>Actual margin: (Revenue − COGS) ÷ Revenue over 12 months.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header fw-bold" style="background:#1B4F72;color:#fff;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px">Bucket Definitions</div>
+          <div class="card-body p-3" style="font-size:.78rem">
+            <table class="table table-sm table-borderless mb-0">
+              <tbody>
+                <tr><td><span class="bucket-badge" style="background:#dc3545">A</span></td><td>Margin ≥ 30% <strong>and</strong> vel_6mo &gt; 5<br><span class="text-muted">High velocity, high margin</span></td></tr>
+                <tr><td><span class="bucket-badge" style="background:#fd7e14">B</span></td><td>Margin ≥ 30%<br><span class="text-muted">High margin</span></td></tr>
+                <tr><td><span class="bucket-badge" style="background:#0D6EFD">C</span></td><td>Margin ≥ 20%</td></tr>
+                <tr><td><span class="bucket-badge" style="background:#6c757d">D</span></td><td>Margin ≥ 10%</td></tr>
+                <tr><td><span class="bucket-badge" style="background:#adb5bd">—</span></td><td>No 12mo revenue or margin &lt; 10%</td></tr>
+              </tbody>
+            </table>
+            <p class="text-muted mt-2 mb-0" style="font-size:.72rem">Buckets are fully automated — no manual input. Requires 12-month sales history.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header fw-bold" style="background:#1B4F72;color:#fff;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px">
+            Risk Level Criteria <span style="font-weight:400;opacity:.75">(evaluated in priority order)</span>
+          </div>
+          <div class="card-body p-3" style="font-size:.78rem">
+            <table class="table table-sm mb-0">
+              <thead><tr><th style="width:40px">#</th><th>Risk Level</th><th>Condition</th></tr></thead>
+              <tbody>
+                <tr><td class="text-muted">1</td><td><span class="risk-badge" style="background:#FFA500;color:#000">OUT OF STOCK - BUY ON SIGHT</span></td><td>Zero stock · Bucket A · vel_6mo &gt; 5</td></tr>
+                <tr><td class="text-muted">2</td><td><span class="risk-badge" style="background:#FFD700;color:#000">OUT OF STOCK - HIGH PRIORITY</span></td><td>Zero stock · Bucket A or B · vel &gt; 0</td></tr>
+                <tr><td class="text-muted">3</td><td><span class="risk-badge" style="background:#0D6EFD;color:#fff">OUT OF STOCK - REORDER NOW</span></td><td>Zero stock · vel_6mo &gt; 5</td></tr>
+                <tr><td class="text-muted">4</td><td><span class="risk-badge" style="background:#9EC5FE;color:#000">OUT OF STOCK</span></td><td>Zero stock · any velocity &gt; 0</td></tr>
+                <tr><td class="text-muted">5</td><td><span class="risk-badge" style="background:#dc3545;color:#fff">CRITICAL - EXPIRING</span></td><td>Stock &gt; 0 · expires ≤ 30 days</td></tr>
+                <tr><td class="text-muted">6</td><td><span class="risk-badge" style="background:#fd7e14;color:#fff">URGENT - EXPIRING</span></td><td>Stock &gt; 0 · expires 31–90 days</td></tr>
+                <tr><td class="text-muted">7</td><td><span class="risk-badge" style="background:#ffc107;color:#000">WARNING - EXPIRING</span></td><td>Stock &gt; 0 · expires 91–180 days</td></tr>
+                <tr><td class="text-muted">8</td><td><span class="risk-badge" style="background:#C9B3E8;color:#000">LOW STOCK - PRIORITY ITEM</span></td><td>Bucket A or B · MOS ≤ 3</td></tr>
+                <tr><td class="text-muted">9</td><td><span class="risk-badge" style="background:#fff3cd;color:#000">OVERSTOCKED</span></td><td>MOS &gt; 12</td></tr>
+                <tr><td class="text-muted">10</td><td><span class="risk-badge" style="background:#e9ecef;color:#000">ZERO STOCK - NO SALES</span></td><td>Zero stock · zero velocity</td></tr>
+                <tr><td class="text-muted">11</td><td><span class="risk-badge" style="background:#d4edda;color:#000">OK</span></td><td>Everything else</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+let DATA = null;
+let bySku = {};
+
+fetch('../data/procurement/index.json').then(r => r.json()).then(data => {
+  DATA = data;
+  data.items.forEach(i => bySku[i.sku] = i);
+  document.getElementById('snapDate').textContent = data.generated_from_snapshot;
+  renderStats();
+  renderOverview();
+  renderTab('buyBody', data.buy_list_skus, buyRow);
+  renderTab('oosBody', data.oos_skus, oosRow);
+  renderTab('expBody', data.expiring_skus, expRow);
+  renderTab('dnrBody', data.dnr_skus, dnrRow);
+  renderTab('profBody', data.profitability_skus, profRow, true);
+  renderTab('allBody', data.items.map(i => i.sku), allRow);
+  document.getElementById('badgeBuy').textContent = data.buy_list_skus.length;
+  document.getElementById('badgeOOS').textContent = data.oos_skus.length;
+  document.getElementById('badgeExp').textContent = data.expiring_skus.length;
+  document.getElementById('badgeDNR').textContent = data.dnr_skus.length;
+  document.getElementById('badgeAll').textContent = data.items.length;
+  wireInertLinks();
+});
+
+function fmt(n, d) { return Number(n || 0).toFixed(d); }
+function money(n) { return '$' + Number(n || 0).toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0}); }
+function mos(v) { return v >= 999 ? '∞' : fmt(v, 1); }
+
+function renderStats() {
+  const s = DATA.stats;
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card"><div class="val">${s.total_skus}</div><div class="lbl">Active SKUs</div></div>
+    <div class="stat-card danger"><div class="val">${s.oos_count}</div><div class="lbl">Out of Stock</div></div>
+    <div class="stat-card warning"><div class="val">${s.expiring_count}</div><div class="lbl">Expiring ≤180d</div></div>
+    <div class="stat-card danger"><div class="val">${s.critical_count}</div><div class="lbl">Critical ≤30d</div></div>
+    <div class="stat-card" style="border-color:#dc3545"><div class="val">${s.bucket_a_count}</div><div class="lbl">Bucket A Items</div></div>
+    <div class="stat-card" style="border-color:#fd7e14"><div class="val">${s.bucket_b_count}</div><div class="lbl">Bucket B Items</div></div>
+    <div class="stat-card" style="border-color:#0d6efd"><div class="val">${Math.round(s.total_units_on_shelf).toLocaleString()}</div><div class="lbl">Total Units on Shelf</div></div>
+    <div class="stat-card warning"><div class="val">${Math.round(s.at_risk_units).toLocaleString()}</div><div class="lbl">At Risk Units — May Expire</div></div>
+  `;
+}
+
+function renderOverview() {
+  const riskBody = document.getElementById('riskSummaryBody');
+  riskBody.innerHTML = DATA.risk_order
+    .filter(r => (DATA.risk_counts[r] || 0) > 0)
+    .map(r => `
+      <tr>
+        <td><span class="risk-badge" style="background:${DATA.risk_colors[r].bg};color:${DATA.risk_colors[r].text}">${r}</span></td>
+        <td class="text-end fw-bold">${DATA.risk_counts[r]}</td>
+      </tr>`).join('');
+
+  const bd = document.getElementById('bucketBreakdown');
+  bd.innerHTML = Object.entries(DATA.bucket_colors).map(([b, color]) => `
+    <div class="d-flex align-items-center mb-2 gap-2">
+      <span class="bucket-badge" style="background:${color}">${b}</span>
+      <div>
+        <div class="fw-bold" style="font-size:.85rem">${DATA.bucket_counts[b] || 0} SKUs</div>
+        <div class="text-muted" style="font-size:.72rem">${money(DATA.bucket_gp[b] || 0)} GP/yr</div>
+      </div>
+    </div>`).join('');
+
+  const tp = document.getElementById('topProfit');
+  tp.innerHTML = DATA.top_profit_skus.map(sku => {
+    const i = bySku[sku];
+    return `
+      <div class="d-flex justify-content-between mb-1" style="font-size:.78rem">
+        <span><span class="bucket-badge me-1" style="background:${i.bucket_color};font-size:.6rem;width:16px;height:16px;line-height:16px">${i.bucket || '?'}</span>${i.sku}</span>
+        <span class="fw-bold text-success">${money(i.profit_per_month)}/mo</span>
+      </div>`;
+  }).join('');
+
+  document.getElementById('riskLegend').innerHTML = Object.entries(DATA.risk_colors).map(([risk, c]) => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${c.bg};border:1px solid #ccc"></div>
+      <span style="font-size:.68rem;color:#6c757d">${risk}</span>
+    </div>`).join('');
+}
+
+function renderTab(bodyId, skus, rowFn, withIndex) {
+  const el = document.getElementById(bodyId);
+  const rows = skus.map((sku, idx) => {
+    const i = bySku[sku];
+    if (!i) return '';
+    return rowFn(i, idx);
+  });
+  el.innerHTML = rows.join('');
+}
+
+function daysExpHtml(days) {
+  if (days === null || days === undefined) return '—';
+  const cls = days <= 30 ? 'text-danger' : (days <= 90 ? 'text-warning' : '');
+  return `<span class="fw-bold ${cls}">${days}d</span>`;
+}
+
+function buyRow(i) {
+  return `<tr data-bucket="${i.bucket || 'none'}">
+    <td><span class="bucket-badge" style="background:${i.bucket_color}">${i.bucket || '—'}</span></td>
+    <td><strong>${i.sku}</strong></td><td>${i.brand}</td>
+    <td><span class="risk-badge" style="background:${i.risk_bg};color:${i.risk_text}">${i.risk}</span></td>
+    <td style="font-size:.72rem;font-weight:600;color:#1B4F72">${i.reorder}</td>
+    <td class="text-end">${fmt(i.stock,1)}</td>
+    <td class="text-end">${mos(i.months_of_stock)}</td>
+    <td class="text-end">${fmt(i.vel_6mo,2)}</td>
+    <td class="text-end">$${fmt(i.cogs,4)}</td>
+    <td class="text-end fw-bold ${i.profit_per_month > 0 ? 'text-success' : ''}">$${fmt(i.profit_per_month,2)}</td>
+    <td class="text-end">${daysExpHtml(i.days_to_exp)}</td>
+  </tr>`;
+}
+
+function oosRow(i) {
+  return `<tr data-bucket="${i.bucket || 'none'}">
+    <td><span class="bucket-badge" style="background:${i.bucket_color}">${i.bucket || '—'}</span></td>
+    <td><strong>${i.sku}</strong></td><td>${i.brand}</td>
+    <td><span class="risk-badge" style="background:${i.risk_bg};color:${i.risk_text}">${i.risk}</span></td>
+    <td style="font-size:.72rem;font-weight:600;color:#1B4F72">${i.reorder}</td>
+    <td class="text-end">${fmt(i.vel_6mo,2)}</td>
+    <td class="text-end">${fmt(i.vel_3mo,2)}</td>
+    <td class="text-end">${fmt(i.sold_12mo,1)}</td>
+    <td class="text-end fw-bold ${i.profit_per_month > 0 ? 'text-success' : ''}">$${fmt(i.profit_per_month,2)}</td>
+    <td class="text-end">$${fmt(i.cogs,4)}</td>
+  </tr>`;
+}
+
+function expRow(i) {
+  return `<tr data-bucket="${i.bucket || 'none'}">
+    <td><span class="bucket-badge" style="background:${i.bucket_color}">${i.bucket || '—'}</span></td>
+    <td><strong>${i.sku}</strong></td><td>${i.brand}</td>
+    <td><span class="risk-badge" style="background:${i.risk_bg};color:${i.risk_text}">${i.risk}</span></td>
+    <td class="text-end">${daysExpHtml(i.days_to_exp)}</td>
+    <td class="text-end">${i.days_to_removal}d</td>
+    <td class="text-end">${fmt(i.stock,1)}</td>
+    <td class="text-end ${i.at_risk > 0 ? 'text-danger fw-bold' : ''}">${fmt(i.at_risk,1)}</td>
+    <td class="text-end ${i.critical_units > 0 ? 'text-danger fw-bold' : ''}">${fmt(i.critical_units,1)}</td>
+    <td class="text-end">${fmt(i.vel_6mo,2)}</td>
+    <td style="font-size:.72rem;color:#6c757d">${i.action}</td>
+  </tr>`;
+}
+
+function dnrRow(i) {
+  return `<tr data-bucket="${i.bucket || 'none'}">
+    <td><span class="bucket-badge" style="background:${i.bucket_color}">${i.bucket || '—'}</span></td>
+    <td><strong>${i.sku}</strong></td><td>${i.brand}</td>
+    <td><span class="risk-badge" style="background:${i.risk_bg};color:${i.risk_text}">${i.risk}</span></td>
+    <td style="font-size:.72rem;font-weight:600;color:#6c757d">${i.reorder}</td>
+    <td class="text-end">${fmt(i.stock,1)}</td>
+    <td class="text-end">${mos(i.months_of_stock)}</td>
+    <td class="text-end">${fmt(i.vel_12mo,2)}</td>
+    <td class="text-end">$${fmt(i.inv_value_cost,2)}</td>
+  </tr>`;
+}
+
+function trendHtml(tr, big) {
+  if (tr > 5) return `<span class="trend-up">▲ ${fmt(big ? tr : Math.round(tr),big?1:0)}%</span>`;
+  if (tr < -5) return `<span class="trend-down">▼ ${fmt(big ? -tr : Math.round(-tr),big?1:0)}%</span>`;
+  return big ? `<span class="trend-flat">— ${fmt(tr,1)}%</span>` : `<span class="trend-flat">—</span>`;
+}
+
+function profRow(i, idx) {
+  return `<tr data-bucket="${i.bucket || 'none'}">
+    <td class="text-muted" style="font-size:.72rem">${idx+1}</td>
+    <td><span class="bucket-badge" style="background:${i.bucket_color}">${i.bucket || '—'}</span></td>
+    <td><strong>${i.sku}</strong></td><td>${i.brand}</td>
+    <td class="text-end">${fmt(i.sold_12mo,1)}</td>
+    <td class="text-end">$${Number(i.revenue_12mo).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+    <td class="text-end fw-bold text-success">$${Number(i.gross_profit_12mo).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+    <td class="text-end">${fmt(i.margin_pct*100,1)}%</td>
+    <td class="text-end fw-bold">$${fmt(i.profit_per_month,2)}</td>
+    <td class="text-end">${fmt(i.vel_6mo,2)}</td>
+    <td class="text-end">${trendHtml(i.trend_pct, true)}</td>
+  </tr>`;
+}
+
+function allRow(i) {
+  return `<tr data-bucket="${i.bucket || 'none'}">
+    <td><span class="bucket-badge" style="background:${i.bucket_color}">${i.bucket || '—'}</span></td>
+    <td><strong>${i.sku}</strong></td><td>${i.brand}</td>
+    <td><span class="risk-badge" style="background:${i.risk_bg};color:${i.risk_text}">${i.risk}</span></td>
+    <td class="text-end">${fmt(i.stock,1)}</td>
+    <td class="text-end">${mos(i.months_of_stock)}</td>
+    <td class="text-end">${fmt(i.vel_6mo,2)}</td>
+    <td class="text-end">$${fmt(i.cogs,4)}</td>
+    <td class="text-end">${fmt(i.margin_pct*100,1)}%</td>
+    <td class="text-end ${i.profit_per_month > 0 ? 'text-success' : ''}">$${fmt(i.profit_per_month,2)}</td>
+    <td class="text-end ${i.at_risk > 0 ? 'text-danger fw-bold' : ''}">${i.at_risk > 0 ? fmt(i.at_risk,1) : '—'}</td>
+    <td class="text-end">${daysExpHtml(i.days_to_exp)}</td>
+    <td class="text-end">${trendHtml(i.trend_pct, false)}</td>
+  </tr>`;
+}
+
+function filterTable(tableId, query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function filterBucket(tableId, bucket) {
+  document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+    if (!bucket) { row.style.display = ''; return; }
+    row.style.display = (row.dataset.bucket === bucket) ? '' : 'none';
+  });
+  const searchEl = document.getElementById('allSearch');
+  if (searchEl && searchEl.value) filterTable(tableId, searchEl.value);
+}
+</script>
+</body>
+</html>

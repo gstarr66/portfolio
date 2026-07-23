@@ -1,0 +1,31 @@
+{
+  "today": "2026-07-23",
+  "claims": [
+    {
+      "id": 1,
+      "claim_number": "WC-2026-0001",
+      "sales_invoice": "42420",
+      "customer_name": "gary starr",
+      "status": "Work in Progress",
+      "date_initiated": "2026-06-25",
+      "claim_type": "Standard Return",
+      "sku": "1019E",
+      "lot_number": "1234567",
+      "expiration_date": "2026-07-31",
+      "issue": "test",
+      "initiated_by_name": "Gary Starr",
+      "submitted_at": "2026-06-25 14:57:43.935295+00",
+      "ops_approval": "Approved",
+      "ops_approved_by": "Gary Starr",
+      "ops_approved_at": "2026-06-25 14:58:24.854252+00",
+      "acct_approval": "Approved",
+      "acct_approved_by": "Gary Starr",
+      "acct_approved_at": "2026-06-25 14:58:27.747198+00",
+      "resolution_date": null,
+      "resolution_details": null,
+      "resolved_by_name": null,
+      "resolved_at": null,
+      "created_at": "2026-06-25 14:57:15.057862+00"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# SurgiCentral portfolio demo — access gate
+# This site shows real SurgiShop business data under real branding, so it is
+# meant to be shown by Gary during interviews, not crawled or browsed by
+# strangers. See README_HOSTING.txt for setup steps.
+
+AuthType Basic
+AuthName "SurgiCentral Demo — Restricted"
+AuthUserFile /FULL/SERVER/PATH/TO/.htpasswd
+Require valid-user
+
+<Files ".htpasswd">
+  Require all denied
+</Files>
+
+<Files ".htaccess">
+  Require all denied
+</Files>

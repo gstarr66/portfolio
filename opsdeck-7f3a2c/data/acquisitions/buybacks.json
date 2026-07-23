@@ -1,0 +1,163 @@
+{
+  "today": "2026-07-23",
+  "stats": {
+    "approved": 1,
+    "accepted": 1
+  },
+  "STATUS_COLORS": {
+    "pending_approval": "warning",
+    "approved": "info",
+    "offered": "primary",
+    "accepted": "success",
+    "denied": "danger",
+    "countered": "warning",
+    "cancelled": "secondary"
+  },
+  "STATUS_LABELS": {
+    "pending_approval": "Pending Approval",
+    "approved": "Approved \u2014 Ready to Send",
+    "offered": "Offered",
+    "accepted": "Accepted",
+    "denied": "Denied",
+    "countered": "Countered",
+    "cancelled": "Cancelled"
+  },
+  "buybacks": [
+    {
+      "id": 1,
+      "facility_name": "Osborn Medical Center",
+      "contact_name": "Ferra Alvira",
+      "address_line1": "7400 E Osborn Rd",
+      "city": "Scottsdale",
+      "state": "AZ",
+      "zip_code": "85251",
+      "phone": null,
+      "email": null,
+      "status": "approved",
+      "total_credit_offer": 2500.0,
+      "total_cash_offer": 2250.0,
+      "offer_notes": null,
+      "approved_by_name": "Gary Starr",
+      "approved_at": "2026-06-17 15:14:16.634393+00",
+      "sf_case_number": null,
+      "po_number": null,
+      "created_by_name": "Gary Starr",
+      "created_at": "2026-06-17 15:13:21.809955+00",
+      "updated_at": "2026-06-17 15:14:16.634393+00",
+      "item_count": 5,
+      "items": [
+        {
+          "id": 1,
+          "line_num": 1,
+          "manufacturer": null,
+          "ref_number": "SLP35135US",
+          "unit_of_measure": "Box",
+          "quantity": 4,
+          "expiration_date": "2027-03-26",
+          "credit_per_qty": 100.0,
+          "cash_per_qty": 90.0,
+          "dating_notes": null
+        },
+        {
+          "id": 2,
+          "line_num": 2,
+          "manufacturer": null,
+          "ref_number": "SLP14150US",
+          "unit_of_measure": "Box",
+          "quantity": 5,
+          "expiration_date": "2027-06-20",
+          "credit_per_qty": 100.0,
+          "cash_per_qty": 90.0,
+          "dating_notes": null
+        },
+        {
+          "id": 3,
+          "line_num": 3,
+          "manufacturer": null,
+          "ref_number": "SLP35090US",
+          "unit_of_measure": "Box",
+          "quantity": 8,
+          "expiration_date": "0027-05-29",
+          "credit_per_qty": 100.0,
+          "cash_per_qty": 90.0,
+          "dating_notes": null
+        },
+        {
+          "id": 4,
+          "line_num": 4,
+          "manufacturer": null,
+          "ref_number": "SLP35150US",
+          "unit_of_measure": "Box",
+          "quantity": 4,
+          "expiration_date": "2027-05-15",
+          "credit_per_qty": 100.0,
+          "cash_per_qty": 90.0,
+          "dating_notes": null
+        },
+        {
+          "id": 5,
+          "line_num": 5,
+          "manufacturer": null,
+          "ref_number": "SLP35150US",
+          "unit_of_measure": "Box",
+          "quantity": 4,
+          "expiration_date": "2027-07-03",
+          "credit_per_qty": 100.0,
+          "cash_per_qty": 90.0,
+          "dating_notes": null
+        }
+      ],
+      "case": null
+    },
+    {
+      "id": 2,
+      "facility_name": "Osborn Medical Center",
+      "contact_name": "Ferra Alvira",
+      "address_line1": "7400 E Osborn Rd",
+      "city": "Scottsdale",
+      "state": "AZ",
+      "zip_code": "85251",
+      "phone": null,
+      "email": null,
+      "status": "accepted",
+      "total_credit_offer": 400.0,
+      "total_cash_offer": 360.0,
+      "offer_notes": null,
+      "approved_by_name": "Gary Starr",
+      "approved_at": "2026-06-17 15:24:03.418832+00",
+      "sf_case_number": "00001574",
+      "po_number": "14181",
+      "created_by_name": "Gary Starr",
+      "created_at": "2026-06-17 15:23:47.608224+00",
+      "updated_at": "2026-06-17 15:24:32.171727+00",
+      "item_count": 1,
+      "items": [
+        {
+          "id": 6,
+          "line_num": 1,
+          "manufacturer": null,
+          "ref_number": "SLP35135US",
+          "unit_of_measure": "Box",
+          "quantity": 4,
+          "expiration_date": "2027-03-26",
+          "credit_per_qty": 100.0,
+          "cash_per_qty": 90.0,
+          "dating_notes": null
+        }
+      ],
+      "case": {
+        "id": 2,
+        "buyback_id": 2,
+        "sf_case_number": "00001574",
+        "customer_name": "Osborn Medical Center",
+        "po_number": "14181",
+        "case_owner": "Gary Starr",
+        "status": "Shipping Label Sent",
+        "post_date": "2026-06-17",
+        "notes": null,
+        "created_at": "2026-06-17 15:24:32.171727+00",
+        "updated_at": "2026-06-17 15:30:02.018202+00"
+      }
+    }
+  ]
+}

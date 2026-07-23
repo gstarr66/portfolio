@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recall Detail — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4" id="app">
+  <div class="text-muted py-5 text-center">Loading recall…</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const wantedId = parseInt(params.get('id'), 10);
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return `${m}/${d}/${y}`;
+  }
+  function fmtCreatedAt(ts) {
+    if (!ts) return '—';
+    // ts like '2026-06-24 17:31:08.117197+00' (UTC) -> format in America/New_York, matching the real app
+    const iso = ts.replace(' ', 'T').replace('+00', 'Z');
+    const d = new Date(iso);
+    if (isNaN(d)) return ts;
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    }).formatToParts(d).reduce((a, p) => (a[p.type] = p.value, a), {});
+    return `${parts.month}/${parts.day}/${parts.year} ${parts.hour}:${parts.minute} EST`;
+  }
+
+  fetch('../data/recalls/all_recalls.json').then(r => r.json()).then(data => {
+    const recall = data.recalls.find(r => r.id === wantedId);
+    const app = document.getElementById('app');
+
+    if (!recall) {
+      app.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="mb-0">Recall Detail</h4>
+          <div class="d-flex gap-2">
+            <a href="all_recalls.html" class="btn btn-outline-secondary btn-sm">← All Recalls</a>
+            <a href="dashboard.html" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          Recall #${wantedId || '?'} isn't in this demo's embedded slice (the ${data.embedded_count.toLocaleString()}
+          most recent of ${data.total.toLocaleString()} — see <a href="all_recalls.html">All Recalls</a> for the note
+          on what was capped for demo performance).
+        </div>`;
+      return;
+    }
+
+    const terminal = recall.status && ['terminated', 'completed'].includes(recall.status.toLowerCase());
+    const fdaId = recall.cfres_id || recall.recall_number;
+
+    app.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Recall Detail</h4>
+        <div class="d-flex gap-2">
+          <a href="all_recalls.html" class="btn btn-outline-secondary btn-sm">← All Recalls</a>
+          <a href="dashboard.html" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header ${terminal ? 'bg-secondary' : 'bg-danger'} text-white">
+          <h5 class="mb-0">${recall.device_name || 'Unknown Device'}</h5>
+        </div>
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-3">Recall Number</dt>
+            <dd class="col-sm-9"><code>${recall.recall_number || '—'}</code></dd>
+
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">${recall.status ? `<span class="badge ${terminal ? 'bg-secondary' : 'bg-danger'}">${recall.status}</span>` : '—'}</dd>
+
+            <dt class="col-sm-3">Recall Date</dt>
+            <dd class="col-sm-9">${fmtDate(recall.recall_date)}</dd>
+
+            <dt class="col-sm-3">Recalling Firm</dt>
+            <dd class="col-sm-9">${recall.recall_firm || '—'}</dd>
+
+            <dt class="col-sm-3">Product / Catalog Code</dt>
+            <dd class="col-sm-9">${recall.product_code || '—'}</dd>
+
+            <dt class="col-sm-3">Reason for Recall</dt>
+            <dd class="col-sm-9" style="white-space:pre-wrap">${recall.reason || '—'}</dd>
+
+            <dt class="col-sm-3">Code / Lot Info</dt>
+            <dd class="col-sm-9" style="white-space:pre-wrap">${recall.code_info || '—'}</dd>
+
+            <dt class="col-sm-3">FDA CFRES ID</dt>
+            <dd class="col-sm-9"><code>${recall.cfres_id || '—'}</code></dd>
+
+            <dt class="col-sm-3">Record Added</dt>
+            <dd class="col-sm-9">${fmtCreatedAt(recall.created_at)}</dd>
+          </dl>
+        </div>
+        <div class="card-footer">
+          <a href="https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfres/res.cfm?id=${fdaId}"
+             target="_blank" class="btn btn-outline-danger btn-sm">View on FDA.gov ↗</a>
+        </div>
+      </div>`;
+  });
+</script>
+</body>
+</html>

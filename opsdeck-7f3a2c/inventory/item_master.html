@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Item Master — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0">Item Master</h5>
+  </div>
+
+  <div class="d-flex gap-3 mb-3 flex-wrap align-items-end">
+    <form class="d-flex gap-2 align-items-end" onsubmit="return false">
+      <input type="text" id="searchBox" class="form-control form-control-sm" placeholder="SKU, name, brand, item #" style="width:260px">
+      <button class="btn btn-sm btn-primary" id="btnSearch">Search</button>
+      <button class="btn btn-sm btn-outline-secondary" id="btnClear">Clear</button>
+    </form>
+
+    <div class="btn-group btn-group-sm" id="showGroup">
+      <button class="btn btn-outline-secondary active" data-show="active">Active</button>
+      <button class="btn btn-outline-secondary" data-show="inactive">Inactive</button>
+      <button class="btn btn-outline-secondary" data-show="all">All</button>
+    </div>
+  </div>
+
+  <p class="text-muted small mb-2" id="countLine"></p>
+
+  <div id="tableWrap"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+let PRODUCTS = [];
+let show = 'active';
+
+fetch('../data/inventory/item_master.json').then(r => r.json()).then(data => {
+  PRODUCTS = data.products;
+  render();
+});
+
+function render() {
+  const q = (document.getElementById('searchBox').value || '').toLowerCase().trim();
+
+  let rows = PRODUCTS.filter(p => {
+    if (show === 'active' && !p.is_active) return false;
+    if (show === 'inactive' && p.is_active) return false;
+    return true;
+  });
+  if (q) {
+    rows = rows.filter(p =>
+      (p.sku||'').toLowerCase().includes(q) ||
+      (p.name||'').toLowerCase().includes(q) ||
+      (p.manufacturer||'').toLowerCase().includes(q) ||
+      (p.item_number||'').toLowerCase().includes(q));
+  }
+
+  document.getElementById('countLine').textContent = `${rows.length} item(s) — click any row to view/edit.`;
+
+  const wrap = document.getElementById('tableWrap');
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="alert alert-info" style="max-width:500px">No items found.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="table-responsive">
+      <table class="table table-sm table-hover table-bordered align-middle" style="font-size:0.83rem">
+        <thead class="table-dark">
+          <tr>
+            <th style="width:110px">SKU</th><th>Item Name</th><th>Brand</th>
+            <th style="width:90px">Item #</th><th>Category</th>
+            <th class="text-center" style="width:70px">On Hand</th>
+            <th class="text-end" style="width:75px">Retail</th>
+            <th class="text-end" style="width:75px">True Low</th>
+            <th class="text-center" style="width:70px">Flags</th>
+            <th class="text-center" style="width:70px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(rowHtml).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function rowHtml(p) {
+  let flags = '';
+  if (p.implantable) flags += `<span class="badge bg-primary me-1" title="Implantable">IMP</span>`;
+  if (p.temp_critical) flags += `<span class="badge bg-danger me-1" title="Temperature Critical">TC</span>`;
+  if (p.temp_sensitive) flags += `<span class="badge bg-warning text-dark" title="Temperature Sensitive">TS</span>`;
+  return `<tr style="cursor:pointer" onclick="location.href='item_master_detail.html?sku=${encodeURIComponent(p.sku)}'">
+    <td style="max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap"><strong title="${p.sku}">${p.sku}</strong></td>
+    <td>${p.name || '—'}</td>
+    <td class="text-muted">${p.manufacturer || '—'}</td>
+    <td class="text-muted small">${p.item_number || '—'}</td>
+    <td class="small">${p.category_code || '—'}</td>
+    <td class="text-center">${Math.trunc(p.total_qty)}</td>
+    <td class="text-end">${p.retail_price ? '$'+p.retail_price.toFixed(2) : '—'}</td>
+    <td class="text-end">${p.true_low ? `<span class="text-danger fw-semibold">$${p.true_low.toFixed(2)}</span>` : '—'}</td>
+    <td class="text-center">${flags}</td>
+    <td class="text-center">${p.is_active ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}</td>
+  </tr>`;
+}
+
+document.getElementById('btnSearch').addEventListener('click', render);
+document.getElementById('btnClear').addEventListener('click', () => { document.getElementById('searchBox').value=''; render(); });
+document.getElementById('searchBox').addEventListener('keydown', e => { if (e.key === 'Enter') render(); });
+document.querySelectorAll('#showGroup button').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#showGroup button').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    show = this.dataset.show;
+    render();
+  });
+});
+</script>
+</body>
+</html>

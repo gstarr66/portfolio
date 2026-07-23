@@ -1,0 +1,29 @@
+{
+  "shipments": [
+    {
+      "id": 1,
+      "vendor": "test vendor",
+      "po_number": "11111",
+      "received_date": "2026-05-20",
+      "received_time": "14:17:00",
+      "status": "Received",
+      "total_boxes": 3,
+      "notes": null
+    },
+    {
+      "id": 2,
+      "vendor": "test vendor",
+      "po_number": null,
+      "received_date": "2026-05-20",
+      "received_time": null,
+      "status": "Pending",
+      "total_boxes": null,
+      "notes": null
+    }
+  ],
+  "statuses": [
+    "Pending",
+    "Received",
+    "Awaiting More Boxes"
+  ]
+}

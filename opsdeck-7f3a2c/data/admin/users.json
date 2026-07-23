@@ -1,0 +1,85 @@
+{
+ "generated_note": "Full snapshot -- both real SurgiCentral user accounts, 2026-07-23.",
+ "users": [
+  {
+   "id": 1,
+   "email": "gary.starr@surgishop.com",
+   "name": "Gary Starr",
+   "is_active": true,
+   "created_at": "2026-06-11 18:39:00.6922+00",
+   "last_login_at": "2026-06-11 22:52:28.112491+00",
+   "role_names": "Administrator"
+  },
+  {
+   "id": 2,
+   "email": "craig.giordano@surgishop.com",
+   "name": "Craig Giordano",
+   "is_active": false,
+   "created_at": "2026-06-17 18:37:44.498039+00",
+   "last_login_at": null,
+   "role_names": "\u2014"
+  }
+ ],
+ "all_roles": [
+  {
+   "id": 12,
+   "name": "accounting",
+   "display_name": "Accounting"
+  },
+  {
+   "id": 9,
+   "name": "acquisition",
+   "display_name": "Acquisition"
+  },
+  {
+   "id": 10,
+   "name": "administrator",
+   "display_name": "Administrator"
+  },
+  {
+   "id": 4,
+   "name": "inventory_control",
+   "display_name": "Inventory Control"
+  },
+  {
+   "id": 3,
+   "name": "operations_manager",
+   "display_name": "Operations Manager"
+  },
+  {
+   "id": 5,
+   "name": "procurement_manager",
+   "display_name": "Procurement Manager"
+  },
+  {
+   "id": 6,
+   "name": "procurement_staff",
+   "display_name": "Procurement Staff"
+  },
+  {
+   "id": 11,
+   "name": "qc_lead",
+   "display_name": "QC Lead"
+  },
+  {
+   "id": 7,
+   "name": "sales",
+   "display_name": "Sales"
+  },
+  {
+   "id": 8,
+   "name": "sales_manager",
+   "display_name": "Sales Manager"
+  },
+  {
+   "id": 2,
+   "name": "warehouse_manager",
+   "display_name": "Warehouse Manager"
+  },
+  {
+   "id": 1,
+   "name": "warehouse_staff",
+   "display_name": "Warehouse Staff"
+  }
+ ]
+}

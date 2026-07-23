@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buyback Detail — SurgiCentral</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/site.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="container-fluid px-4" id="content">
+  <div class="text-muted py-5 text-center">Loading…</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/site.js"></script>
+<script>
+  function money(v) { return (v || v === 0) ? '$' + Number(v).toFixed(2) : '—'; }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = iso.slice(0, 10).split('-');
+    return `${d[1]}/${d[2]}/${d[0]}`;
+  }
+  function fmtDateTime(iso) {
+    if (!iso) return '—';
+    const dt = new Date(iso);
+    if (isNaN(dt)) return iso;
+    return dt.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+
+  Promise.all([
+    fetch('../data/acquisitions/buybacks.json').then(r => r.json()),
+  ]).then(([data]) => {
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get('id'), 10);
+    const demo = window.demoStore.get('acquisitions_buybacks', []);
+    const all = data.buybacks.concat(demo);
+    const buyback = all.find(b => b.id === id);
+
+    if (!buyback) {
+      document.getElementById('content').innerHTML = `
+        <div class="alert alert-warning mt-4">
+          Buyback #${params.get('id') || '?'} not found.
+          <a href="list.html">Back to Pipeline</a>
+        </div>`;
+      return;
+    }
+
+    render(buyback, data);
+  });
+
+  function itemRowHtml(item, showOffer) {
+    let expHtml = '—';
+    if (item.expiration_date) {
+      const exp = new Date(item.expiration_date + 'T00:00:00');
+      const today = new Date('2026-07-23T00:00:00');
+      const days = Math.round((exp - today) / 86400000);
+      if (days < 0) expHtml = '<span class="text-danger fw-bold">EXPIRED</span>';
+      else if (days <= 90) expHtml = `<span class="text-warning fw-bold">${fmtDate(item.expiration_date)}</span>`;
+      else expHtml = fmtDate(item.expiration_date);
+    }
+    let offerCols = '';
+    if (showOffer) {
+      const creditTotal = (item.credit_per_qty && item.quantity) ? money(item.credit_per_qty * item.quantity) : '—';
+      const cashTotal = (item.cash_per_qty && item.quantity) ? money(item.cash_per_qty * item.quantity) : '—';
+      offerCols = `
+        <td>${money(item.credit_per_qty)}</td>
+        <td>${money(item.cash_per_qty)}</td>
+        <td>${creditTotal}</td>
+        <td>${cashTotal}</td>`;
+    }
+    return `
+      <tr>
+        <td class="text-muted">${item.line_num ?? ''}</td>
+        <td>${item.manufacturer || '—'}</td>
+        <td class="fw-semibold">${item.ref_number || '—'}</td>
+        <td>${item.unit_of_measure || '—'}</td>
+        <td>${item.quantity ?? '—'}</td>
+        <td class="text-nowrap">${expHtml}</td>
+        ${offerCols}
+      </tr>`;
+  }
+
+  function render(buyback, data) {
+    const showOffer = buyback.status !== 'pending_approval';
+    const color = data.STATUS_COLORS[buyback.status] || 'secondary';
+    const label = data.STATUS_LABELS[buyback.status] || buyback.status;
+
+    const offerHeaders = showOffer ? `
+      <th>Credit/Unit</th><th>Cash/Unit</th><th>Credit Total</th><th>Cash Total</th>` : '';
+
+    const totalFooter = (showOffer && (buyback.total_credit_offer || buyback.total_cash_offer)) ? `
+      <tfoot>
+        <tr class="table-dark">
+          <td colspan="6" class="text-end fw-bold">Total Offer:</td>
+          <td colspan="2" class="fw-bold text-success">${buyback.total_credit_offer ? 'Credit: ' + money(buyback.total_credit_offer) : ''}</td>
+          <td colspan="2" class="fw-bold text-success">${buyback.total_cash_offer ? 'Cash: ' + money(buyback.total_cash_offer) : ''}</td>
+        </tr>
+      </tfoot>` : '';
+
+    let actionsHtml = '';
+    if (buyback.status === 'pending_approval' || buyback.status === 'countered') {
+      actionsHtml += `
+        <div class="card shadow-sm border-warning">
+          <div class="card-header bg-warning text-dark py-2 fw-bold">Set Offer Amounts</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Enter Credit and/or Cash per unit for each item.</p>
+            <div class="table-responsive mb-3">
+              <table class="table table-sm mb-0">
+                <thead><tr><th>Ref #</th><th>Qty</th><th>Credit/Ea</th><th>Cash/Ea</th></tr></thead>
+                <tbody>
+                  ${buyback.items.map(it => `
+                    <tr>
+                      <td style="font-size:.8rem">${it.ref_number || '—'}</td>
+                      <td style="font-size:.8rem">${it.quantity}</td>
+                      <td><input type="number" class="form-control form-control-sm" style="width:75px" disabled placeholder="0.00"></td>
+                      <td><input type="number" class="form-control form-control-sm" style="width:75px" disabled placeholder="0.00"></td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+            <button class="btn btn-warning btn-sm w-100" data-demo-inert="Approve & Set Offer">Approve &amp; Set Offer</button>
+          </div>
+        </div>`;
+    }
+
+    let statusButtons = '';
+    if (buyback.status === 'approved') {
+      statusButtons += `<button class="btn btn-primary btn-sm w-100" data-demo-inert="Mark as Offered">✉ Mark as Offered (Email Sent)</button>`;
+    }
+    if (buyback.status === 'offered') {
+      statusButtons += `
+        <button class="btn btn-success btn-sm w-100" data-demo-inert="Mark Accepted">✓ Mark Accepted</button>
+        <button class="btn btn-warning btn-sm w-100" data-demo-inert="Hospital Countered">↩ Hospital Countered</button>
+        <button class="btn btn-outline-danger btn-sm w-100" data-demo-inert="Hospital Denied">✕ Hospital Denied</button>`;
+    }
+    if (buyback.status === 'countered') {
+      statusButtons += `<button class="btn btn-warning btn-sm w-100" data-demo-inert="Resubmit for Approval">↩ Resubmit for Approval</button>`;
+    }
+    if (!['accepted', 'denied', 'cancelled'].includes(buyback.status)) {
+      statusButtons += `<button class="btn btn-outline-secondary btn-sm w-100" data-demo-inert="Cancel Buyback">Cancel Buyback</button>`;
+    }
+
+    const approvalCard = buyback.approved_by_name ? `
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white py-2">Approval</div>
+        <div class="card-body">
+          <table class="table table-sm table-borderless mb-0">
+            <tr><td class="text-muted">Approved By</td><td>${buyback.approved_by_name}</td></tr>
+            <tr><td class="text-muted">Approved At</td><td>${fmtDateTime(buyback.approved_at)}</td></tr>
+          </table>
+        </div>
+      </div>` : '';
+
+    let caseCard = '';
+    if (buyback.case) {
+      caseCard = `
+        <div class="card shadow-sm border-success">
+          <div class="card-header bg-success text-white py-2">Salesforce Case</div>
+          <div class="card-body">
+            <table class="table table-sm table-borderless mb-0">
+              <tr><td class="text-muted">SF Case #</td><td class="fw-bold">${buyback.case.sf_case_number}</td></tr>
+              <tr><td class="text-muted">PO #</td><td>${buyback.case.po_number || '—'}</td></tr>
+              <tr><td class="text-muted">Status</td><td><span class="badge bg-secondary">${buyback.case.status}</span></td></tr>
+            </table>
+            <a href="cases.html" class="btn btn-sm btn-outline-success w-100 mt-2">View in Case Tracker</a>
+          </div>
+        </div>`;
+    } else if (buyback.status === 'accepted' && buyback.sf_case_number) {
+      caseCard = `
+        <div class="alert alert-warning py-2 mb-0">
+          SF Case # ${buyback.sf_case_number} on file but no case tracker entry yet.
+          <a href="cases.html">Add manually</a>.
+        </div>`;
+    }
+
+    document.getElementById('content').innerHTML = `
+      <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
+        <a href="list.html" class="btn btn-sm btn-outline-secondary">← Pipeline</a>
+        <h4 class="mb-0">${buyback.facility_name}</h4>
+        <span class="badge bg-${color} fs-6">${label}</span>
+      </div>
+      <p class="text-muted mb-3" style="font-size:.9rem">
+        Buyback #${buyback.id} &nbsp;·&nbsp;
+        Created by ${buyback.created_by_name || '—'} on ${fmtDate(buyback.created_at)}
+        ${buyback.contact_name ? `&nbsp;·&nbsp; Contact: ${buyback.contact_name}` : ''}
+        ${buyback.phone ? `&nbsp;·&nbsp; ${buyback.phone}` : ''}
+        ${buyback.email ? `&nbsp;·&nbsp; <a href="mailto:${buyback.email}">${buyback.email}</a>` : ''}
+      </p>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white py-2">Surplus Items</div>
+            <div class="table-responsive">
+              <table class="table table-sm mb-0 align-middle">
+                <thead>
+                  <tr>
+                    <th>#</th><th>Manufacturer</th><th>Ref #</th><th>UOM</th><th>Qty</th><th>Expiration</th>
+                    ${offerHeaders}
+                  </tr>
+                </thead>
+                <tbody>${buyback.items.map(it => itemRowHtml(it, showOffer)).join('')}</tbody>
+                ${totalFooter}
+              </table>
+            </div>
+          </div>
+          ${buyback.offer_notes ? `<div class="alert alert-light border mt-3 mb-0"><strong>Approver Notes:</strong> ${buyback.offer_notes}</div>` : ''}
+        </div>
+
+        <div class="col-lg-4 d-flex flex-column gap-3">
+          ${actionsHtml}
+          <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white py-2">Update Status</div>
+            <div class="card-body d-flex flex-column gap-2">${statusButtons || '<span class="text-muted small">No further actions — terminal status.</span>'}</div>
+          </div>
+          ${approvalCard}
+          ${caseCard}
+        </div>
+      </div>`;
+
+    document.querySelectorAll('#content [data-demo-inert]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        toast('"' + el.getAttribute('data-demo-inert') + '" needs the live SurgiCentral backend — not wired up in this static portfolio demo.', 'secondary');
+      });
+    });
+  }
+</script>
+</body>
+</html>

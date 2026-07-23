@@ -1,0 +1,30 @@
+{
+  "counts": {
+    "open_count": 0,
+    "pending_approval": 0,
+    "ready_to_resolve": 1,
+    "closed_count": 0
+  },
+  "statuses": [
+    "Open",
+    "Work in Progress",
+    "Closed",
+    "Cancelled"
+  ],
+  "claims": [
+    {
+      "id": 1,
+      "claim_number": "WC-2026-0001",
+      "sales_invoice": "42420",
+      "customer_name": "gary starr",
+      "status": "Work in Progress",
+      "date_initiated": "2026-06-25",
+      "claim_type": "Standard Return",
+      "sku": "1019E",
+      "initiated_by_name": "Gary Starr",
+      "ops_approval": "Approved",
+      "acct_approval": "Approved",
+      "submitted_at": "2026-06-25 14:57:43.935295+00"
+    }
+  ]
+}

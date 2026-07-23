@@ -1,0 +1,86 @@
+{
+  "requests": [],
+  "counts": {
+    "inbound_pending": 0,
+    "inventory_control_pending": 0,
+    "submitted": 0
+  },
+  "categories": [
+    [
+      "ENT",
+      "E"
+    ],
+    [
+      "ENTVascular",
+      "EV"
+    ],
+    [
+      "Endomechanical",
+      "Y"
+    ],
+    [
+      "GYN/Urology",
+      "G"
+    ],
+    [
+      "GYN/UrologyEndomechanical",
+      "GY"
+    ],
+    [
+      "GYN/UrologyMesh",
+      "MG"
+    ],
+    [
+      "Hemostat / Wound Care",
+      "H"
+    ],
+    [
+      "Hemostat / Wound CareOrthopedicSpine / Neurology",
+      "SOH"
+    ],
+    [
+      "Hemostat / Wound CareSpine / Neurology",
+      "HS"
+    ],
+    [
+      "Mesh",
+      "M"
+    ],
+    [
+      "MeshEndomechanical",
+      "YM"
+    ],
+    [
+      "Orthopedic",
+      "O"
+    ],
+    [
+      "OrthopedicSpine / Neurology",
+      "SO"
+    ],
+    [
+      "OrthopedicSpine / NeurologyEndomechanical",
+      "YOS"
+    ],
+    [
+      "Robotics",
+      "R"
+    ],
+    [
+      "Specialty",
+      "Z"
+    ],
+    [
+      "Spine / Neurology",
+      "S"
+    ],
+    [
+      "Vascular",
+      "V"
+    ]
+  ],
+  "tax_classes": [
+    "P0000000",
+    "PH404914"
+  ]
+}

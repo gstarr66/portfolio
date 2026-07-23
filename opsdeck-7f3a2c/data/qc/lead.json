@@ -1,0 +1,74 @@
+{
+"dates": {
+"2026-05-19": [],
+"2026-05-20": [
+{
+"po_number": "14094",
+"supplier": "Quincy",
+"batch_count": 2,
+"submitted_count": 2,
+"finalized_count": 0,
+"checkers": "Angel Santiago",
+"total_accepted": 0.0,
+"total_rejected": 0.0,
+"total_scanned": 8.0,
+"total_sd_lt3mo": 0.0,
+"total_sd_3to18mo": 0.0,
+"total_boxes": null,
+"lead_status": "ready"
+},
+{
+"po_number": "14113",
+"supplier": "Quincy",
+"batch_count": 1,
+"submitted_count": 1,
+"finalized_count": 0,
+"checkers": "Angel Santiago",
+"total_accepted": 0.0,
+"total_rejected": 0.0,
+"total_scanned": 4.0,
+"total_sd_lt3mo": 0.0,
+"total_sd_3to18mo": 0.0,
+"total_boxes": null,
+"lead_status": "ready"
+}
+],
+"2026-06-22": [
+{
+"po_number": "14080",
+"supplier": "Roger King",
+"batch_count": 1,
+"submitted_count": 1,
+"finalized_count": 0,
+"checkers": "Gary Starr",
+"total_accepted": 2.0,
+"total_rejected": 5.0,
+"total_scanned": 7.0,
+"total_sd_lt3mo": 5.0,
+"total_sd_3to18mo": 0.0,
+"total_boxes": null,
+"lead_status": "ready"
+},
+{
+"po_number": "14081",
+"supplier": "Quincy Enterprises Inc. - NJ",
+"batch_count": 1,
+"submitted_count": 1,
+"finalized_count": 0,
+"checkers": "Gary Starr",
+"total_accepted": 1.0,
+"total_rejected": 1.0,
+"total_scanned": 3.0,
+"total_sd_lt3mo": 2.0,
+"total_sd_3to18mo": 0.0,
+"total_boxes": null,
+"lead_status": "ready"
+}
+]
+},
+"available_dates": [
+"2026-05-19",
+"2026-05-20",
+"2026-06-22"
+]
+}
